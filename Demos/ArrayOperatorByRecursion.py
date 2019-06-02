@@ -37,7 +37,7 @@ def array_quick_sort(array) -> list:
     middle_value = array[0]
     left_array = [i for i in array[1:] if i <= middle_value]
     right_array = [i for i in array[1:] if i > middle_value]
-    return left_array + [middle_value] + right_array
+    return array_quick_sort(left_array) + [middle_value] + array_quick_sort(right_array)
 
 
 # <editor-fold desc="折叠后要显示的内容">
