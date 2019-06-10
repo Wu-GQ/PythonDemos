@@ -164,9 +164,83 @@ def is_anagram(s: str, t: str) -> bool:
     return char_dict_a == char_dict_b
 
 
+class Trie:
+
+    def __init__(self):
+        """
+        Initialize your data structure here.
+        """
+        self.__word_set = set()
+
+    def insert(self, word: str) -> None:
+        """
+        Inserts a word into the trie.
+        """
+        self.__word_set.add(word)
+
+    def search(self, word: str) -> bool:
+        """
+        Returns if the word is in the trie.
+        """
+        return word in self.__word_set
+
+    def startsWith(self, prefix: str) -> bool:
+        """
+        Returns if there is any word in the trie that starts with the given prefix.
+        """
+        for i in self.__word_set:
+            if i.startswith(prefix):
+                return True
+        return False
+
+
+def word_break(s: str, wordDict: list) -> bool:
+    """
+    单词拆分
+    :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/275/string/1138/
+    """
+    match_list = [1] + [0] * len(s)
+    for i in range(1, len(s) + 1):
+        for word in wordDict:
+            if s[:i].endswith(word) and match_list[i - len(word)] == 1:
+                match_list[i] = 1
+                break
+
+    return bool(match_list[len(s)])
+
+
+def word_break_2(s: str, wordDict: list) -> list:
+    """
+    单词拆分 II
+    :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/275/string/1139/
+    """
+    point_list = [[] for i in range(len(s))]
+    point_list.insert(0, [0])
+
+    # 通过遍历获得所有可能的路径点
+    for i in range(1, len(s) + 1):
+        for word in wordDict:
+            if s[:i].endswith(word) and len(point_list[i - len(word)]) > 0:
+                point_list[i].append(i - len(word))
+
+    if len(point_list[len(s)]) == 0:
+        return []
+
+    # 遍历输出所有路径
+    path_list = [[] for i in range(len(s) + 1)]
+
+    for i in range(len(s), 0, -1):
+        for point_index in point_list[i]:
+            now_path = s[point_index:i]
+
+            if i == len(s):
+                path_list[point_index].append(now_path)
+            else:
+                for path in path_list[i]:
+                    path_list[point_index].append("%s %s" % (now_path, path))
+
+    return path_list[0]
+
+
 if __name__ == "__main__":
-    string = "中aabb国"
-
-    s = "baab中国"
-
-    print(is_anagram(string, s))
+    print(word_break_2("abcdede", ["abc", "abcd", "de", "ede"]))
