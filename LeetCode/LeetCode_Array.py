@@ -147,6 +147,39 @@ def product_except_self(nums: list) -> list:
     return result_list
 
 
+def removeDuplicates(nums: list) -> int:
+    """
+    从排序数组中删除重复项
+    :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/1/array/21/
+    """
+    slow_index = 0
+    fast_index = 1
+    while fast_index < len(nums):
+        if nums[fast_index] != nums[slow_index]:
+            slow_index += 1
+            nums[slow_index] = nums[fast_index]
+        fast_index += 1
+    return slow_index + 1
+
+
+def plusOne(digits: list) -> list:
+    """
+    加一
+    :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/1/array/27/
+    """
+    digits[len(digits) - 1] += 1
+    for i in range(len(digits) - 1, 0, -1):
+        if digits[i] > 9:
+            digits[i - 1] += digits[i] // 10
+            digits[i] %= 10
+        else:
+            break
+    if digits[0] > 9:
+        digits.insert(0, digits[0] // 10)
+        digits[1] %= 10
+    return digits
+
+
 if __name__ == "__main__":
-    array2 = [9, 4, 9, 6, 7, 6]
-    print(product_except_self(array2))
+    array2 = [9, 0, 9, 1, 9]
+    print(plusOne(array2))

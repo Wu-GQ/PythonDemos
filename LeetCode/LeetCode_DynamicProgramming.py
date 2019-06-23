@@ -100,7 +100,91 @@ class Solution:
             print(tail)
         return len(tail)
 
+    def coinChange(self, coins: list, amount: int) -> int:
+        """
+        零钱兑换
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/272/dynamic-programming/1180/
+        """
+        amount_list = [-1] * (amount + 1)
+        amount_list[0] = 0
+
+        coins.sort()
+
+        for i in range(amount + 1):
+            for coin in coins:
+                if i > coin and amount_list[i - coin] >= 0:
+                    amount_list[i] = amount_list[i - coin] + 1 if amount_list[i] == -1 else min(amount_list[i], amount_list[i - coin] + 1)
+                elif i == coin:
+                    amount_list[i] = 1
+                elif i < coin:
+                    break
+
+        return amount_list[amount]
+
+    def rob(self, nums: list) -> int:
+        """
+        打家劫舍
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/272/dynamic-programming/1177/
+        """
+        money_list = [0] * len(nums)
+
+        max_money = 0
+
+        for i in range(len(nums)):
+            if i < 2:
+                money_list[i] = nums[i]
+            elif i == 2:
+                money_list[i] = nums[0] + nums[2]
+            else:
+                money_list[i] = max(money_list[i - 3], money_list[i - 2]) + nums[i]
+
+            max_money = max(max_money, money_list[i])
+
+        return max_money
+
+    def climbStairs(self, n):
+        """
+        爬楼梯
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/23/dynamic-programming/54/
+        """
+        _stairs_array = [0, 1, 2]
+        for i in range(3, n + 1):
+            _stairs_array.append(_stairs_array[i - 2] + _stairs_array[i - 1])
+        return _stairs_array[n]
+
+    def maxProfit(self, prices: list) -> int:
+        """
+        买卖股票的最佳时机 II
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/1/array/22/
+        """
+        profit = 0
+
+        i = 0
+        while i < len(prices) - 1:
+            low = prices[i]
+            high = prices[i + 1]
+
+            if low >= high:
+                i += 1
+            else:
+                # 找到极大值
+                j = i + 1
+                while j < len(prices):
+                    if prices[j] >= high:
+                        high = prices[j]
+                        j += 1
+                    else:
+                        break
+
+                # 计算利润
+                profit += high - low
+
+                # 更新下标
+                i = j
+
+        return profit
+
 
 if __name__ == "__main__":
-    so = Solution()
-    print(so.num_squares(12))
+    coins_list = [1, 1, 2, 3, 3, 4]
+    print(Solution().maxProfit(coins_list))
