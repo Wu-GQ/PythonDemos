@@ -21,8 +21,8 @@ class Solution(object):
         two_queue = Queue()
         two_queue.put(root)
 
-        deep = 1
-        while not one_queue.empty() and not two_queue.empty():
+        deep = 0
+        while not one_queue.empty() or not two_queue.empty():
             if not one_queue.empty():
                 index = one_queue.get()
                 if index.left is not None:
@@ -42,7 +42,10 @@ if __name__ == '__main__':
     root.left = TreeNode(9)
     root.right = TreeNode(20)
 
-    root.right.left = TreeNode(15)
-    root.right.right = TreeNode(7)
+    # root.right.left = TreeNode(15)
+    # root.right.right = TreeNode(7)
+    #
+    # root.right.left.left = TreeNode(15)
+    # root.right.left.right = TreeNode(7)
 
     print(Solution().maxDepth(root))
