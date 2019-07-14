@@ -242,5 +242,50 @@ def word_break_2(s: str, wordDict: list) -> list:
     return path_list[0]
 
 
+def reverse_num(x: int) -> int:
+    """
+    整数反转
+    :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/5/strings/33/
+    """
+    num_string = str(abs(x))[::-1]
+    if (x >= 0 and float(num_string) > pow(2, 31) - 1) or (x < 0 and float(num_string) > pow(2, 31)):
+        return 0
+    elif x >= 0:
+        return int(num_string)
+    else:
+        return -int(num_string)
+
+
+def longestCommonPrefix(strs: list) -> str:
+    """
+    最长公共前缀
+    :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/5/strings/40/
+    """
+    if len(strs) == 0:
+        return ""
+
+    i = 0
+    while i < len(strs[0]):
+        ch = strs[0][i]
+        for string in strs:
+            if i >= len(string) or string[i] != ch:
+                return strs[0][:i]
+        i += 1
+    return strs[0]
+
+
+def strstr(haystack: str, needle: str) -> int:
+    """
+    实现strStr()
+    :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/5/strings/38/
+    """
+    # if len(needle) == 0:
+    #     return 0
+    return haystack.find(needle)
+
+
+
 if __name__ == "__main__":
-    print(word_break_2("abcdede", ["abc", "abcd", "de", "ede"]))
+    # str_list = ["dogss", "dog", "dogs"]
+    # print(longestCommonPrefix(str_list))
+    print(strstr("aaaaa", ""))

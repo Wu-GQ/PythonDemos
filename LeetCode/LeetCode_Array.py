@@ -180,6 +180,21 @@ def plusOne(digits: list) -> list:
     return digits
 
 
+def twoSum(nums: list, target: int) -> list:
+    """
+    两数之和
+    :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/1/array/29/
+    """
+    nums_set = dict()
+
+    for i in range(len(nums)):
+        other_num = target - nums[i]
+        if other_num in nums_set:
+            return [nums_set[other_num], i]
+        nums_set[nums[i]] = i
+    return []
+
+
 if __name__ == "__main__":
     array2 = [9, 0, 9, 1, 9]
-    print(plusOne(array2))
+    print(twoSum(array2, 9))
