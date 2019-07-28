@@ -152,7 +152,7 @@ class Solution:
             _stairs_array.append(_stairs_array[i - 2] + _stairs_array[i - 1])
         return _stairs_array[n]
 
-    def maxProfit(self, prices: list) -> int:
+    def maxProfit2(self, prices: list) -> int:
         """
         买卖股票的最佳时机 II
         :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/1/array/22/
@@ -184,7 +184,21 @@ class Solution:
 
         return profit
 
+    def maxProfit(self, prices: list) -> int:
+        """
+        买卖股票的最佳时机
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/23/dynamic-programming/55/
+        """
+        low = float('inf')
+        max_profit = 0
+        for i in prices:
+            if i < low:
+                low = i
+            else:
+                max_profit = max(max_profit, i - low)
+        return max_profit
+
 
 if __name__ == "__main__":
-    coins_list = [1, 1, 2, 3, 3, 4]
+    coins_list = [7, 1, 5, 3, 6, 4]
     print(Solution().maxProfit(coins_list))
