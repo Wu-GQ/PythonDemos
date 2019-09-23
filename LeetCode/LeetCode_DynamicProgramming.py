@@ -184,7 +184,48 @@ class Solution:
 
         return profit
 
+    def maxArea(self, height: list) -> int:
+        """
+        盛水最多的容器，S = max((j-i) * min(a[i], a[j]))
+        :see https://leetcode-cn.com/problems/container-with-most-water/
+        """
+        if len(height) < 2:
+            return 0
+
+        # 使用双指针法，从两端向内缩进，因为缩进时(j-i)的值必然减小，min(a[i], a[j])的值如果减小或不变，则必然不符合“最多”的要求，
+        # 因此，每次向内缩进的原则是，选择较小的边，向内缩进
+        i = 0
+        j = len(height) - 1
+        max_area = 0
+        while i < j:
+            max_area = max(max_area, (j - i) * min(height[i], height[j]))
+            if height[i] > height[j]:
+                j -= 1
+            else:
+                i += 1
+
+        return max_area
+
+    def maxSubArray(self, nums: list) -> int:
+        """
+        最大子序和
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/23/dynamic-programming/56/
+        """
+        # 状态转移方程 S[n] = max(S[n-1] + a[n], a[n])
+        if len(nums) < 1:
+            return 0
+
+        # 整个数组的最大子序和
+        max_sum = nums[0]
+        # 某个子数组的最大子序和
+        sums = nums[0]
+        for i in range(1, len(nums)):
+            sums = max(sums + nums[i], nums[i])
+            max_sum = max(sums, max_sum)
+
+        return max_sum
+
 
 if __name__ == "__main__":
-    coins_list = [1, 1, 2, 3, 3, 4]
-    print(Solution().maxProfit(coins_list))
+    coins_list = [-2, 1, -3, 4, -1, 2, 1, -5, 4]
+    print(Solution().maxSubArray(coins_list))
