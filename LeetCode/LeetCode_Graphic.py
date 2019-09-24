@@ -34,6 +34,23 @@ class Solution:
 
         return 0
 
+    def canFinish(self, numCourses: int, prerequisites: list) -> bool:
+        """
+        课程表
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/273/graph-theory/1184/
+        """
+        # 拓扑排序：统计每个节点的入边数量和出边数量，逐个删除入边为0的节点及其出边，若入边为0的节点全部删除后，仍然存在节点，则存在环
+        # 保存未删除的节点
+        undelete_node_set = set([i for i in range(numCourses)])
+        # 保存无入边的节点
+        non_in_node_stack = []
+
+        while len(undelete_node_set) > 0 and len(non_in_node_stack) > 0:
+
+
+
+
+
 
 if __name__ == '__main__':
     print(Solution().ladderLength("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"]))
