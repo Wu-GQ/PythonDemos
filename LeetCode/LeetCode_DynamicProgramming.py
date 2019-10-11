@@ -113,7 +113,9 @@ class Solution:
         for i in range(amount + 1):
             for coin in coins:
                 if i > coin and amount_list[i - coin] >= 0:
-                    amount_list[i] = amount_list[i - coin] + 1 if amount_list[i] == -1 else min(amount_list[i], amount_list[i - coin] + 1)
+                    amount_list[i] = amount_list[i - coin] + 1 if amount_list[i] == -1 else min(amount_list[i],
+                                                                                                amount_list[
+                                                                                                    i - coin] + 1)
                 elif i == coin:
                     amount_list[i] = 1
                 elif i < coin:
@@ -223,9 +225,35 @@ class Solution:
             sums = max(sums + nums[i], nums[i])
             max_sum = max(sums, max_sum)
 
+            # print(nums[i], max_sum, sums)
+
         return max_sum
+
+    def maxProduct(self, nums: list) -> int:
+        """
+        乘积最大子序列
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/264/array/1126/
+        """
+        # 状态转移方程 S[n] = max(Smax[n-1] * a[n], Smin[n-1] * a[n], S[n-1])
+        if len(nums) < 1:
+            return 0
+
+        max_value = nums[0]
+        min_value = nums[0]
+        max_result = nums[0]
+
+        for i in range(1, len(nums)):
+            if nums[i] >= 0:
+                max_value, min_value = max(max_value * nums[i], nums[i]), min(min_value * nums[i], nums[i])
+            else:
+                max_value, min_value = max(min_value * nums[i], nums[i]), min(max_value * nums[i], nums[i])
+            max_result = max(max_result, max_value, min_value)
+            # print(f'{nums[i]}: {max_value}, {min_value}, {max_result}')
+
+        return max_result
 
 
 if __name__ == "__main__":
-    coins_list = [-2, 1, -3, 4, -1, 2, 1, -5, 4]
-    print(Solution().maxSubArray(coins_list))
+    coins_list = [2, 3, 0, -5, -3, -4, 1]
+    # print(Solution().maxSubArray(coins_list))
+    print(Solution().maxProduct(coins_list))
