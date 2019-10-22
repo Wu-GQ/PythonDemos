@@ -1,5 +1,4 @@
 from queue import Queue
-import time
 
 
 class TreeNode:
@@ -209,6 +208,38 @@ class Solution(object):
 
         return result_list
 
+    max_path_sum = float('-inf')
+
+    def maxPathSum(self, root: TreeNode) -> int:
+        """
+        二叉树中的最大路径和
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/272/dynamic-programming/1175/
+        """
+        if root is None:
+            return 0
+        self.max_path_sum = root.val
+
+        return max(self.recursive_child_tree_max_path_sum(root), self.max_path_sum)
+
+    def recursive_child_tree_max_path_sum(self, root: TreeNode) -> int:
+        # 使用递归，判断每个节点的子树的最大路径和
+        if root is None:
+            return 0
+
+        # 计算左子树和右子树的最大路径和
+        left_max_path_sum = self.recursive_child_tree_max_path_sum(root.left)
+        right_max_path_sum = self.recursive_child_tree_max_path_sum(root.right)
+
+        # 路径只包含一半子树和该子树的父节点
+        part_child_tree_max_path_sum = root.val + max(0, max(left_max_path_sum, right_max_path_sum))
+        # 路径只在这个子树中
+        child_tree_max_path_sum = root.val + max(0, left_max_path_sum) + max(0, right_max_path_sum)
+
+        # 更新最大路径和
+        self.max_path_sum = max(self.max_path_sum, child_tree_max_path_sum, part_child_tree_max_path_sum)
+
+        return part_child_tree_max_path_sum
+
 
 if __name__ == '__main__':
     # root = TreeNode(1)
@@ -227,4 +258,12 @@ if __name__ == '__main__':
     # print(Solution().lowestCommonAncestor(root, TreeNode(5), TreeNode(4)).val)
     # string = Solution().serialize(root)
     # print(string)
-    print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
+    # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
+
+    s = Solution()
+    # data = "[-10,9,20,null,null,15,7]"
+    # data = "[-3]"
+    # data = "[1,-2,-3,1,3,-2,null,-1]"
+    data = "[5,4,8,11,null,13,4,7,2,null,null,null,1]"
+    root: TreeNode = s.deserialize(data)
+    print(s.maxPathSum(root))

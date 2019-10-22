@@ -40,7 +40,7 @@ def array_quick_sort(array) -> list:
     return array_quick_sort(left_array) + [middle_value] + array_quick_sort(right_array)
 
 
-# <editor-fold desc="折叠后要显示的内容">
+# <editor-fold desc="归并排序">
 
 def array_merge_sort(array) -> list:
     """ 归并排序 - 分 """

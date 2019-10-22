@@ -20,7 +20,7 @@ class LinkedList(object):
 
     def __init__(self, data_list: list):
         """ 由数组初始化为链表 """
-        self.head = ListNode(data_list[0])
+        self.head = ListNode(data_list[0] if len(data_list) > 0 else 0)
         p = self.head
         for i in range(1, len(data_list)):
             p.next = ListNode(data_list[i])
@@ -190,50 +190,237 @@ class LinkedList(object):
             middle_value_node.next = right_linked_list_header_node
             return left_linked_list_header_node
 
+    def merge_sort_for_linked_list(self, head: ListNode) -> ListNode:
+        """
+        排序链表（归并排序）
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/265/linked-list/1147/
+        """
 
-def mergeTwoLists(l1: ListNode, l2: ListNode) -> ListNode:
-    """
-    合并两个有序链表
-    :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/6/linked-list/44/
-    """
-    p = l1
-    q = l2
+        def merge_for_part_linked_list(head1: ListNode, head2: ListNode) -> ListNode:
+            """ 归并排序 - 并 """
+            sorted_linked_list_head = ListNode(0)
+            sorted_linked_list_end = sorted_linked_list_head
 
-    if p is None:
-        return q
-    elif q is None:
-        return p
+            p = head1
+            q = head2
 
-    head = ListNode(p.val) if p.val <= q.val else ListNode(p.val)
-    if p.val <= q.val:
-        head = ListNode(p.val)
-        p = p.next
-    else:
-        head = ListNode(q.val)
-        q = q.next
+            while p is not None and q is not None:
+                if p.val < q.val:
+                    sorted_linked_list_end.next = p
+                    p = p.next
+                    sorted_linked_list_end = sorted_linked_list_end.next
+                else:
+                    sorted_linked_list_end.next = q
+                    q = q.next
+                    sorted_linked_list_end = sorted_linked_list_end.next
 
-    t = head
-    while p is not None or q is not None:
+            if p is not None:
+                sorted_linked_list_end.next = p
+            if q is not None:
+                sorted_linked_list_end.next = q
+
+            return sorted_linked_list_head.next
+
+        if head is None or head.next is None:
+            return head
+
+        # 通过快慢指针，获得链表中间的位置
+        slow_ptr = head
+        fast_ptr = head
+
+        while fast_ptr.next is not None and fast_ptr.next.next is not None:
+            slow_ptr = slow_ptr.next
+            fast_ptr = fast_ptr.next.next
+
+        # 分割前后链表
+        p = slow_ptr.next
+        slow_ptr.next = None
+
+        # 递归执行归并排序
+        return merge_for_part_linked_list(self.merge_sort_for_linked_list(head), self.merge_sort_for_linked_list(p))
+
+    def sortList(self, head: ListNode) -> ListNode:
+        """
+        排序链表
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/265/linked-list/1147/
+        """
+
+        def quick_sort_for_linked_list(head_node: ListNode) -> list:
+            # 使用快速排序，对链表进行排序（时间超限，是因为第一个元素是1，后面元素随机1、2、3，导致第一次的快排无效）
+            if head_node is None or head_node.next is None:
+                return [head_node, head_node]
+
+            # 中值
+            middle_value_node = head_node
+
+            # 比中值小的链表
+            smaller_numbers_linked_list_head = ListNode(-1)
+            smaller_numbers_linked_list_end = smaller_numbers_linked_list_head
+            smaller_numbers_linked_list_end.next = None
+            # 比中值大的链表
+            bigger_numbers_linked_list_head = ListNode(1)
+            bigger_numbers_linked_list_end = bigger_numbers_linked_list_head
+            bigger_numbers_linked_list_end.next = None
+
+            # 遍历链表，将小于中值的值放入小链表，大于中值的值放入大链表
+            p = head_node.next
+            while p is not None:
+                q = p.next
+                if p.val < middle_value_node.val:
+                    smaller_numbers_linked_list_end.next = p
+                    smaller_numbers_linked_list_end = p
+                    if smaller_numbers_linked_list_end is not None:
+                        smaller_numbers_linked_list_end.next = None
+                else:
+                    bigger_numbers_linked_list_end.next = p
+                    bigger_numbers_linked_list_end = p
+                    if bigger_numbers_linked_list_end is not None:
+                        bigger_numbers_linked_list_end.next = None
+                p = q
+
+            # 对小链表和大链表执行快速排序
+            recursive_smaller_linked_list = quick_sort_for_linked_list(smaller_numbers_linked_list_head.next)
+            recursive_bigger_linked_list = quick_sort_for_linked_list(bigger_numbers_linked_list_head.next)
+
+            # 拼接小链表和大链表
+            if recursive_bigger_linked_list[1] is None:
+                recursive_smaller_linked_list[1].next = middle_value_node
+                middle_value_node.next = None
+                return [recursive_smaller_linked_list[0], middle_value_node]
+            elif recursive_smaller_linked_list[1] is None:
+                middle_value_node.next = recursive_bigger_linked_list[0]
+                return [middle_value_node, recursive_bigger_linked_list[1]]
+            else:
+                recursive_smaller_linked_list[1].next = middle_value_node
+                middle_value_node.next = recursive_bigger_linked_list[0]
+                return [recursive_smaller_linked_list[0], recursive_bigger_linked_list[1]]
+
+        return quick_sort_for_linked_list(head)[0]
+
+    def oddEvenList(self, head: ListNode) -> ListNode:
+        """
+        奇偶链表
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/265/linked-list/1152/
+        """
+        if head is None:
+            return head
+
+        # 奇数链表的头结点和尾结点
+        odd_numbers_linked_list_head = head
+        odd_numbers_linked_list_end = odd_numbers_linked_list_head
+        # 偶数链表的头结点和尾结点
+        even_numbers_linked_list_head = head.next
+        even_numbers_linked_list_end = even_numbers_linked_list_head
+
+        p = head.next
+
+        index = 1
+        while p is not None:
+            q = p.next
+
+            if index & 1 == 0:
+                odd_numbers_linked_list_end.next = p
+                odd_numbers_linked_list_end = odd_numbers_linked_list_end.next
+                odd_numbers_linked_list_end.next = None
+            else:
+                even_numbers_linked_list_end.next = p
+                even_numbers_linked_list_end = even_numbers_linked_list_end.next
+                even_numbers_linked_list_end.next = None
+
+            index += 1
+            p = q
+
+        # 拼接奇偶链表
+        odd_numbers_linked_list_end.next = even_numbers_linked_list_head
+
+        return odd_numbers_linked_list_head
+
+    def whole_linked_list_description(self, head: ListNode) -> str:
+        p = head
+        s: str = ''
+        while p is not None:
+            s = f'{s} {p.val} '
+            p = p.next
+
+        return s
+
+    def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
+        """
+        合并两个有序链表
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/6/linked-list/44/
+        """
+        p = l1
+        q = l2
+
         if p is None:
-            t.next = q
-            break
+            return q
         elif q is None:
-            t.next = p
-            break
-        elif p.val <= q.val:
-            t.next = ListNode(p.val)
+            return p
+
+        head = ListNode(p.val) if p.val <= q.val else ListNode(p.val)
+        if p.val <= q.val:
+            head = ListNode(p.val)
             p = p.next
         else:
-            t.next = ListNode(q.val)
+            head = ListNode(q.val)
             q = q.next
-        t = t.next
 
-    return head
+        t = head
+        while p is not None or q is not None:
+            if p is None:
+                t.next = q
+                break
+            elif q is None:
+                t.next = p
+                break
+            elif p.val <= q.val:
+                t.next = ListNode(p.val)
+                p = p.next
+            else:
+                t.next = ListNode(q.val)
+                q = q.next
+            t = t.next
+
+        return head
+
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        """
+        两数相加
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-medium/31/linked-list/82/
+        """
+        if l1 is None and l2 is None:
+            return ListNode(0)
+
+        result_linked_list_head = ListNode(0)
+        r = result_linked_list_head
+
+        last_result = 0
+        p = l1
+        q = l2
+        while p is not None or q is not None:
+            result = last_result + (p.val if p is not None else 0) + (q.val if q is not None else 0)
+            last_result = result // 10
+            r.next = ListNode(result % 10)
+
+            if p is not None:
+                p = p.next
+            if q is not None:
+                q = q.next
+            r = r.next
+
+        if last_result > 0:
+            r.next = ListNode(last_result % 10)
+
+        return result_linked_list_head.next
 
 
 if __name__ == '__main__':
-    data = [12, 1, 9, 4, 6, 8, 2, 3, 5]
-    linked_list = LinkedList(data)
+    data1 = [4, 2, 1, 3, 6, 7, 8, 10]
+    # data = [6, 7, 8, 10, 2, 3, 5, 7, 3, -10]
+    data2 = [5, 2, 1]
+    # data = []
 
-    p: ListNode = linked_list.quick_sort(linked_list.head)
+    linked_list = LinkedList(data1)
+
+    p: ListNode = linked_list.addTwoNumbers(LinkedList(data1).head, LinkedList(data2).head)
     print(linked_list.description(p))
