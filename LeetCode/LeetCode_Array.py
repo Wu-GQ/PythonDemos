@@ -166,9 +166,31 @@ class Solution:
         矩阵置零
         :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-medium/29/array-and-strings/76/
         """
-        for i in matrix:
-            for j in matrix[i]:
-                j = 0
+        if len(matrix) == 0:
+            return
+
+        zero_x_list = set()
+        zero_y_list = set()
+
+        m = len(matrix)
+        n = len(matrix[0])
+
+        # 遍历获得所有0的位置
+        for i in range(m):
+            for j in range(n):
+                if matrix[i][j] == 0:
+                    zero_x_list.add(i)
+                    zero_y_list.add(j)
+
+        # 横向置0
+        for x in zero_x_list:
+            for i in range(n):
+                matrix[x][i] = 0
+
+        # 纵向置0
+        for y in zero_y_list:
+            for j in range(m):
+                matrix[j][y] = 0
 
 class MinStack:
     """
@@ -205,16 +227,9 @@ if __name__ == "__main__":
     # array2 = [9, 0, 9, 1, 9]
     # print(twoSum(array2, 9))
 
-    minStack = MinStack()
-    minStack.push(-2)
-    minStack.push(0)
-    minStack.push(-3)
-    print(minStack.getMin())
+    matrix = [[0, 1, 2, 0], [3, 4, 5, 2], [1, 3, 1, 5]]
 
-    print(minStack.stack, minStack.min_stack)
+    s = Solution()
+    s.setZeroes(matrix)
 
-    minStack.pop()
-    print(minStack.top())
-
-    minStack.getMin()
-    print(minStack.stack, minStack.min_stack)
+    print(matrix)

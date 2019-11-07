@@ -413,6 +413,56 @@ class LinkedList(object):
 
         return result_linked_list_head.next
 
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
+        """
+        相交链表
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-medium/31/linked-list/84/
+        """
+        if headA is None or headB is None:
+            return None
+
+        # 两个链表的长度差值
+        length_difference = 0
+
+        p = headA
+        q = headB
+
+        # 先让一个链表走到末尾
+        while p is not None and q is not None:
+            p = p.next
+            q = q.next
+
+        # 统计两个链表的长度差值
+        if p is None:
+            while q is not None:
+                q = q.next
+                length_difference += 1
+        elif q is None:
+            while p is not None:
+                p = p.next
+                length_difference -= 1
+
+        # 差值大于0表示B链表比A链表长，否则A链表比B链表长
+        p = headA
+        q = headB
+
+        # 将两个指针移到距离链表结尾相同长度的位置
+        if length_difference > 0:
+            while length_difference > 0:
+                q = q.next
+                length_difference -= 1
+        else:
+            while length_difference < 0:
+                p = p.next
+                length_difference += 1
+
+        # 同时移动两个指针，若两个指针地址相同，则是相交的起点
+        while p is not None and q is not None and p != q:
+            p = p.next
+            q = q.next
+
+        return p
+
 
 if __name__ == '__main__':
     data1 = [4, 2, 1, 3, 6, 7, 8, 10]
