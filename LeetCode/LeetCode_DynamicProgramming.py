@@ -252,8 +252,26 @@ class Solution:
 
         return max_result
 
+    def uniquePaths(self, m: int, n: int) -> int:
+        """
+        不同路径
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-medium/51/dynamic-programming/105/
+        """
+        # 实际上的求组合问题 C(m - 1, m + n - 2)
+        min_num, max_num = (m - 1, n - 1) if m < n else (n - 1, m - 1)
+        print(min_num, max_num)
+        return 1 if min_num == 0 else int(
+            self.consequentMultiple(max_num + 1, min_num + max_num) / self.consequentMultiple(1, min_num))
+
+    def consequentMultiple(self, start: int, end: int) -> int:
+        """ 连乘 """
+        result = start
+        for i in range(start + 1, end + 1):
+            result *= i
+        return result
+
 
 if __name__ == "__main__":
-    coins_list = [2, 3, 0, -5, -3, -4, 1]
+    # coins_list = [2, 3, 0, -5, -3, -4, 1]
     # print(Solution().maxSubArray(coins_list))
-    print(Solution().maxProduct(coins_list))
+    print(Solution().uniquePaths(1, 2))

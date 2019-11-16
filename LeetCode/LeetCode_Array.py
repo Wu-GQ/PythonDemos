@@ -192,6 +192,69 @@ class Solution:
             for j in range(m):
                 matrix[j][y] = 0
 
+    def threeSum(self, nums: list) -> list:
+        """
+        三数之和
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-medium/29/array-and-strings/75/
+        """
+        result_list = []
+
+        nums.sort()
+
+        num_dict = {}
+        for i in nums:
+            if i in num_dict:
+                num_dict[i] += 1
+            else:
+                num_dict[i] = 1
+
+        search_set = set()
+
+        for i in range(len(nums)):
+            a = nums[i]
+
+            old_b = float('inf')
+            for j in range(i + 1, len(nums)):
+                if i == j or old_b == nums[j]:
+                    continue
+
+                old_b = nums[j]
+
+                b = nums[j]
+                c = -a - b
+
+                if c in num_dict:
+                    num_dict[a] -= 1
+                    num_dict[b] -= 1
+
+                    if num_dict[c] > 0:
+                        result = sorted([a, b, c])
+                        result_string = f'{result[0]}_{result[1]}_{result[2]}'
+                        if result_string not in search_set:
+                            result_list.append(result)
+                            search_set.add(result_string)
+
+                    num_dict[a] += 1
+                    num_dict[b] += 1
+
+        return result_list
+
+    def groupAnagrams(self, strs: list) -> list:
+        """
+        字谜分组
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-medium/29/array-and-strings/77/
+        """
+        str_dict = {}
+        for string in strs:
+            sorted_str = "".join(sorted(string))
+            if sorted_str in str_dict:
+                str_dict[sorted_str].append(string)
+            else:
+                str_dict[sorted_str] = [string]
+
+        return [str_dict[i] for i in str_dict]
+
+
 class MinStack:
     """
     最小栈
@@ -227,9 +290,9 @@ if __name__ == "__main__":
     # array2 = [9, 0, 9, 1, 9]
     # print(twoSum(array2, 9))
 
-    matrix = [[0, 1, 2, 0], [3, 4, 5, 2], [1, 3, 1, 5]]
+    matrix = [-1, -2, -3, 4, 1, 3, 0, 3, -2, 1, -2, 2, -1, 1, -5, 4, -3]  # [-1, 0, 1, 2, -1, -4]
 
     s = Solution()
-    s.setZeroes(matrix)
+    print(s.threeSum(matrix))
 
-    print(matrix)
+    # print(matrix)
