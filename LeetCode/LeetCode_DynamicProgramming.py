@@ -270,8 +270,34 @@ class Solution:
             result *= i
         return result
 
+    def minDistance(self, word1: str, word2: str) -> int:
+        """
+        编辑距离
+        :see https://leetcode-cn.com/problems/edit-distance/
+        """
+        distance_list = []
+
+        m = len(word1) + 1
+        n = len(word2) + 1
+        for i in range(m * n):
+            x = i % m
+            y = i // m
+
+            if x == 0:
+                distance_list.append(y)
+                continue
+            if y == 0:
+                distance_list.append(x)
+                continue
+
+            distance_list.append(min(distance_list[i - m] + 1,
+                                     distance_list[i - 1] + 1,
+                                     distance_list[i - m - 1] + (0 if word1[x - 1] == word2[y - 1] else 1)))
+
+        return distance_list[m * n - 1]
+
 
 if __name__ == "__main__":
     # coins_list = [2, 3, 0, -5, -3, -4, 1]
     # print(Solution().maxSubArray(coins_list))
-    print(Solution().uniquePaths(1, 2))
+    print(Solution().minDistance('horse', 'ros'))
