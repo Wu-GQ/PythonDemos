@@ -240,6 +240,35 @@ class Solution(object):
 
         return part_child_tree_max_path_sum
 
+    def buildTree(self, preorder: list, inorder: list) -> TreeNode:
+        """
+        从前序与中序遍历序列构造二叉树
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-medium/32/trees-and-graphs/87/
+        """
+        if len(preorder) == 0 or len(inorder) == 0:
+            return None
+
+        # 前序序列的第一个节点即为根节点
+        root_node_value = preorder.pop(0)
+
+        # 找到根节点在中序序列中的位置
+        root_node_index_in_inorder = inorder.index(root_node_value)
+
+        # 中序序列根节点左侧的序列，即为左子树的中序序列
+        # 左子树的前序序列的节点数量，与左子树的中序序列的节点数量相同
+        left_tree_in_order = inorder[:root_node_index_in_inorder]
+        left_tree_pre_order = preorder[:len(left_tree_in_order)]
+
+        right_tree_in_order = inorder[root_node_index_in_inorder + 1:]
+        right_tree_pre_order = preorder[len(left_tree_in_order):]
+
+        # 通过递归，组建二叉树
+        root_node = TreeNode(root_node_value)
+        root_node.left = self.buildTree(left_tree_pre_order, left_tree_in_order)
+        root_node.right = self.buildTree(right_tree_pre_order, right_tree_in_order)
+
+        return root_node
+
 
 if __name__ == '__main__':
     # root = TreeNode(1)
@@ -261,9 +290,5 @@ if __name__ == '__main__':
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
 
     s = Solution()
-    # data = "[-10,9,20,null,null,15,7]"
-    # data = "[-3]"
-    # data = "[1,-2,-3,1,3,-2,null,-1]"
-    data = "[5,4,8,11,null,13,4,7,2,null,null,null,1]"
-    root: TreeNode = s.deserialize(data)
-    print(s.maxPathSum(root))
+    tree = s.buildTree([3, 9, 20, 15, 7], [9, 3, 15, 20, 7])
+    print(tree.val)
