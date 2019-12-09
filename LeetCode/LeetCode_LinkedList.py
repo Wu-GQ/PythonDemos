@@ -190,6 +190,26 @@ class LinkedList(object):
             middle_value_node.next = right_linked_list_header_node
             return left_linked_list_header_node
 
+    def hasCycle(self, head: ListNode) -> bool:
+        """
+        环形链表
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/6/linked-list/46/
+        """
+        if head is None:
+            return False
+
+        slow_point = head
+        fast_point = head
+
+        while fast_point.next is not None and fast_point.next.next is not None:
+            fast_point = fast_point.next.next
+            slow_point = slow_point.next
+            if fast_point == slow_point:
+                return True
+
+        if fast_point.next is None or fast_point.next.next is None:
+            return False
+
     def merge_sort_for_linked_list(self, head: ListNode) -> ListNode:
         """
         排序链表（归并排序）

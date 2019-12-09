@@ -1,5 +1,5 @@
-import heapq
 import bisect
+import heapq
 
 
 class MedianFinder(object):

@@ -113,9 +113,7 @@ class Solution:
         for i in range(amount + 1):
             for coin in coins:
                 if i > coin and amount_list[i - coin] >= 0:
-                    amount_list[i] = amount_list[i - coin] + 1 if amount_list[i] == -1 else min(amount_list[i],
-                                                                                                amount_list[
-                                                                                                    i - coin] + 1)
+                    amount_list[i] = amount_list[i - coin] + 1 if amount_list[i] == -1 else min(amount_list[i], amount_list[i - coin] + 1)
                 elif i == coin:
                     amount_list[i] = 1
                 elif i < coin:
@@ -154,7 +152,7 @@ class Solution:
             _stairs_array.append(_stairs_array[i - 2] + _stairs_array[i - 1])
         return _stairs_array[n]
 
-    def maxProfit(self, prices: list) -> int:
+    def maxProfit2(self, prices: list) -> int:
         """
         买卖股票的最佳时机 II
         :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/1/array/22/
@@ -185,6 +183,20 @@ class Solution:
                 i = j
 
         return profit
+
+    def maxProfit(self, prices: list) -> int:
+        """
+        买卖股票的最佳时机
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/23/dynamic-programming/55/
+        """
+        low = float('inf')
+        max_profit = 0
+        for i in prices:
+            if i < low:
+                low = i
+            else:
+                max_profit = max(max_profit, i - low)
+        return max_profit
 
     def maxArea(self, height: list) -> int:
         """
