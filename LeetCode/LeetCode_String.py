@@ -284,8 +284,41 @@ def strstr(haystack: str, needle: str) -> int:
     return haystack.find(needle)
 
 
+class Solution:
+    count_and_say_array = ["1"]
+
+    def countAndSay(self, n: int) -> str:
+        """
+        报数
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/5/strings/39/
+        """
+        if n > len(self.count_and_say_array):
+            for i in range(len(self.count_and_say_array), n):
+                last_word = self.count_and_say_array[i - 1]
+
+                word = ""
+                char = ""
+                char_count = 0
+
+                for j in last_word:
+                    if char_count == 0:
+                        char = j
+                        char_count = 1
+                    elif j == char:
+                        char_count += 1
+                    else:
+                        word = "{0}{1}{2}".format(word, char_count, char)
+                        char_count = 1
+                        char = j
+
+                if char_count > 0:
+                    word = "{0}{1}{2}".format(word, char_count, char)
+                self.count_and_say_array.append(word)
+
+        return self.count_and_say_array[n - 1]
+
 
 if __name__ == "__main__":
-    # str_list = ["dogss", "dog", "dogs"]
-    # print(longestCommonPrefix(str_list))
-    print(strstr("aaaaa", ""))
+    str_list = ["dogss", "dog", "dogs"]
+    print(longestCommonPrefix(str_list))
+    # print(strstr("aaaaa", ""))

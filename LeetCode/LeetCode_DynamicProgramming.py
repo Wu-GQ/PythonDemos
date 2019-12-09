@@ -198,7 +198,118 @@ class Solution:
                 max_profit = max(max_profit, i - low)
         return max_profit
 
+    def maxArea(self, height: list) -> int:
+        """
+        盛水最多的容器，S = max((j-i) * min(a[i], a[j]))
+        :see https://leetcode-cn.com/problems/container-with-most-water/
+        """
+        if len(height) < 2:
+            return 0
+
+        # 使用双指针法，从两端向内缩进，因为缩进时(j-i)的值必然减小，min(a[i], a[j])的值如果减小或不变，则必然不符合“最多”的要求，
+        # 因此，每次向内缩进的原则是，选择较小的边，向内缩进
+        i = 0
+        j = len(height) - 1
+        max_area = 0
+        while i < j:
+            max_area = max(max_area, (j - i) * min(height[i], height[j]))
+            if height[i] > height[j]:
+                j -= 1
+            else:
+                i += 1
+
+        return max_area
+
+    def maxSubArray(self, nums: list) -> int:
+        """
+        最大子序和
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/23/dynamic-programming/56/
+        """
+        # 状态转移方程 S[n] = max(S[n-1] + a[n], a[n])
+        if len(nums) < 1:
+            return 0
+
+        # 整个数组的最大子序和
+        max_sum = nums[0]
+        # 某个子数组的最大子序和
+        sums = nums[0]
+        for i in range(1, len(nums)):
+            sums = max(sums + nums[i], nums[i])
+            max_sum = max(sums, max_sum)
+
+            # print(nums[i], max_sum, sums)
+
+        return max_sum
+
+    def maxProduct(self, nums: list) -> int:
+        """
+        乘积最大子序列
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/264/array/1126/
+        """
+        # 状态转移方程 S[n] = max(Smax[n-1] * a[n], Smin[n-1] * a[n], S[n-1])
+        if len(nums) < 1:
+            return 0
+
+        max_value = nums[0]
+        min_value = nums[0]
+        max_result = nums[0]
+
+        for i in range(1, len(nums)):
+            if nums[i] >= 0:
+                max_value, min_value = max(max_value * nums[i], nums[i]), min(min_value * nums[i], nums[i])
+            else:
+                max_value, min_value = max(min_value * nums[i], nums[i]), min(max_value * nums[i], nums[i])
+            max_result = max(max_result, max_value, min_value)
+            # print(f'{nums[i]}: {max_value}, {min_value}, {max_result}')
+
+        return max_result
+
+    def uniquePaths(self, m: int, n: int) -> int:
+        """
+        不同路径
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-medium/51/dynamic-programming/105/
+        """
+        # 实际上的求组合问题 C(m - 1, m + n - 2)
+        min_num, max_num = (m - 1, n - 1) if m < n else (n - 1, m - 1)
+        print(min_num, max_num)
+        return 1 if min_num == 0 else int(
+            self.consequentMultiple(max_num + 1, min_num + max_num) / self.consequentMultiple(1, min_num))
+
+    def consequentMultiple(self, start: int, end: int) -> int:
+        """ 连乘 """
+        result = start
+        for i in range(start + 1, end + 1):
+            result *= i
+        return result
+
+    def minDistance(self, word1: str, word2: str) -> int:
+        """
+        编辑距离
+        :see https://leetcode-cn.com/problems/edit-distance/
+        """
+        distance_list = []
+
+        m = len(word1) + 1
+        n = len(word2) + 1
+        for i in range(m * n):
+            x = i % m
+            y = i // m
+
+            if x == 0:
+                distance_list.append(y)
+                continue
+            if y == 0:
+                distance_list.append(x)
+                continue
+
+            distance_list.append(min(distance_list[i - m] + 1,
+                                     distance_list[i - 1] + 1,
+                                     distance_list[i - m - 1] + (0 if word1[x - 1] == word2[y - 1] else 1)))
+
+        return distance_list[m * n - 1]
+
 
 if __name__ == "__main__":
-    coins_list = [7, 1, 5, 3, 6, 4]
-    print(Solution().maxProfit(coins_list))
+    # coins_list = [2, 3, 0, -5, -3, -4, 1]
+    # print(Solution().maxSubArray(coins_list))
+    print(Solution().minDistance('horse', 'ros'))
