@@ -239,6 +239,30 @@ class Solution:
 
         return result_list
 
+    def trap(self, height: list) -> int:
+        """
+        接雨水
+        :see https://leetcode-cn.com/problems/trapping-rain-water/
+        """
+        max_height_list = []
+
+        # 正序找出左侧的最大值
+        max_height = 0
+        for i in height:
+            if i > max_height:
+                max_height = i
+            max_height_list.append(max_height)
+
+        # 逆序找出右侧的最大值，并和左侧的最大值比较，保留两者较小的最大值
+        max_height = 0
+        for i in range(len(height) - 1, -1, -1):
+            if height[i] > max_height:
+                max_height = height[i]
+            max_height_list[i] = min(max_height, max_height_list[i])
+
+        # 求和
+        return sum(max_height_list[i] - height[i] for i in range(0, len(height)))
+
     def groupAnagrams(self, strs: list) -> list:
         """
         字谜分组
@@ -290,9 +314,9 @@ if __name__ == "__main__":
     # array2 = [9, 0, 9, 1, 9]
     # print(twoSum(array2, 9))
 
-    matrix = [-1, -2, -3, 4, 1, 3, 0, 3, -2, 1, -2, 2, -1, 1, -5, 4, -3]  # [-1, 0, 1, 2, -1, -4]
+    matrix = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]
 
     s = Solution()
-    print(s.threeSum(matrix))
+    print(s.trap(matrix))
 
     # print(matrix)
