@@ -278,6 +278,36 @@ class Solution:
 
         return [str_dict[i] for i in str_dict]
 
+    def permute(self, nums: list) -> list:
+        """
+        全排列
+        :see https://leetcode-cn.com/problems/permutations/
+        """
+        if len(nums) == 0:
+            return []
+        result = []
+
+        def permutation(nums: list, start_index: int):
+            if len(nums) == start_index:
+                result.append(nums.copy())
+
+            used_index_set = set()
+            for i in range(start_index, len(nums)):
+                if nums[i] in used_index_set:
+                    continue
+                else:
+                    used_index_set.add(nums[i])
+
+                nums[start_index], nums[i] = nums[i], nums[start_index]
+
+                permutation(nums, start_index + 1)
+
+                nums[start_index], nums[i] = nums[i], nums[start_index]
+
+        permutation(nums, 0)
+
+        return result
+
 
 class MinStack:
     """
@@ -314,9 +344,9 @@ if __name__ == "__main__":
     # array2 = [9, 0, 9, 1, 9]
     # print(twoSum(array2, 9))
 
-    matrix = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]
+    matrix = [1, 1, 2]
 
     s = Solution()
-    print(s.trap(matrix))
+    print(s.permute(matrix))
 
     # print(matrix)

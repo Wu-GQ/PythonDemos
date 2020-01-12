@@ -317,8 +317,91 @@ class Solution:
 
         return self.count_and_say_array[n - 1]
 
+    def isMatch(self, s: str, p: str) -> bool:
+        """
+        正则表达式匹配（回溯算法， 可优化)
+        :see https://leetcode-cn.com/problems/regular-expression-matching/
+        """
+        if len(s) == 0 and len(p) == 0:
+            return True
+        elif len(s) > 0 and len(p) == 0:
+            return False
+
+        if len(p) > 1 and p[1] == '*':
+            # 当第二个字符为'*'时，可匹配多个字符
+            if len(s) > 0 and (s[0] == p[0] or p[0] == '.'):
+                # 若s和p的第一字符相同， *分别匹配多次和0次
+                return self.isMatch(s[1:], p) or self.isMatch(s, p[2:])
+            else:
+                # 若s和p的第一个字符不相同，*匹配0次
+                return self.isMatch(s, p[2:])
+        elif len(s) > 0 and (s[0] == p[0] or p[0] == '.'):
+            return self.isMatch(s[1:], p[1:])
+        else:
+            return False
+
+    def isMatch_2(self, s: str, p: str) -> bool:
+        """
+        正则表达式匹配（动态规划）
+        :see https://leetcode-cn.com/problems/regular-expression-matching/
+        """
+        if len(s) == 0 and len(p) == 0:
+            return True
+        elif len(s) > 0 and len(p) == 0:
+            return False
+
+        # 此处在两个字符串前加空格，是为了减少边界条件的处理
+        s = f' {s}'
+        p = f' {p}'
+
+        s_length = len(s)
+        p_length = len(p)
+
+        # 存储比较结果
+        compare_list = [[False for i in range(p_length)] for j in range(s_length)]
+
+        for i in range(s_length):
+            for j in range(p_length):
+                if i == 0 and j == 0:
+                    compare_list[i][j] = True
+                elif i > 0 and j == 0:
+                    compare_list[i][j] = False
+                elif p[j] != '*' and (s[i] == p[j] or (p[j] == '.' and i > 0)):
+                    compare_list[i][j] = compare_list[i - 1][j - 1]
+                elif p[j] == '*' and (s[i] == p[j - 1] or (p[j - 1] == '.' and i > 0)):
+                    compare_list[i][j] = compare_list[i - 1][j] or compare_list[i][j - 2]
+                elif p[j] == '*' and s[i] != p[j - 1]:
+                    compare_list[i][j] = compare_list[i][j - 2]
+
+        return compare_list[s_length - 1][p_length - 1]
+
+    def isMatch2(self, s: str, p: str) -> bool:
+        """
+        通配符匹配
+        :see https://leetcode-cn.com/problems/wildcard-matching/
+        """
+        # 此处在两个字符串前加空格，是为了减少边界条件的处理
+        s = f' {s}'
+        p = f' {p}'
+
+        s_length = len(s)
+        p_length = len(p)
+
+        compare_list = [[False for i in range(p_length)] for j in range(s_length)]
+
+        for i in range(s_length):
+            for j in range(p_length):
+                if i == 0 and j == 0:
+                    compare_list[i][j] = True
+                elif i > 0 and j == 0:
+                    compare_list[i][j] = False
+                elif p[j] == '*':
+                    compare_list[i][j] = compare_list[i - 1][j] or compare_list[i][j - 1]
+                elif p[j] != '*' and (s[i] == p[j] or i > 0 and p[j] == '?'):
+                    compare_list[i][j] = compare_list[i - 1][j - 1]
+
+        return compare_list[s_length - 1][p_length - 1]
+
 
 if __name__ == "__main__":
-    str_list = ["dogss", "dog", "dogs"]
-    print(longestCommonPrefix(str_list))
-    # print(strstr("aaaaa", ""))
+    print(Solution().isMatch2("aa", "a"))
