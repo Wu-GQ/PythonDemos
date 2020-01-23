@@ -298,8 +298,12 @@ class Solution:
                 else:
                     used_index_set.add(nums[i])
 
+                # 把第i位放到最前面，然后对剩下的部分进行全排列
                 nums[start_index], nums[i] = nums[i], nums[start_index]
 
+                print(f'start_index: {start_index}, i: {i}, result: {nums}')
+
+                # 注释掉下面这句递归的语句，再理解代码原理比较简单
                 permutation(nums, start_index + 1)
 
                 nums[start_index], nums[i] = nums[i], nums[start_index]
@@ -307,6 +311,149 @@ class Solution:
         permutation(nums, 0)
 
         return result
+
+    def nextPermutation(self, nums: list) -> None:
+        """
+        下一个排列
+        :see https://leetcode-cn.com/problems/next-permutation/
+        """
+        # 从数组的末尾开始寻找第一组数字，使得 i > j 且 nums[i] > nums[j]
+        length: int = len(nums)
+        if length < 2:
+            return
+
+        # 从后往前，找第一次变小的数字，如果没有，则翻转数组
+        tmp_num: int = nums[-1]
+        i: int = length
+        while i > 0:
+            i -= 1
+
+            if nums[i] >= tmp_num:
+                tmp_num = nums[i]
+            else:
+                break
+
+        if i == 0 and nums[0] >= tmp_num:
+            nums.reverse()
+            return
+
+        # 从i的位置开始寻找，找到最接近tmp_num且大于tmp_num的数字
+        tmp_num = nums[i]
+        j = i
+        while j < length - 1:
+            if nums[j + 1] <= tmp_num:
+                break
+            j += 1
+
+        # 交换nums[i]和nums[j]
+        nums[i], nums[j] = nums[j], nums[i]
+
+        # 旋转nums[i + 1:]的数组
+        right_nums = nums[i + 1:]
+        right_nums.reverse()
+        nums[i + 1:] = nums[length - 1:i:-1]
+
+    def solveNQueens(self, n: int) -> list:
+        """
+        N皇后
+        :see https://leetcode-cn.com/problems/n-queens/
+        """
+        if n < 1:
+            return []
+
+        result_list = []
+
+        def is_exist_queen(queens_list: list, row: int, column: int) -> bool:
+            """ 判断对角线和纵线上是否存在皇后 """
+            for i in range(0, row):
+                diff = row - i
+                if (column - diff >= 0 and queens_list[i][column - diff] == 'Q') \
+                        or queens_list[i][column] == 'Q' \
+                        or (column + diff < n and queens_list[i][column + diff] == 'Q'):
+                    return True
+            return False
+
+        def backtrace(line: int, queens_list: list):
+            """ 回溯第line行的可能性 """
+            if line == n:
+                result_list.append(queens_list.copy())
+                return
+
+            # 在第line行从0~n逐个试，能否加入皇后。如果可以，则加入皇后，继续回溯；否则i++
+            for i in range(n):
+                # 判断能否加入皇后
+                if is_exist_queen(queens_list, line, i):
+                    continue
+
+                # 最后一行加入皇后
+                queen_string: str = f"{'.' * i}Q{'.' * (n - i - 1)}"
+                queens_list.append(queen_string)
+
+                # 回溯
+                backtrace(line + 1, queens_list)
+
+                # 删除最后一行
+                queens_list.pop()
+
+        backtrace(0, [])
+
+        return result_list
+
+    def combine(self, n: int, k: int) -> list:
+        """
+        组合
+        :see https://leetcode-cn.com/problems/combinations/ 
+        """
+        if k < 0 or n < 0:
+            return []
+
+        if k >= n:
+            return [[i for i in range(1, n + 1)]]
+
+        result_list = []
+
+        def backtrace(index: int, num_list: list):
+            if len(num_list) == k:
+                result_list.append(num_list.copy())
+                return
+
+            for i in range(index, n + 1):
+                num_list.append(i)
+
+                backtrace(i + 1, num_list)
+
+                num_list.pop()
+
+        backtrace(1, [])
+
+        return result_list
+
+    def generateParenthesis(self, n: int) -> list:
+        """
+        括号生成
+        :see https://leetcode-cn.com/problems/generate-parentheses/
+        """
+        if n < 1:
+            return []
+
+        result_list = []
+
+        def backtrace(string: str, left_count: int, right_count: int):
+            if len(string) == 2 * n:
+                result_list.append(string)
+                return
+
+            if 0 < left_count < n and left_count > right_count:
+                backtrace(f'{string}(', left_count + 1, right_count)
+                backtrace(f'{string})', left_count, right_count + 1)
+            elif left_count == 0 or left_count == right_count:
+                backtrace(f'{string}(', left_count + 1, right_count)
+            elif left_count == n:
+                backtrace(f'{string})', left_count, right_count)
+
+        backtrace("", 0, 0)
+
+        return result_list
 
 
 class MinStack:
@@ -341,12 +488,7 @@ class MinStack:
 
 
 if __name__ == "__main__":
-    # array2 = [9, 0, 9, 1, 9]
-    # print(twoSum(array2, 9))
-
-    matrix = [1, 1, 2]
+    matrix = [1, 3, 1]
 
     s = Solution()
-    print(s.permute(matrix))
-
-    # print(matrix)
+    print(s.generateParenthesis(4))
