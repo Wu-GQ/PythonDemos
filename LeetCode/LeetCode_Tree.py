@@ -351,20 +351,113 @@ class Solution(object):
 
         return root_node
 
+    def minDepth(self, root: TreeNode) -> int:
+        """
+        二叉树的最小深度
+        :see https://leetcode-cn.com/problems/minimum-depth-of-binary-tree/
+        """
+        if root is None:
+            return 0
+        elif root.left is None and root.right is None:
+            return 1
+        elif root.left is not None and root.right is not None:
+            return min(self.minDepth(root.left), self.minDepth(root.right)) + 1
+        elif root.left is not None:
+            return self.minDepth(root.left) + 1
+        elif root.right is not None:
+            return self.minDepth(root.right) + 1
+
+    def invertTree(self, root: TreeNode) -> TreeNode:
+        """
+        翻转二叉树
+        :see https://leetcode-cn.com/problems/invert-binary-tree/
+        """
+        if root is None:
+            return None
+
+        root.left, root.right = root.right, root.left
+        self.invertTree(root.left)
+        self.invertTree(root.right)
+
+        return root
+
+    def preorderTraversal(self, root: TreeNode) -> list:
+        """
+        前序遍历
+        :see https://leetcode-cn.com/problems/binary-tree-preorder-traversal/
+        """
+        # result_list = []
+        #
+        # def preorder_traversal(root: TreeNode):
+        #     if root is None:
+        #         return
+        #
+        #     result_list.append(root.val)
+        #     preorder_traversal(root.left)
+        #     preorder_traversal(root.right)
+        #
+        # preorder_traversal(root)
+        #
+        # return result_list
+
+        if root is None:
+            return []
+
+        result_list = []
+        stack_list = [root]
+        checked_node_set = set()
+
+        while len(stack_list) > 0:
+            tree_node = stack_list[-1]
+
+            if tree_node not in checked_node_set:
+                result_list.append(tree_node.val)
+                checked_node_set.add(tree_node)
+
+            if tree_node.left is not None and tree_node.left not in checked_node_set:
+                stack_list.append(tree_node.left)
+            elif tree_node.right is not None and tree_node.right not in checked_node_set:
+                stack_list.append(tree_node.right)
+            else:
+                stack_list.pop()
+
+        return result_list
+
+    def flatten(self, root: TreeNode) -> None:
+        """
+        二叉树展开为链表
+        :see https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list/
+        """
+        if root is None:
+            return
+
+        self.flatten(root.left)
+        self.flatten(root.right)
+
+        if root.left is not None:
+            temp = root.right
+            root.right = root.left
+            root.left = None
+
+            tree_node = root.right
+            while tree_node.right is not None:
+                tree_node = tree_node.right
+            tree_node.right = temp
+
 
 if __name__ == '__main__':
-    # root = TreeNode(1)
-    # # root.left = TreeNode(2)
-    # root.right = TreeNode(3)
+    root = TreeNode(1)
+    root.left = TreeNode(2)
+    root.right = TreeNode(5)
     #
-    # # root.left.left = TreeNode(6)
-    # # root.left.right = TreeNode(2)
+    root.left.left = TreeNode(3)
+    root.left.right = TreeNode(4)
     # #
     # # root.left.right.left = TreeNode(7)
     # # root.left.right.right = TreeNode(4)
     #
     # # root.right.left = TreeNode(4)
-    # root.right.right = TreeNode(5)
+    root.right.right = TreeNode(6)
 
     # print(Solution().lowestCommonAncestor(root, TreeNode(5), TreeNode(4)).val)
     # string = Solution().serialize(root)
@@ -372,5 +465,5 @@ if __name__ == '__main__':
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
 
     s = Solution()
-    tree = s.buildTree([3, 9, 20, 15, 7], [9, 3, 15, 20, 7])
-    print(tree.val)
+    s.flatten(root)
+    print(s.serialize(root))

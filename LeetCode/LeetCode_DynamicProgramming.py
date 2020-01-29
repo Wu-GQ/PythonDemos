@@ -308,8 +308,101 @@ class Solution:
 
         return distance_list[m * n - 1]
 
+    def longestPalindrome(self, s: str) -> str:
+        """
+        最长回文子串
+        :see https://leetcode-cn.com/problems/longest-palindromic-substring/
+        """
+        length = len(s)
+        if length == 0:
+            return ""
+
+        def palindrome_string(start: int, end: int) -> (int, int):
+            """ 返回将回文串两边扩展后最长的回文串的左下标和右下标 """
+            if start < 0 or end >= length or s[start] != s[end]:
+                return start, start
+
+            for i in range(length):
+                left_index = start - i
+                right_index = end + i
+
+                if left_index < 0 or right_index >= length or s[left_index] != s[right_index]:
+                    return left_index + 1, right_index - 1
+
+            return start, start
+
+        start_index: int = 0
+        end_index: int = 0
+
+        for i in range(0, length):
+            single = palindrome_string(i, i)
+            double = palindrome_string(i, i + 1)
+
+            if single[1] - single[0] > end_index - start_index:
+                start_index = single[0]
+                end_index = single[1]
+            if double[1] - double[0] > end_index - start_index:
+                start_index = double[0]
+                end_index = double[1]
+
+        return s[start_index:end_index + 1]
+
+    def longestValidParentheses(self, s: str) -> int:
+        """
+        最长有效括号
+        :see https://leetcode-cn.com/problems/longest-valid-parentheses/
+        """
+        # 有效长度数组
+        valid_length_list = []
+        # 当前的有效（数量
+        parentheses_count = 0
+        # 最大长度
+        max_length = 0
+
+        for i in range(0, len(s)):
+            if s[i] == '(':
+                parentheses_count += 1
+                valid_length_list.append(0)
+            elif parentheses_count > 0:
+                parentheses_count -= 1
+                if i - valid_length_list[i - 1] - 2 >= 0:
+                    valid_length_list.append(
+                        valid_length_list[i - 1] + valid_length_list[i - valid_length_list[i - 1] - 2] + 2)
+                else:
+                    valid_length_list.append(valid_length_list[i - 1] + 2)
+            else:
+                valid_length_list.append(0)
+
+            if valid_length_list[i] > max_length:
+                max_length = valid_length_list[i]
+        # print(valid_length_list)
+        return max_length
+
+    def largestRectangleArea(self, heights: list) -> int:
+        """
+        柱状图中最大的矩形
+        :see https://leetcode-cn.com/problems/largest-rectangle-in-histogram/
+        """
+        length = len(heights)
+        if length < 1:
+            return 0
+
+        max_area = 0
+        height_stack = [(-1, -1)]
+
+        for i in range(0, length):
+            while heights[i] < height_stack[-1][1]:
+                index_height = height_stack.pop()
+                max_area = max(max_area, index_height[1] * (i - height_stack[-1][0] - 1))
+
+            height_stack.append((i, heights[i]))
+
+        while len(height_stack) > 1:
+            index_height = height_stack.pop()
+            max_area = max(max_area, index_height[1] * (length - height_stack[-1][0] - 1))
+
+        return max_area
+
 
 if __name__ == "__main__":
-    # coins_list = [2, 3, 0, -5, -3, -4, 1]
-    # print(Solution().maxSubArray(coins_list))
-    print(Solution().minDistance('horse', 'ros'))
+    print(Solution().largestRectangleArea([1, 2, 3]))
