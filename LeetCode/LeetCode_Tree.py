@@ -48,8 +48,6 @@ class Solution(object):
         # a = True if root.left is None else root.left.val < root.val
         # b = True if root.right is None else root.right.val > root.val
         #
-        # print("val: %d, left: %d, right: %d, result: %d" % (root.val, root.left.val if root.left is not None else -1, root.right.val if root.right is not None else -1, a and b))
-        #
         # return self.isValidBST(root.left) and self.isValidBST(root.right) if a and b else False
 
         result_list = self.intermediate_traversal(root)
@@ -444,20 +442,57 @@ class Solution(object):
                 tree_node = tree_node.right
             tree_node.right = temp
 
+    def maxProduct(self, root: TreeNode) -> int:
+        """
+        1339. 分裂二叉树的最大乘积
+        :see https://leetcode-cn.com/problems/maximum-product-of-splitted-binary-tree/
+        """
+        sum_of_sub_tree_dict = {}
+
+        def sum_of_sub_tree(node: TreeNode) -> int:
+            """ 求子树的节点和 """
+            if node is None:
+                return 0
+
+            if node in sum_of_sub_tree_dict:
+                return sum_of_sub_tree_dict[node]
+
+            node_sum = sum_of_sub_tree(node.left) + sum_of_sub_tree(node.right) + node.val
+            sum_of_sub_tree_dict[node] = node_sum
+
+            return node_sum
+
+        total_sum = sum_of_sub_tree(root)
+
+        max_value = 10 ** 9 + 7
+
+        product = 0
+        subtract = float('inf')
+        for node in sum_of_sub_tree_dict:
+            result = abs(total_sum - sum_of_sub_tree_dict[node] * 2)
+            if result < subtract:
+                subtract = result
+
+                product = (total_sum - sum_of_sub_tree_dict[node]) * sum_of_sub_tree_dict[node]
+                if product > max_value:
+                    product %= max_value
+
+        return product
+
 
 if __name__ == '__main__':
     root = TreeNode(1)
     root.left = TreeNode(2)
-    root.right = TreeNode(5)
+    root.right = TreeNode(3)
     #
-    root.left.left = TreeNode(3)
-    root.left.right = TreeNode(4)
+    root.left.left = TreeNode(4)
+    root.left.right = TreeNode(5)
     # #
     # # root.left.right.left = TreeNode(7)
     # # root.left.right.right = TreeNode(4)
     #
     # # root.right.left = TreeNode(4)
-    root.right.right = TreeNode(6)
+    root.right.left = TreeNode(6)
 
     # print(Solution().lowestCommonAncestor(root, TreeNode(5), TreeNode(4)).val)
     # string = Solution().serialize(root)
@@ -465,5 +500,4 @@ if __name__ == '__main__':
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
 
     s = Solution()
-    s.flatten(root)
-    print(s.serialize(root))
+    print(s.maxProduct(root))

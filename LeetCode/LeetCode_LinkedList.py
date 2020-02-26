@@ -483,14 +483,112 @@ class LinkedList(object):
 
         return p
 
+    def reverseList(self, head: ListNode) -> ListNode:
+        """
+        反转链表
+        :see https://leetcode-cn.com/problems/reverse-linked-list/
+        """
+        """ 
+        # 迭代，利用栈的特性，先进后出实现链表反转 
+        if head is None:
+            return head
+
+        node_stack = []
+
+        p = head
+        while p is not None:
+            node_stack.append(p)
+            p = p.next
+
+        head = node_stack[-1]
+        while len(node_stack) > 0:
+            p = node_stack.pop()
+            p.next = node_stack[-1] if len(node_stack) > 0 else None
+
+        return head
+        """
+        # 递归
+        if head is None or head.next is None:
+            return head
+
+        def aaa(head: ListNode) -> ListNode:
+            if head is None or head.next is None:
+                return head
+
+            q = head.next
+            p = aaa(q)
+            q.next = head
+
+            return p
+
+        p = aaa(head)
+        head.next = None
+
+        return p
+
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
+        """
+        25. K 个一组翻转链表
+        :see https://leetcode-cn.com/problems/reverse-nodes-in-k-group/
+        """
+
+        def reverse_linked_list(head: ListNode) -> (ListNode, ListNode, ListNode):
+            """
+            反转链表
+            :param head: 链表头结点
+            :return: 反转后的链表头结点，反转后的链表的尾结点，下一次开始翻转的头结点
+            """
+            if head is None:
+                return head
+
+            node_stack = []
+
+            # 将全部节点入栈
+            p = head
+            node_index = k
+            while p is not None and node_index > 0:
+                node_stack.append(p)
+                p = p.next
+                node_index -= 1
+
+            # 当node_index大于0时，说明剩下的链表不足以翻转
+            if node_index > 0:
+                return head, None, None
+
+            # 保存下一次开始翻转的头结点
+            next_head_node = p
+
+            # 翻转链表
+            new_head = node_stack[-1]
+            while len(node_stack) > 0:
+                p = node_stack.pop()
+                p.next = node_stack[-1] if len(node_stack) > 0 else None
+
+            return new_head, head, next_head_node
+
+        if head is None:
+            return head
+
+        # 对第一组翻转链表特殊处理
+        head_node, end_node, next_node = reverse_linked_list(head)
+
+        # 连接每一组翻转后的链表
+        while next_node is not None:
+            new_head_node, new_end_node, next_node = reverse_linked_list(next_node)
+            end_node.next = new_head_node
+            end_node = new_end_node
+
+        return head_node
+
 
 if __name__ == '__main__':
     data1 = [4, 2, 1, 3, 6, 7, 8, 10]
     # data = [6, 7, 8, 10, 2, 3, 5, 7, 3, -10]
-    data2 = [5, 2, 1]
+    data2 = [1, 2, 3]
     # data = []
 
     linked_list = LinkedList(data1)
 
-    p: ListNode = linked_list.addTwoNumbers(LinkedList(data1).head, LinkedList(data2).head)
+    # p: ListNode = linked_list.addTwoNumbers(LinkedList(data1).head, LinkedList(data2).head)
+    p: ListNode = linked_list.reverseKGroup(LinkedList(data2).head, 6)
     print(linked_list.description(p))

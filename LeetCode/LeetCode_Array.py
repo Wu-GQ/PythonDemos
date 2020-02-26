@@ -1,3 +1,34 @@
+class MinStack:
+    """
+    最小栈
+    :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/24/design/59/
+    """
+
+    def __init__(self):
+        """
+        initialize your data structure here.
+        """
+        # 用来存正常的数据
+        self.stack = []
+        # 用来存最小的数据
+        self.min_stack = []
+
+    def push(self, x: int) -> None:
+        self.stack.append(x)
+        # 比较前一存入的数据,如果新加入的数据比较小，则在另一栈中存入新的数据
+        self.min_stack.append(self.min_stack[-1] if len(self.min_stack) > 0 and self.min_stack[-1] < x else x)
+
+    def pop(self) -> None:
+        self.stack.pop()
+        self.min_stack.pop()
+
+    def top(self) -> int:
+        return self.stack[-1]
+
+    def getMin(self) -> int:
+        return self.min_stack[-1]
+
+
 class Solution:
     def move_zeroes(self, nums: list) -> None:
         """
@@ -455,40 +486,280 @@ class Solution:
 
         return result_list
 
-
-class MinStack:
-    """
-    最小栈
-    :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/24/design/59/
-    """
-
-    def __init__(self):
+    def validateStackSequences(self, pushed: list, popped: list) -> bool:
         """
-        initialize your data structure here.
+        验证栈序列
+        :see https://leetcode-cn.com/problems/validate-stack-sequences/
         """
-        # 用来存正常的数据
-        self.stack = []
-        # 用来存最小的数据
-        self.min_stack = []
+        if len(pushed) != len(popped):
+            return False
 
-    def push(self, x: int) -> None:
-        self.stack.append(x)
-        # 比较前一存入的数据,如果新加入的数据比较小，则在另一栈中存入新的数据
-        self.min_stack.append(self.min_stack[-1] if len(self.min_stack) > 0 and self.min_stack[-1] < x else x)
+        # -1时为了防止temp_stack_list[-1]崩溃
+        temp_stack_list = [-1]
 
-    def pop(self) -> None:
-        self.stack.pop()
-        self.min_stack.pop()
+        for j in popped:
+            if temp_stack_list[-1] == j:
+                # 当栈顶元素相同时，先出栈
+                temp_stack_list.pop()
+                continue
 
-    def top(self) -> int:
-        return self.stack[-1]
+            # 栈顶元素不匹配，则将pushed的栈顶元素入栈；否则将pushed的栈顶元素去除
+            while len(pushed) > 0:
+                value = pushed.pop(0)
+                if value != j:
+                    temp_stack_list.append(value)
+                else:
+                    break
 
-    def getMin(self) -> int:
-        return self.min_stack[-1]
+        # 成功匹配的情况下，栈内只剩下一个-1
+        return len(temp_stack_list) == 1
+
+    def maxSlidingWindow(self, nums: list, k: int) -> list:
+        """
+        滑动窗口最大值
+        :see https://leetcode-cn.com/problems/sliding-window-maximum/
+        """
+        if k > len(nums) or len(nums) == 0:
+            return []
+
+        # 用来保存最大值
+        result_list = []
+        # 用来保存每个窗口可能的最大值及其下标
+        index_value_list = [(-1, -float('inf'))]
+
+        # 先将前k个入队列
+        for i in range(0, k):
+            while len(index_value_list) > 0 and index_value_list[-1][1] <= nums[i]:
+                index_value_list.pop()
+            index_value_list.append((i, nums[i]))
+
+        result_list.append(index_value_list[0][1])
+
+        # 从第k个开始遍历
+        for i in range(k, len(nums)):
+            # 先去掉最前面的失效的元素
+            while len(index_value_list) > 0 and index_value_list[0][0] <= i - k:
+                index_value_list.pop(0)
+
+            # 再去掉末尾小于当前元素的元素
+            while len(index_value_list) > 0 and index_value_list[-1][1] <= nums[i]:
+                index_value_list.pop()
+            index_value_list.append((i, nums[i]))
+
+            # 队列中的首元素即为最大元素
+            result_list.append(index_value_list[0][1])
+
+        return result_list
+
+    def canJump(self, nums: list) -> bool:
+        """
+        跳跃游戏
+        :see https://leetcode-cn.com/problems/jump-game/
+        """
+        # # 参考深度优先遍历（超时）
+        # length = len(nums)
+        # if length < 2:
+        #     return True
+        #
+        # # 判断是否被检测过
+        # result_list = [False] * length
+        #
+        # def jump(start_index: int) -> bool:
+        #     if start_index >= length - 1:
+        #         return True
+        #
+        #     for i in range(start_index + nums[start_index], start_index, -1):
+        #         if i >= length - 1:
+        #             return True
+        #
+        #         if result_list[i]:
+        #             return False
+        #
+        #         if jump(i):
+        #             return True
+        #         else:
+        #             result_list[i] = True
+        #
+        #     return False
+        #
+        # return jump(0)
+
+        # 贪心算法，只保存右侧最大可达的坐标
+        length = len(nums)
+        if length < 1:
+            return False
+        elif length == 1:
+            return True
+
+        max_index = nums[0]
+        i = 0
+        while i < length - 1 and i <= max_index:
+            max_index = max(max_index, i + nums[i])
+            if max_index >= length - 1:
+                return True
+            i += 1
+
+        return False
+
+    def jump(self, nums: list) -> int:
+        """
+        跳跃游戏 II
+        :see https://leetcode-cn.com/problems/jump-game-ii/
+        """
+        # 参考广度优先遍历（超时）
+        length = len(nums)
+        if length < 2:
+            return 0
+
+        min_step_list = [-1] * length
+
+        def bfs_jump(start_index: int) -> int:
+            if start_index >= length - 1:
+                return 0
+
+            # 避免重复计算
+            if min_step_list[start_index] >= 0:
+                return min_step_list[start_index]
+
+            # 递归
+            min_jump_step = float('inf')
+            for i in range(start_index + nums[start_index], start_index, -1):
+                if i >= length - 1:
+                    min_jump_step = 1
+                    break
+                else:
+                    min_jump_step = min(min_jump_step, bfs_jump(i) + 1)
+
+            # 保存最小步数
+            min_step_list[start_index] = min_jump_step
+
+            return min_jump_step
+
+        return bfs_jump(0)
+
+    def canReach(self, arr: list, start: int) -> bool:
+        """
+        跳跃游戏 III
+        :see https://leetcode-cn.com/problems/jump-game-iii/
+        """
+        length = len(arr)
+        if start < 0 or start >= length:
+            return False
+
+        # False代表未检测， True代表已检测且不能到终点
+        can_reach_list = [False] * length
+
+        def reach(index: int) -> bool:
+            if index < 0 or index >= length or can_reach_list[index]:
+                return False
+            if arr[index] == 0:
+                return True
+
+            # index已被检测，不再重复检测
+            can_reach_list[index] = True
+
+            return reach(index + arr[index]) or reach(index - arr[index])
+
+        return reach(start)
+
+    def maxJumps(self, arr: list, d: int) -> int:
+        """
+        跳跃游戏 V
+        :see https://leetcode-cn.com/problems/jump-game-v/
+        """
+        if d < 1:
+            return 0
+
+        length = len(arr)
+        if length < 1:
+            return 0
+        elif length == 1:
+            return 1
+
+        max_step_list = [-1] * length
+
+        def max_step_for_index(index: int) -> int:
+            if index < 0 or index >= length:
+                return 0
+
+            if max_step_list[index] >= 0:
+                return max_step_list[index]
+
+            max_step = 0
+            # 先求左边的最大步数
+            for i in range(index - 1, index - d - 1, -1):
+                if i < 0 or arr[i] >= arr[index]:
+                    break
+                else:
+                    max_step = max(max_step, max_step_for_index(i))
+
+            # 再求右边的最大步数
+            for i in range(index + 1, index + d + 1):
+                if i >= length or arr[i] >= arr[index]:
+                    break
+                else:
+                    max_step = max(max_step, max_step_for_index(i))
+
+            max_step_list[index] = max_step + 1
+
+            return max_step_list[index]
+
+        max_step = 0
+        for i in range(0, length):
+            if max_step_list[i] == -1:
+                max_step_list[i] = max_step_for_index(i)
+            max_step = max(max_step, max_step_list[i])
+
+        return max_step
+
+    def canCross(self, stones: list) -> bool:
+        """
+        青蛙过河
+        :see https://leetcode-cn.com/problems/frog-jump/
+        """
+        length = len(stones)
+        if length < 2:
+            return False
+
+        # 元组的第一位表示index，第二位表示打到该位置所用的距离
+        stone_list = [(0, 0)]
+        checked_stone_set = set()
+
+        while len(stone_list) > 0:
+            next_stone = stone_list.pop(0)
+
+            for i in range(next_stone[0] + 1, stones[next_stone[0]] + next_stone[1] + 2):
+                if i >= length:
+                    break
+                distance = stones[i] - stones[next_stone[0]]
+                if (i, distance) in checked_stone_set:
+                    continue
+
+                if distance == next_stone[1] - 1 or distance == next_stone[1] or distance == next_stone[1] + 1:
+                    if i == length - 1:
+                        return True
+                    stone_list.append((i, distance))
+                    checked_stone_set.add((i, distance))
+
+            print(next_stone[0], next_stone[1])
+
+        return False
+
+    def wiggleSort(self, nums: list) -> None:
+        """
+        324. 摆动排序 II
+        :see https://leetcode-cn.com/problems/wiggle-sort-ii/
+        """
+        nums.sort(reverse=True)
+
+        big_nums = nums[:len(nums) // 2]
+        small_nums = nums[len(nums) // 2:]
+        for i in range(0, len(nums)):
+            nums[i] = big_nums[i >> 1] if i & 1 == 1 else small_nums[i >> 1]
 
 
 if __name__ == "__main__":
-    matrix = [1, 3, 1]
-
     s = Solution()
-    print(s.generateParenthesis(4))
+    num = [1, 1, 2, 2, 2, 3]
+    s.wiggleSort(num)
+    print(num)

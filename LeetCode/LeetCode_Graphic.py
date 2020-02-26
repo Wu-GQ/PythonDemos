@@ -165,8 +165,34 @@ class Solution:
 
         return len(cost_courses)
 
+    def sumOfDistancesInTree(self, N: int, edges: list) -> list:
+        """
+        树中距离之和
+        :see https://leetcode-cn.com/problems/sum-of-distances-in-tree/
+        """
+        # 参考最小生成树算法——floyd算法（超时）
+        distance_list = [[float('inf')] * N for i in range(0, N)]
+
+        # 无向图
+        for i in edges:
+            distance_list[i[0]][i[1]] = 1
+            distance_list[i[1]][i[0]] = 1
+
+        # floyd算法核心，判断点i到点k+点k到点j的距离和点i到点j的距离
+        for k in range(0, N):
+            for i in range(0, N):
+                for j in range(0, N):
+                    if i == j:
+                        distance_list[i][i] = 0
+                    else:
+                        distance_list[i][j] = min(distance_list[i][j], distance_list[i][k] + distance_list[k][j])
+
+        return [sum(i) for i in distance_list]
+
 
 if __name__ == '__main__':
     # print(Solution().ladderLength("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"]))
-    print(Solution().scheduleCourse([[5, 15], [3, 19], [6, 7], [2, 10], [5, 16], [8, 14], [10, 11], [2, 19]]))
+    # print(Solution().scheduleCourse([[5, 15], [3, 19], [6, 7], [2, 10], [5, 16], [8, 14], [10, 11], [2, 19]]))
     # print(Solution().scheduleCourse([[5, 5], [4, 6], [2, 6]]))
+    s = Solution()
+    print(s.sumOfDistancesInTree(6, [[0, 1], [0, 2], [2, 3], [2, 4], [2, 5]]))

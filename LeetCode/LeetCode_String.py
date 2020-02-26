@@ -402,6 +402,58 @@ class Solution:
 
         return compare_list[s_length - 1][p_length - 1]
 
+    def minWindow(self, s: str, t: str) -> str:
+        """
+        最小覆盖子串
+        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-hard/55/array-and-strings/133/
+        """
+        t_length = len(t)
+        s_length = len(s)
+        if t_length > s_length:
+            return ""
+
+        # 被覆盖的字符序列
+        selected_ch_stack = []
+        # 被覆盖的字符下标
+        selected_ch_index_stack = []
+        # 已被覆盖的字符总数量
+        selected_ch_total_count = 0
+        # 未被覆盖的字符数量
+        unselected_ch_count_dict = {}
+        for i in t:
+            if i in unselected_ch_count_dict:
+                unselected_ch_count_dict[i] += 1
+            else:
+                unselected_ch_count_dict[i] = 1
+
+        min_length = float("inf")
+        start_index = -1
+        end_index = -1
+
+        for i in range(0, s_length):
+            if s[i] in unselected_ch_count_dict:
+                # 将新字符加入已覆盖字符队列
+                unselected_ch_count_dict[s[i]] -= 1
+                selected_ch_stack.append(s[i])
+                selected_ch_index_stack.append(i)
+
+                if unselected_ch_count_dict[s[i]] >= 0:
+                    selected_ch_total_count += 1
+                elif s[i] == selected_ch_stack[0]:
+                    # 从头开始删除重复覆盖的字符
+                    while len(selected_ch_stack) > 0 > unselected_ch_count_dict[selected_ch_stack[0]]:
+                        ch = selected_ch_stack.pop(0)
+                        selected_ch_index_stack.pop(0)
+                        unselected_ch_count_dict[ch] += 1
+
+                # 更新最短距离
+                if selected_ch_total_count == t_length:
+                    length = selected_ch_index_stack[-1] - selected_ch_index_stack[0]
+                    if length < min_length:
+                        start_index, end_index, min_length = selected_ch_index_stack[0], selected_ch_index_stack[-1], length
+
+        return s[start_index:end_index + 1] if start_index != -1 and end_index != -1 else ""
+
 
 if __name__ == "__main__":
-    print(Solution().isMatch2("aa", "a"))
+    print(Solution().minWindow("abacgc", "aacc"))

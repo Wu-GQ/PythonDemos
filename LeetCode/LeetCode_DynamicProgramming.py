@@ -403,6 +403,335 @@ class Solution:
 
         return max_area
 
+    def maximalRectangle(self, matrix: list) -> int:
+        """
+        最大矩形
+        :see https://leetcode-cn.com/problems/maximal-rectangle/
+        """
+        # 参考柱状图中最大的矩形
+        matrix_height = len(matrix)
+        if matrix_height < 1:
+            return 0
+        matrix_width = len(matrix[0])
+        if matrix_width < 1:
+            return 0
+
+        max_area = 0
+
+        for row in range(0, matrix_height):
+            # 将每一行看成柱状图中最大的矩形求解
+            index_stack_list = [-1]
+            height_stack_list = [-1]
+
+            for column in range(0, matrix_width):
+                height = int(matrix[row][column])
+                if height > 0 and row > 0:
+                    height += matrix[row - 1][column]
+                matrix[row][column] = height
+
+                while height < height_stack_list[-1]:
+                    index_stack_list.pop()
+                    last_height = height_stack_list.pop()
+                    max_area = max(max_area, last_height * (column - index_stack_list[-1] - 1))
+
+                index_stack_list.append(column)
+                height_stack_list.append(height)
+
+            while len(height_stack_list) > 1:
+                index_stack_list.pop()
+                last_height = height_stack_list.pop()
+                max_area = max(max_area, last_height * (matrix_width - index_stack_list[-1] - 1))
+
+        return max_area
+
+    def isInterleave(self, s1: str, s2: str, s3: str) -> bool:
+        """
+        交错字符串
+        :see https://leetcode-cn.com/problems/interleaving-string/
+        """
+        if len(s3) != len(s1) + len(s2):
+            return False
+
+        result_list = [[False] * (len(s1) + 1) for i in s2 + " "]
+
+        for row in range(0, len(s2) + 1):
+            for column in range(0, len(s1) + 1):
+                if row == 0 and column == 0:
+                    result_list[0][0] = True
+                elif row == 0:
+                    result_list[0][column] = result_list[0][column - 1] and s1[column - 1] == s3[column - 1]
+                elif column == 0:
+                    result_list[row][0] = result_list[row - 1][0] and s2[row - 1] == s3[row - 1]
+                else:
+                    result_list[row][column] = (result_list[row - 1][column] and s2[row - 1] == s3[row - 1 + column]) or (
+                            result_list[row][column - 1] and s1[column - 1] == s3[column - 1 + row])
+
+        return result_list[len(s2)][len(s1)]
+
+    def numDistinct(self, s: str, t: str) -> int:
+        """
+        不同的子序列
+        :see https://leetcode-cn.com/problems/distinct-subsequences/
+        """
+        if len(s) < len(t):
+            return 0
+
+        result_list = [[0] * len(s) for i in t]
+
+        for row in range(0, len(t)):
+            for column in range(row, len(s)):
+                if s[column] == t[row]:
+                    result_list[row][column] = result_list[row][column - 1] + (result_list[row - 1][column - 1] if row > 0 else 1)
+                else:
+                    result_list[row][column] = result_list[row][column - 1]
+
+        return result_list[-1][-1]
+
+    def maxProfit(self, prices: list) -> int:
+        """
+        买卖股票的最佳时机
+        :see https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/
+        """
+        # 状态转移方程：i代表第几天；j代表买卖的次数；0代表无持仓，1代表有持仓
+        # 卖出: f[i][j][0] = max(f[i - 1][j][0], f[i - 1][j][1] + prices[i])
+        # 买入: f[i][j][1] = max(f[i - 1][j][1], f[i - 1][j - 1][0] - prices[i])
+        if len(prices) < 2:
+            return 0
+
+        result_list = [[], []]
+
+        length = len(prices)
+        for i in range(0, length):
+            if i == 0:
+                result_list[0].append((0, -float('INF')))
+                result_list[1].append((-float('INF'), -prices[i]))
+            else:
+                result_list[0].append((max(result_list[0][i - 1][0], result_list[0][i - 1][1] + prices[i]), result_list[0][i - 1][1]))
+                result_list[1].append((max(result_list[1][i - 1][0], result_list[1][i - 1][1] + prices[i]),
+                                       max(result_list[1][i - 1][1], result_list[0][i - 1][0] - prices[i])))
+
+        return max(max(result_list[0][length - 1]), max(result_list[1][length - 1]))
+
+    def maxProfit3(self, prices: list) -> int:
+        """
+        买卖股票的最佳时机 III
+        :see https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii/
+        """
+        if len(prices) < 2:
+            return 0
+
+        # 最大的两次涨幅, 默认a≥b
+        max_gain_a = 0
+        max_gain_b = 0
+
+        # 通过遍历，获取两次最大的涨幅
+        gain = 0
+        for i in range(1, len(prices)):
+            if prices[i] > prices[i - 1]:
+                gain += prices[i] - prices[i - 1]
+            else:
+                if gain >= max_gain_a:
+                    max_gain_a, max_gain_b = gain, max_gain_a
+                elif max_gain_b < gain < max_gain_a:
+                    max_gain_b = gain
+
+                gain = 0
+
+        # 保存最后一次的涨幅
+        if gain >= max_gain_a:
+            max_gain_a, max_gain_b = gain, max_gain_a
+        elif max_gain_b < gain < max_gain_a:
+            max_gain_b = gain
+
+        return max_gain_a + max_gain_b
+
+    def uniquePathsWithObstacles(self, obstacleGrid: list) -> int:
+        """
+        63. 不同路径 II
+        :see https://leetcode-cn.com/problems/unique-paths-ii/
+        """
+        # f(x,y) = f(x-1,y)+f(x,y-1) if a(x,y)==0 else 0
+        if len(obstacleGrid) == 0 or len(obstacleGrid[0]) == 0 or obstacleGrid[0][0] == 1:
+            return 0
+
+        path_list = [0] * len(obstacleGrid[0])
+        path_list[0] = 1
+
+        for single_line in obstacleGrid:
+            for i in range(0, len(single_line)):
+                if single_line[i] == 1:
+                    path_list[i] = 0
+                elif i > 0:
+                    path_list[i] = path_list[i - 1] + path_list[i]
+
+        return path_list[-1]
+
+    def minPathSum(self, grid: list) -> int:
+        """
+        64. 最小路径和
+        :see https://leetcode-cn.com/problems/minimum-path-sum/
+        """
+        if len(grid) == 0 or len(grid[0]) == 0:
+            return 0
+
+        for i in range(0, len(grid)):
+            for j in range(0, len(grid[i])):
+                if i == 0 and j == 0:
+                    continue
+                elif i == 0 and j > 0:
+                    grid[i][j] += grid[i][j - 1]
+                elif i > 0 and j == 0:
+                    grid[i][j] += grid[i - 1][j]
+                else:
+                    grid[i][j] += min(grid[i][j - 1], grid[i - 1][j])
+
+        return grid[-1][-1]
+
+    def largestMultipleOfThree(self, digits: list) -> str:
+        """
+        1363. 形成三的最大倍数
+        :see https://leetcode-cn.com/problems/largest-multiple-of-three/
+        """
+
+        # 状态: f(余0)，f(余1)，f(余2)
+        def compare_nums(a: list, b: list) -> bool:
+            for i in range(9, -1, -1):
+                if a[i] > b[i]:
+                    return True
+                elif a[i] < b[i]:
+                    return False
+            return True
+
+        zero_nums, one_nums, two_nums = [0] * 10, [0] * 10, [0] * 10
+        zero_count, one_count, two_count = 0, 0, 0
+        zero_sum, one_sum, two_sum = 0, 0, 0
+
+        for digit in digits:
+            remainder = digit % 3
+            if remainder == 0:
+                zero_nums[digit] += 1
+                zero_count += 1
+                zero_sum += digit
+
+                one_nums[digit] += 1
+                one_count += 1
+                one_sum += digit
+
+                two_nums[digit] += 1
+                two_count += 1
+                two_sum += digit
+            elif remainder == 1:
+                if two_sum % 3 == 2:
+                    temp_zero_nums = two_nums.copy()
+                    temp_zero_nums[digit] += 1
+                    temp_zero_count = two_count + 1
+                    temp_zero_sum = two_sum + digit
+
+                    if temp_zero_count < zero_count or (temp_zero_count == zero_count and compare_nums(zero_nums, temp_zero_nums)):
+                        temp_zero_nums = zero_nums
+                        temp_zero_count = zero_count
+                        temp_zero_sum = zero_sum
+                else:
+                    temp_zero_nums = zero_nums
+                    temp_zero_count = zero_count
+                    temp_zero_sum = zero_sum
+
+                if zero_sum % 3 == 0:
+                    temp_one_nums = zero_nums.copy()
+                    temp_one_nums[digit] += 1
+                    temp_one_count = zero_count + 1
+                    temp_one_sum = zero_sum + digit
+
+                    if temp_one_count < one_count or (temp_one_count == one_count and compare_nums(one_nums, temp_one_nums)):
+                        temp_one_nums = one_nums
+                        temp_one_count = one_count
+                        temp_one_sum = one_sum
+                else:
+                    temp_one_nums = one_nums
+                    temp_one_count = one_count
+                    temp_one_sum = one_sum
+
+                if one_sum % 3 == 1:
+                    temp_two_nums = one_nums.copy()
+                    temp_two_nums[digit] += 1
+                    temp_two_count = one_count + 1
+                    temp_two_sum = one_sum + digit
+
+                    if temp_two_count < two_count or (temp_two_count == two_count and compare_nums(two_nums, temp_two_nums)):
+                        temp_two_nums = two_nums
+                        temp_two_count = two_count
+                        temp_two_sum = two_sum
+                else:
+                    temp_two_nums = two_nums
+                    temp_two_count = two_count
+                    temp_two_sum = two_sum
+
+                zero_nums, one_nums, two_nums = temp_zero_nums, temp_one_nums, temp_two_nums
+                zero_count, one_count, two_count = temp_zero_count, temp_one_count, temp_two_count
+                zero_sum, one_sum, two_sum = temp_zero_sum, temp_one_sum, temp_two_sum
+            else:
+                if one_sum % 3 == 1:
+                    temp_zero_nums = one_nums.copy()
+                    temp_zero_nums[digit] += 1
+                    temp_zero_count = one_count + 1
+                    temp_zero_sum = one_sum + digit
+
+                    if temp_zero_count < zero_count or (temp_zero_count == zero_count and compare_nums(zero_nums, temp_zero_nums)):
+                        temp_zero_nums = zero_nums
+                        temp_zero_count = zero_count
+                        temp_zero_sum = zero_sum
+                else:
+                    temp_zero_nums = zero_nums
+                    temp_zero_count = zero_count
+                    temp_zero_sum = zero_sum
+
+                if two_sum % 3 == 2:
+                    temp_one_nums = two_nums.copy()
+                    temp_one_nums[digit] += 1
+                    temp_one_count = two_count + 1
+                    temp_one_sum = two_sum + digit
+
+                    if temp_one_count < one_count or (temp_one_count == one_count and compare_nums(one_nums, temp_one_nums)):
+                        temp_one_nums = one_nums
+                        temp_one_count = one_count
+                        temp_one_sum = one_sum
+                else:
+                    temp_one_nums = one_nums
+                    temp_one_count = one_count
+                    temp_one_sum = one_sum
+
+                if zero_sum % 3 == 0:
+                    temp_two_nums = zero_nums.copy()
+                    temp_two_nums[digit] += 1
+                    temp_two_count = zero_count + 1
+                    temp_two_sum = zero_sum + digit
+
+                    if temp_two_count < two_count or (temp_two_count == two_count and compare_nums(two_nums, temp_two_nums)):
+                        temp_two_nums = two_nums
+                        temp_two_count = two_count
+                        temp_two_sum = two_sum
+                else:
+                    temp_two_nums = two_nums
+                    temp_two_count = two_count
+                    temp_two_sum = two_sum
+
+                zero_nums, one_nums, two_nums = temp_zero_nums, temp_one_nums, temp_two_nums
+                zero_count, one_count, two_count = temp_zero_count, temp_one_count, temp_two_count
+                zero_sum, one_sum, two_sum = temp_zero_sum, temp_one_sum, temp_two_sum
+
+            # print(zero_count, one_count, two_count)
+            # print(digit, zero_nums, one_nums, two_nums)
+
+        if zero_sum == 0 and zero_count == 0:
+            return ""
+
+        string = f"{''.join([str(9)] * zero_nums[9])}{''.join([str(8)] * zero_nums[8])}{''.join([str(7)] * zero_nums[7])}" \
+                 f"{''.join([str(6)] * zero_nums[6])}{''.join([str(5)] * zero_nums[5])}{''.join([str(4)] * zero_nums[4])}" \
+                 f"{''.join([str(3)] * zero_nums[3])}{''.join([str(2)] * zero_nums[2])}{''.join([str(1)] * zero_nums[1])}" \
+                 f"{''.join([str(0)] * zero_nums[0])}"
+
+        return "0" if string[0] == '0' else string
+
 
 if __name__ == "__main__":
-    print(Solution().largestRectangleArea([1, 2, 3]))
+    print(Solution().largestMultipleOfThree([9, 8, 6, 8, 6]))
