@@ -495,6 +495,7 @@ class Solution:
         # 状态转移方程：i代表第几天；j代表买卖的次数；0代表无持仓，1代表有持仓
         # 卖出: f[i][j][0] = max(f[i - 1][j][0], f[i - 1][j][1] + prices[i])
         # 买入: f[i][j][1] = max(f[i - 1][j][1], f[i - 1][j - 1][0] - prices[i])
+        """
         if len(prices) < 2:
             return 0
 
@@ -509,41 +510,53 @@ class Solution:
                 result_list[0].append((max(result_list[0][i - 1][0], result_list[0][i - 1][1] + prices[i]), result_list[0][i - 1][1]))
                 result_list[1].append((max(result_list[1][i - 1][0], result_list[1][i - 1][1] + prices[i]),
                                        max(result_list[1][i - 1][1], result_list[0][i - 1][0] - prices[i])))
-
+        
         return max(max(result_list[0][length - 1]), max(result_list[1][length - 1]))
+        """
+        if len(prices) < 2:
+            return 0
+        max_profit, min_price = 0, float('inf')
+        for i in prices:
+            max_profit = max(max_profit, i - min_price)
+            min_price = min(min_price, i)
+            # print(i, min_price, max_profit)
+        return max_profit
 
     def maxProfit3(self, prices: list) -> int:
         """
         买卖股票的最佳时机 III
         :see https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii/
         """
-        if len(prices) < 2:
+        """
+        状态转移方程:
+        f(N天，K交易次数，持有) = max(f(N-1天，K交易次数，持有), f(N-1天，K-1交易次数，无)-当日价格)
+        f(N天，K交易次数，无) = max(f(N-1天，K交易次数，无)，f(N-1，K交易次数，持有)+当日价格)
+        """
+        length = len(prices)
+        if length < 2:
             return 0
 
-        # 最大的两次涨幅, 默认a≥b
-        max_gain_a = 0
-        max_gain_b = 0
+        # 持有，交易1次
+        possess_one_profit = -float('inf')
+        # 持有，交易2次
+        possess_two_profit = -float('inf')
+        # 无，交易1次
+        none_one_profit = -float('inf')
+        # 无，交易2次
+        none_two_profit = -float('inf')
 
-        # 通过遍历，获取两次最大的涨幅
-        gain = 0
-        for i in range(1, len(prices)):
-            if prices[i] > prices[i - 1]:
-                gain += prices[i] - prices[i - 1]
+        # 动态规划
+        for i in range(0, length):
+            if i == 0:
+                possess_one_profit, possess_two_profit, none_one_profit, none_two_profit_list = -prices[i], -float('inf'), 0, -float('inf')
             else:
-                if gain >= max_gain_a:
-                    max_gain_a, max_gain_b = gain, max_gain_a
-                elif max_gain_b < gain < max_gain_a:
-                    max_gain_b = gain
+                possess_one_profit, possess_two_profit, none_one_profit, none_two_profit = \
+                    max(possess_one_profit, -prices[i]), \
+                    max(possess_two_profit, none_one_profit - prices[i]) if i > 1 else -float('inf'), \
+                    max(none_one_profit, possess_one_profit + prices[i]), \
+                    max(none_two_profit, possess_two_profit + prices[i]) if i > 2 else -float('inf')
 
-                gain = 0
-
-        # 保存最后一次的涨幅
-        if gain >= max_gain_a:
-            max_gain_a, max_gain_b = gain, max_gain_a
-        elif max_gain_b < gain < max_gain_a:
-            max_gain_b = gain
-
-        return max_gain_a + max_gain_b
+        return max(none_one_profit, none_two_profit)
 
     def uniquePathsWithObstacles(self, obstacleGrid: list) -> int:
         """
@@ -734,4 +747,4 @@ class Solution:
 
 
 if __name__ == "__main__":
-    print(Solution().largestMultipleOfThree([9, 8, 6, 8, 6]))
+    print(Solution().maxProfit3([1, 2, 3, 4, 5]))
