@@ -745,6 +745,30 @@ class Solution:
 
         return "0" if string[0] == '0' else string
 
+    def minimumTotal(self, triangle: list) -> int:
+        """
+        120. 三角形最小路径和
+        :see https://leetcode-cn.com/problems/triangle/
+        """
+        if len(triangle) == 0 or len(triangle[0]) == 0:
+            return 0
+
+        for i in range(1, len(triangle)):
+            for j in range(0, i + 1):
+                if j == 0:
+                    triangle[i][j] += triangle[i - 1][j]
+                elif j == i:
+                    triangle[i][j] += triangle[i - 1][j - 1]
+                else:
+                    triangle[i][j] += min(triangle[i - 1][j - 1], triangle[i - 1][j])
+
+        return min(triangle[-1])
+
 
 if __name__ == "__main__":
-    print(Solution().maxProfit3([1, 2, 3, 4, 5]))
+    print(Solution().minimumTotal([
+        [2],
+        [3, 4],
+        [6, 5, 7],
+        [4, 1, 8, 3]
+    ]))
