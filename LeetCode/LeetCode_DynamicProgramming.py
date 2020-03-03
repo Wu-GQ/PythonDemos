@@ -764,11 +764,38 @@ class Solution:
 
         return min(triangle[-1])
 
+    def numDecodings(self, s: str) -> int:
+        """
+        91. 解码方法
+        :see https://leetcode-cn.com/problems/decode-ways/
+        """
+        # f(n) = f(n - 1) + f(n - 2), 1-9, 10-16
+        if len(s) < 1 or s[0] == '0':
+            return 0
+
+        result_list = [0] * len(s)
+
+        for i in range(0, len(s)):
+            if i == 0:
+                result_list[i] = 1
+            elif i == 1:
+                if s[i] == '0':
+                    if s[i - 1] == '1' or s[i - 1] == '2':
+                        result_list[i] = 1
+                    else:
+                        return 0
+                else:
+                    result_list[i] = 2 if 9 < int(s[i - 1:i + 1]) < 27 else 1
+            elif s[i] == '0':
+                if s[i - 1] == '1' or s[i - 1] == '2':
+                    result_list[i] = result_list[i - 2]
+                else:
+                    return 0
+            else:
+                result_list[i] = result_list[i - 1] + (result_list[i - 2] if 9 < int(s[i - 1:i + 1]) < 27 else 0)
+        print(result_list)
+        return result_list[-1]
+
 
 if __name__ == "__main__":
-    print(Solution().minimumTotal([
-        [2],
-        [3, 4],
-        [6, 5, 7],
-        [4, 1, 8, 3]
-    ]))
+    print(Solution().numDecodings('12120'))

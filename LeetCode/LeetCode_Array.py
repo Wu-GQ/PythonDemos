@@ -757,9 +757,25 @@ class Solution:
         for i in range(0, len(nums)):
             nums[i] = big_nums[i >> 1] if i & 1 == 1 else small_nums[i >> 1]
 
+    def merge(self, A: list, m: int, B: list, n: int) -> None:
+        """
+        面试题 10.01. 合并排序的数组
+        :see https://leetcode-cn.com/problems/sorted-merge-lcci/
+        """
+        if len(A) < m + n:
+            return
+
+        i, j = m - 1, n - 1
+        while j >= 0:
+            if i >= 0 and A[i] >= B[j]:
+                A[i + j + 1] = A[i]
+                i -= 1
+            else:
+                A[i + j + 1] = B[j]
+                j -= 1
+        print(A)
 
 if __name__ == "__main__":
     s = Solution()
-    num = [1, 1, 2, 2, 2, 3]
-    s.wiggleSort(num)
-    print(num)
+    s.merge([1, 2, 3, 0, 0, 0], 3, [4, 5, 6], 3)
+    # print(num)
