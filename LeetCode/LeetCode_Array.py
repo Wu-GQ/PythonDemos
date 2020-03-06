@@ -775,7 +775,35 @@ class Solution:
                 j -= 1
         print(A)
 
+    def findContinuousSequence(self, target: int) -> list:
+        """
+        面试题57 - II. 和为s的连续正数序列
+        :see https://leetcode-cn.com/problems/he-wei-sde-lian-xu-zheng-shu-xu-lie-lcof/
+        """
+        if target < 3:
+            return []
+
+        start = 1
+        end = 2
+
+        result = []
+
+        while start <= target and start <= end:
+            list_sum = sum(range(start, end + 1))
+
+            if list_sum == target:
+                result.append([i for i in range(start, end + 1)])
+                start += 1
+            elif list_sum > target:
+                end -= 1
+            elif list_sum < target < list_sum + end + 1:
+                start += 1
+            else:
+                end += 1
+
+        return result
+
+
 if __name__ == "__main__":
     s = Solution()
-    s.merge([1, 2, 3, 0, 0, 0], 3, [4, 5, 6], 3)
-    # print(num)
+    print(s.findContinuousSequence(15))
