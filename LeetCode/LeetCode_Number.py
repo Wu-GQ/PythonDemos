@@ -64,8 +64,34 @@ class Solution:
 
         return profit
 
+    def distributeCandies(self, candies: int, num_people: int) -> list:
+        """
+        1103. 分糖果 II
+        :see https://leetcode-cn.com/problems/distribute-candies-to-people/
+        """
+        if num_people == 0:
+            return []
+
+        # 完整的分糖果次数
+        n: int = math.floor(0.5 * (-1 + math.sqrt(1 + 8 * candies)))
+        line: int = math.floor(n / num_people)
+        column: int = n - line * num_people
+        left = candies - (1 + n) * n * 0.5
+
+        result_list = []
+
+        for i in range(0, num_people):
+            candy = 0
+            if i < column:
+                candy = (i + 1) * (line + 1) + num_people * line * (line + 1) / 2
+            elif i == column:
+                candy = (i + 1) * line + num_people * line * (line - 1) / 2 + left
+            else:
+                candy = (i + 1) * line + num_people * line * (line - 1) / 2
+            result_list.append(int(candy))
+
+        return result_list
+
 
 if __name__ == '__main__':
-    print(Solution().fizzBuzz(15))
-    print(Solution().fizzBuzz(9))
-    print(Solution().fizzBuzz(20))
+    print(Solution().distributeCandies(7, 4))

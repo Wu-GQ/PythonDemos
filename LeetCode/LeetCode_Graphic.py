@@ -189,10 +189,61 @@ class Solution:
 
         return [sum(i) for i in distance_list]
 
+    def orangesRotting(self, grid: list) -> int:
+        """
+        994. 腐烂的橘子
+        :see https://leetcode-cn.com/problems/rotting-oranges/
+        """
+
+        def check_contiguous_oranges(row: int, column: int, times: int) -> list:
+            contiguous_oranges_list = []
+
+            if row - 1 >= 0 and grid[row - 1][column] == 1:
+                contiguous_oranges_list.append((row - 1, column, times))
+                grid[row - 1][column] = 3
+            if row + 1 < len(grid) and grid[row + 1][column] == 1:
+                contiguous_oranges_list.append((row + 1, column, times))
+                grid[row + 1][column] = 3
+            if column - 1 >= 0 and grid[row][column - 1] == 1:
+                contiguous_oranges_list.append((row, column - 1, times))
+                grid[row][column - 1] = 3
+            if column + 1 < len(grid[row]) and grid[row][column + 1] == 1:
+                contiguous_oranges_list.append((row, column + 1, times))
+                grid[row][column + 1] = 3
+
+            return contiguous_oranges_list
+
+        if len(grid) < 1 or len(grid[0]) < 1:
+            return 0
+
+        # 最小分钟数
+        times = 0
+        # 每次广度遍历的位置
+        orange_queue = []
+        # 腐烂的总数量
+        total_orange_count = 0
+
+        for i in range(0, len(grid)):
+            for j in range(0, len(grid[i])):
+                if grid[i][j] == 2:
+                    orange_queue.append((i, j, 0))
+                    grid[i][j] = 3
+                    total_orange_count += 1
+                elif grid[i][j] == 1:
+                    total_orange_count += 1
+
+        while len(orange_queue) > 0:
+            top_orange = orange_queue.pop(0)
+            orange_queue += check_contiguous_oranges(top_orange[0], top_orange[1], top_orange[2] + 1)
+            times = max(times, top_orange[2])
+            total_orange_count -= 1
+
+        return times if total_orange_count == 0 else -1
+
 
 if __name__ == '__main__':
     # print(Solution().ladderLength("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"]))
     # print(Solution().scheduleCourse([[5, 15], [3, 19], [6, 7], [2, 10], [5, 16], [8, 14], [10, 11], [2, 19]]))
     # print(Solution().scheduleCourse([[5, 5], [4, 6], [2, 6]]))
     s = Solution()
-    print(s.sumOfDistancesInTree(6, [[0, 1], [0, 2], [2, 3], [2, 4], [2, 5]]))
+    print(s.orangesRotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]))
