@@ -102,24 +102,19 @@ class Solution:
 
     def coinChange(self, coins: list, amount: int) -> int:
         """
-        零钱兑换
+        322.零钱兑换
         :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/272/dynamic-programming/1180/
         """
-        amount_list = [-1] * (amount + 1)
-        amount_list[0] = 0
+        amount_list = [0]
 
-        coins.sort()
-
-        for i in range(amount + 1):
+        for i in range(1, amount + 1):
+            amount = float('inf')
             for coin in coins:
-                if i > coin and amount_list[i - coin] >= 0:
-                    amount_list[i] = amount_list[i - coin] + 1 if amount_list[i] == -1 else min(amount_list[i], amount_list[i - coin] + 1)
-                elif i == coin:
-                    amount_list[i] = 1
-                elif i < coin:
-                    break
-
-        return amount_list[amount]
+                if i >= coin:
+                    amount = min(amount, amount_list[i - coin] + 1)
+            amount_list.append(amount)
+        print(amount_list)
+        return amount_list[-1] if amount_list[-1] != float('inf') else -1
 
     def rob(self, nums: list) -> int:
         """
@@ -798,4 +793,4 @@ class Solution:
 
 
 if __name__ == "__main__":
-    print(Solution().numDecodings('12120'))
+    print(Solution().coinChange([1, 2, 5], 15))
