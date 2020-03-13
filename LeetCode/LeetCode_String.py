@@ -454,6 +454,29 @@ class Solution:
 
         return s[start_index:end_index + 1] if start_index != -1 and end_index != -1 else ""
 
+    def gcdOfStrings(self, str1: str, str2: str) -> str:
+        """
+        1071. 字符串的最大公因子
+        :see https://leetcode-cn.com/problems/greatest-common-divisor-of-strings/
+        """
+
+        def is_same_prefix_string(a: str, b: str) -> bool:
+            """ a字符串和b字符串是否具有相同前缀 """
+            for i in range(len(b)):
+                if a[i] != b[i]:
+                    return False
+            return True
+
+        while len(str1) > 0 and len(str2) > 0:
+            if len(str1) < len(str2):
+                str1, str2 = str2, str1
+            if is_same_prefix_string(str1, str2):
+                str1 = str1[len(str2):]
+            else:
+                return ""
+
+        return str1 + str2
+
 
 if __name__ == "__main__":
-    print(Solution().minWindow("abacgc", "aacc"))
+    print(Solution().gcdOfStrings("ABABAB", "ABAB"))
