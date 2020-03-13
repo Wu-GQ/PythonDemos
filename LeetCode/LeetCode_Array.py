@@ -853,7 +853,48 @@ class Solution:
 
         return max_count_num
 
+    count = 0
+
+    def reversePairs(self, nums: list) -> int:
+        """
+        面试题51. 数组中的逆序对
+        :see https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/
+        """
+
+        # 利用归并排序的思想
+        def part_list(sub_nums: list) -> list:
+            if len(sub_nums) < 2:
+                return sub_nums
+            return merge_list(part_list(sub_nums[:len(sub_nums) // 2]), part_list(sub_nums[len(sub_nums) // 2:]))
+
+        def merge_list(nums1: list, nums2: list) -> list:
+            result_list = []
+            i, j = 0, 0
+
+            while i < len(nums1) or j < len(nums2):
+                if i == len(nums1):
+                    result_list += nums2[j:]
+                    break
+                elif j == len(nums2):
+                    result_list += nums1[i:]
+                    break
+                elif nums1[i] > nums2[j]:
+                    result_list.append(nums1[i])
+                    i += 1
+                    self.count += len(nums2) - j
+                else:
+                    result_list.append(nums2[j])
+                    j += 1
+
+            # print(self.count, result_list)
+
+            return result_list
+
+        # print(part_list(nums))
+
+        return self.count
+
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.majorityElement([2,2,1,1,1,2,2]))
+    print(s.reversePairs([7, 5, 6, 4, 10]))
