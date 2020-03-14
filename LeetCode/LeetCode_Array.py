@@ -806,6 +806,56 @@ class Solution:
 
         return result
 
+    def canThreePartsEqualSum(self, A: list) -> bool:
+        """
+        1013. 将数组分成和相等的三个部分
+        :see https://leetcode-cn.com/problems/partition-array-into-three-parts-with-equal-sum/
+        """
+        if len(A) < 3:
+            return False
+
+        sum_list = []
+        for i in range(len(A)):
+            sum_list.append(A[i] if i == 0 else (A[i] + sum_list[i - 1]))
+
+        total_sum = sum_list[-1]
+        if total_sum % 3 != 0:
+            return False
+
+        result = int(total_sum / 3)
+        first_index = -1
+        second_index = -1
+
+        for i in range(len(sum_list)):
+            if sum_list[i] == result and first_index == -1 and second_index == -1:
+                first_index = i
+            elif sum_list[i] == 2 * result and first_index != -1:
+                second_index = i
+
+            if second_index != -1 and second_index < len(sum_list) - 1:
+                return True
+        return False
+
+    def majorityElement(self, nums: list) -> int:
+        """
+        169. 多数元素
+        :see https://leetcode-cn.com/problems/majority-element/
+        """
+        # 最大次数的数字和出现的次数
+        max_count_num = 0
+        max_count = 0
+
+        for i in nums:
+            if max_count == 0:
+                max_count_num = i
+                max_count += 1
+            elif i == max_count_num:
+                max_count += 1
+            else:
+                max_count -= 1
+
+        return max_count_num
+
     count = 0
 
     def reversePairs(self, nums: list) -> int:

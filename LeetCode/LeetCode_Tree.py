@@ -479,6 +479,32 @@ class Solution(object):
 
         return product
 
+    def diameterOfBinaryTree(self, root: TreeNode) -> int:
+        """
+        二叉树的直径
+        :see https://leetcode-cn.com/problems/diameter-of-binary-tree/
+        """
+
+        def max_deep_of_tree(root: TreeNode) -> int:
+            """ 以root为根节点的树的最大深度 """
+            if root is None:
+                return 0
+            if root in max_deep_dict:
+                return max_deep_dict[root]
+            max_deep = max(max_deep_of_tree(root.left), max_deep_of_tree(root.right)) + 1
+            max_deep_dict[root] = max_deep
+            return max_deep
+
+        def max_path_of_tree(root: TreeNode) -> int:
+            """ 以root为根节点的树的最长路径 """
+            if root is None:
+                return 0
+            return max(max_path_of_tree(root.left), max_path_of_tree(root.right), max_deep_of_tree(root.left) + max_deep_of_tree(root.right) - 1)
+
+        max_deep_dict = {}
+
+        return max_deep_of_tree(root) - 1 if root is not None else 0
+
 
 if __name__ == '__main__':
     root = TreeNode(1)
@@ -492,7 +518,7 @@ if __name__ == '__main__':
     # # root.left.right.right = TreeNode(4)
     #
     # # root.right.left = TreeNode(4)
-    root.right.left = TreeNode(6)
+    # root.right.left = TreeNode(6)
 
     # print(Solution().lowestCommonAncestor(root, TreeNode(5), TreeNode(4)).val)
     # string = Solution().serialize(root)
@@ -500,4 +526,4 @@ if __name__ == '__main__':
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
 
     s = Solution()
-    print(s.maxProduct(root))
+    print(s.diameterOfBinaryTree(root))
