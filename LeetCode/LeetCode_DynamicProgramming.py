@@ -1,3 +1,4 @@
+import bisect
 import re
 
 
@@ -61,8 +62,8 @@ class Solution:
 
     def lengthOfLIS(self, nums: list) -> int:
         """
-        最长上升子序列
-        :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/272/dynamic-programming/1179/
+        300.最长上升子序列
+        :see https://leetcode-cn.com/problems/longest-increasing-subsequence/
         """
         # count_list = [1] * len(nums)
         #
@@ -77,25 +78,18 @@ class Solution:
         #         max_length = count_list[i]
         #
         # return max_length
-        size = len(nums)
-        if size < 2:
-            return size
+        if len(nums) < 2:
+            return len(nums)
 
         tail = []
         for num in nums:
-            # 找到大于等于 num 的第 1 个数
-            l = 0
-            r = len(tail)
-            while l < r:
-                mid = l + (r - l) // 2
-                if tail[mid] < num:
-                    l = mid + 1
-                else:
-                    r = mid
-            if l == len(tail):
+            # 找到小于 num 的第 1 个数
+            index = bisect.bisect_left(tail, num)
+
+            if index == len(tail):
                 tail.append(num)
             else:
-                tail[l] = num
+                tail[index] = num
 
             print(tail)
         return len(tail)
@@ -279,8 +273,9 @@ class Solution:
 
     def minDistance(self, word1: str, word2: str) -> int:
         """
-        编辑距离
+        72.编辑距离
         :see https://leetcode-cn.com/problems/edit-distance/
+        """
         """
         distance_list = []
 
@@ -302,6 +297,28 @@ class Solution:
                                      distance_list[i - m - 1] + (0 if word1[x - 1] == word2[y - 1] else 1)))
 
         return distance_list[m * n - 1]
+        """
+
+        word1 = ' ' + word1
+        word2 = ' ' + word2
+
+        distance_list = [[0] * len(word2) for _ in word1]
+
+        for i in range(len(word1)):
+            for j in range(len(word2)):
+                if i == 0:
+                    distance_list[i][j] = j
+                elif j == 0:
+                    distance_list[i][j] = i
+                else:
+                    distance_list[i][j] = min(distance_list[i - 1][j] + 1,
+                                              distance_list[i][j - 1] + 1,
+                                              distance_list[i - 1][j - 1] + (1 if word1[i] != word2[j] else 0))
+
+        for i in distance_list:
+            print(i)
+
+        return distance_list[-1][-1]
 
     def longestPalindrome(self, s: str) -> str:
         """
@@ -843,4 +860,4 @@ class Solution:
 
 
 if __name__ == "__main__":
-    print(Solution().isMatch("mississippi", "mis*is*ip*."))
+    print(Solution().minDistance("ros", "horse"))
