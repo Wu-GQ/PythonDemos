@@ -358,7 +358,7 @@ class Solution:
         p_length = len(p)
 
         # 存储比较结果
-        compare_list = [[False for i in range(p_length)] for j in range(s_length)]
+        compare_list = [[False] * p_length for j in range(s_length)]
 
         for i in range(s_length):
             for j in range(p_length):

@@ -791,6 +791,56 @@ class Solution:
         print(result_list)
         return result_list[-1]
 
+    def isMatch(self, s: str, p: str) -> bool:
+        """
+        面试题19. 正则表达式匹配
+        :see https://leetcode-cn.com/problems/zheng-ze-biao-da-shi-pi-pei-lcof/
+        """
+        """
+        # 回溯递归算法
+        # 执行用时 : 1968 ms , 在所有 Python3 提交中击败了 8.91% 的用户
+        # 内存消耗 : 13.5 MB , 在所有 Python3 提交中击败了 100.00% 的用户
+        if len(s) == 0 and len(p) == 0:
+            return True
+        elif len(s) > 0 and len(p) == 0:
+            return False
+        elif len(p) > 1 and p[1] == '*':
+            if len(s) > 0 and (p[0] == '.' or s[0] == p[0]):
+                return self.isMatch(s[1:], p) or self.isMatch(s, p[2:])
+            else:
+                return self.isMatch(s, p[2:])
+        elif len(s) > 0 and (s[0] == p[0] or p[0] == '.'):
+            return self.isMatch(s[1:], p[1:])
+        else:
+            return False
+        """
+        # 动态规划
+        # 执行用时 : 48 ms, 在所有 Python3 提交中击败了 95.40% 的用户
+        # 内存消耗 : 13.4 MB, 在所有 Python3 提交中击败了 100.00% 的用户
+
+        s = ' ' + s
+        p = ' ' + p
+
+        result_list = [[False] * len(p) for _ in s]
+
+        for i in range(len(s)):
+            for j in range(len(p)):
+                if i == 0 and j == 0:
+                    result_list[i][j] = True
+                elif i > 0 and j == 0:
+                    result_list[i][j] = False
+                elif p[j] == '*':
+                    if s[i] == p[j - 1] or (i > 0 and p[j - 1] == '.'):
+                        result_list[i][j] = result_list[i - 1][j] or result_list[i][j - 2]
+                    else:
+                        result_list[i][j] = result_list[i][j - 2]
+                elif s[i] == p[j] or (i > 0 and p[j] == '.'):
+                    result_list[i][j] = result_list[i - 1][j - 1]
+                else:
+                    result_list[i][j] = False
+
+        return result_list[-1][-1]
+
 
 if __name__ == "__main__":
-    print(Solution().coinChange([1, 2, 5], 15))
+    print(Solution().isMatch("mississippi", "mis*is*ip*."))

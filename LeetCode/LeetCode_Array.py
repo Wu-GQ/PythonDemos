@@ -1,3 +1,6 @@
+import bisect
+
+
 class MinStack:
     """
     最小栈
@@ -841,10 +844,31 @@ class Solution:
             return result_list
 
         # print(part_list(nums))
+        part_list(nums)
 
         return self.count
+
+    def reversePairs2(self, nums: list) -> int:
+        """
+        面试题51. 数组中的逆序对
+        :see https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/
+        """
+        num_list = []
+
+        count = 0
+        # result_list = []
+
+        nums.reverse()
+
+        for i in nums:
+            index = bisect.bisect_left(num_list, i)
+            num_list.insert(index, i)
+            count += index
+            # result_list.append(index)
+
+        return count
 
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.reversePairs([7, 5, 6, 4, 10]))
+    print(s.reversePairs2([7, 5, 6, 4]))
