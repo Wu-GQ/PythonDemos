@@ -240,10 +240,110 @@ class Solution:
 
         return times if total_orange_count == 0 else -1
 
+    def maxAreaOfIsland(self, grid: list) -> int:
+        """
+        695. 岛屿的最大面积
+        :see https://leetcode-cn.com/problems/max-area-of-island/
+        """
+
+        def seek_next_island(x: int, y: int) -> list:
+            """ 寻找该岛屿周围的岛屿坐标 """
+            result = []
+            if x - 1 >= 0 and grid[x - 1][y] == 1:
+                result.append((x - 1, y))
+            if x + 1 < len(grid) and grid[x + 1][y] == 1:
+                result.append((x + 1, y))
+            if y - 1 >= 0 and grid[x][y - 1] == 1:
+                result.append((x, y - 1))
+            if y + 1 < len(grid[x]) and grid[x][y + 1] == 1:
+                result.append((x, y + 1))
+            return result
+
+        if len(grid) < 1 or len(grid[0]) < 1:
+            return 0
+
+        max_island_count = 0
+
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                if grid[i][j] == 1:
+                    # print('----------------')
+                    island_queue = [(i, j)]
+                    island_count = 0
+                    while len(island_queue) > 0:
+                        next_island = island_queue.pop(0)
+                        if grid[next_island[0]][next_island[1]] == 1:
+                            island_count += 1
+                            grid[next_island[0]][next_island[1]] = 2
+                            # print(next_island, island_count)
+                            island_queue += seek_next_island(next_island[0], next_island[1])
+                    max_island_count = max(max_island_count, island_count)
+
+        return max_island_count
+
+    def solve(self, board: list) -> None:
+        """
+        130. 被围绕的区域
+        :see https://leetcode-cn.com/problems/surrounded-regions/
+        """
+
+        def seek_next_area(x: int, y: int) -> list:
+            """ 寻找该岛屿周围的岛屿坐标 """
+            result = []
+            if x - 1 >= 0 and board[x - 1][y] == 'O':
+                result.append((x - 1, y))
+            if x + 1 < len(board) and board[x + 1][y] == 'O':
+                result.append((x + 1, y))
+            if y - 1 >= 0 and board[x][y - 1] == 'O':
+                result.append((x, y - 1))
+            if y + 1 < len(board[x]) and board[x][y + 1] == 'O':
+                result.append((x, y + 1))
+            return result
+
+        if len(board) < 1 or len(board[0]) < 1:
+            return
+
+        for i in range(len(board)):
+            for j in range(len(board[i])):
+                if board[i][j] == 'O':
+                    checked_area = []
+                    need_not_change = False
+                    area_queue = [(i, j)]
+
+                    while len(area_queue) > 0:
+                        next_area = area_queue.pop(0)
+                        if board[next_area[0]][next_area[1]] == 'O':
+                            need_not_change = need_not_change or next_area[0] == 0 or next_area[0] == len(board) - 1 or next_area[1] == 0 or \
+                                              next_area[1] == len(board[0]) - 1
+                            checked_area.append(next_area)
+                            board[next_area[0]][next_area[1]] = 'o'
+                            area_queue += seek_next_area(next_area[0], next_area[1])
+
+                    if not need_not_change:
+                        for area in checked_area:
+                            board[area[0]][area[1]] = 'X'
+
+        for i in board:
+            print(i)
+
+        for i in range(len(board)):
+            for j in range(len(board[i])):
+                board[i][j] = board[i][j].upper()
+
+        # print(board)
+
 
 if __name__ == '__main__':
     # print(Solution().ladderLength("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"]))
     # print(Solution().scheduleCourse([[5, 15], [3, 19], [6, 7], [2, 10], [5, 16], [8, 14], [10, 11], [2, 19]]))
     # print(Solution().scheduleCourse([[5, 5], [4, 6], [2, 6]]))
     s = Solution()
-    print(s.orangesRotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]))
+    a = [["X", "X", "X", "O", "X", "O", "X"],
+         ["X", "O", "X", "O", "X", "O", "O"],
+         ["X", "X", "X", "X", "X", "X", "O"],
+         ["X", "X", "X", "X", "O", "X", "O"],
+         ["X", "X", "X", "X", "X", "X", "O"],
+         ["X", "X", "X", "X", "X", "X", "X"],
+         ["O", "X", "X", "O", "O", "O", "X"]]
+    print(s.solve(a))
+    print(a)
