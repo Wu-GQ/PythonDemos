@@ -580,15 +580,29 @@ class LinkedList(object):
 
         return head_node
 
+    def swapPairs(self, head: ListNode) -> ListNode:
+        """
+        24. 两两交换链表中的节点
+        :see https://leetcode-cn.com/problems/swap-nodes-in-pairs/
+        """
+        if head is None or head.next is None:
+            return head
+
+        q = head.next
+        t = q.next
+
+        q.next = head
+        head.next = self.swapPairs(t)
+
+        return q
+
 
 if __name__ == '__main__':
-    data1 = [4, 2, 1, 3, 6, 7, 8, 10]
-    # data = [6, 7, 8, 10, 2, 3, 5, 7, 3, -10]
-    data2 = [1, 2, 3]
-    # data = []
+    data = [1, 2, 3, 4, 5]
 
-    linked_list = LinkedList(data1)
+    linked_list = LinkedList(data)
 
     # p: ListNode = linked_list.addTwoNumbers(LinkedList(data1).head, LinkedList(data2).head)
-    p: ListNode = linked_list.reverseKGroup(LinkedList(data2).head, 6)
+    p: ListNode = linked_list.swapPairs(linked_list.head)
+
     print(linked_list.description(p))

@@ -92,6 +92,21 @@ class Solution:
 
         return result_list
 
+    def isPalindrome(self, x: int) -> bool:
+        """
+        回文数
+        :see https://leetcode-cn.com/problems/palindrome-number/
+        """
+        if x < 0:
+            return False
+
+        string = str(x)
+        for i in range(len(string)):
+            if string[i] != string[-1 - i]:
+                return False
+
+        return True
+
 
 if __name__ == '__main__':
-    print(Solution().distributeCandies(7, 4))
+    print(Solution().isPalindrome(100))

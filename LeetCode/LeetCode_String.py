@@ -1,3 +1,4 @@
+from io import StringIO
 from queue import Queue
 
 
@@ -477,6 +478,31 @@ class Solution:
 
         return str1 + str2
 
+    def compressString(self, S: str) -> str:
+        """
+        面试题 01.06. 字符串压缩
+        :see https://leetcode-cn.com/problems/compress-string-lcci/
+        """
+        # 统计字母数量
+        new_string_list = []
+        for i in S:
+            if len(new_string_list) > 1 and i == new_string_list[-2]:
+                new_string_list[-1] += 1
+            else:
+                new_string_list.append(i)
+                new_string_list.append(1)
+
+        # 输出
+        if len(new_string_list) >= len(S):
+            return S
+
+        string = StringIO()
+        for i in new_string_list:
+            if i is str:
+                string.write(i)
+            else:
+                string.write(str(i))
+        return string.getvalue()
 
 if __name__ == "__main__":
-    print(Solution().gcdOfStrings("ABABAB", "ABAB"))
+    print(Solution().compressString('aabcccccaaa'))
