@@ -504,5 +504,42 @@ class Solution:
                 string.write(str(i))
         return string.getvalue()
 
+    def countCharacters(self, words: list, chars: str) -> int:
+        """
+        1160. 拼写单词
+        :see https://leetcode-cn.com/problems/find-words-that-can-be-formed-by-characters/
+        """
+        # 先统计字母表的字符数量
+        char_count_dict = {}
+        for i in chars:
+            if i in char_count_dict:
+                char_count_dict[i] += 1
+            else:
+                char_count_dict[i] = 1
+        
+        # 逐个分析每个词汇的字符数量
+        count = 0
+        for word in words:
+            word_count_dict = {}
+            is_break = False
+
+            for i in word:
+                if i not in char_count_dict:
+                    is_break = True
+                    break
+                elif i in word_count_dict:
+                    word_count_dict[i] += 1
+                    if word_count_dict[i] > char_count_dict[i]:
+                        is_break = True
+                        break
+                else:
+                    word_count_dict[i] = 1
+            
+            if not is_break:
+                count += len(word)
+        
+        return count
+
+
 if __name__ == "__main__":
-    print(Solution().compressString('aabcccccaaa'))
+    print(Solution().countCharacters(["hello","world","leetcode"], 'welldonehoneyr'))
