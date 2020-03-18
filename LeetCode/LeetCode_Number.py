@@ -107,6 +107,18 @@ class Solution:
 
         return True
 
+    def isRectangleOverlap(self, rec1: list, rec2: list) -> bool:
+        """
+        836. 矩形重叠
+        :see https://leetcode-cn.com/problems/rectangle-overlap/
+        """
+        # 矩形1的中心: (x1 + x2) / 2, (y1 + y2) / 2
+        # 矩形1的宽度: (x2 - x1) / 2, 高度: (y2 - y1) / 2
+        # 矩形2的中心: (x3 + x4) / 2, (y3 + y4) / 2
+        # 矩形2的宽度: (x4 - x3) / 2, 高度: (y4 - y3) / 2
+        # 矩形重叠 = 矩形1和矩形2之间的距离
+        return rec1[0] - rec2[2] < 0 < rec1[2] - rec2[0] and rec1[1] - rec2[3] < 0 < rec1[3] - rec2[1]
+
 
 if __name__ == '__main__':
-    print(Solution().isPalindrome(100))
+    print(Solution().isRectangleOverlap([0,0,1,1], [1,0,2,1]))
