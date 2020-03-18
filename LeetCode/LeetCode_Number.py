@@ -116,8 +116,8 @@ class Solution:
         # 矩形1的宽度: (x2 - x1) / 2, 高度: (y2 - y1) / 2
         # 矩形2的中心: (x3 + x4) / 2, (y3 + y4) / 2
         # 矩形2的宽度: (x4 - x3) / 2, 高度: (y4 - y3) / 2
-        # 矩形重叠 = 矩形1和矩形2之间的距离
-        return rec1[0] - rec2[2] < 0 < rec1[2] - rec2[0] and rec1[1] - rec2[3] < 0 < rec1[3] - rec2[1]
+        # 矩形重叠 = 矩形1和矩形2之间的距离是否在一定范围内
+        return rec1[0] < rec2[2] and rec1[2] > rec2[0] and rec1[1] < rec2[3] and rec1[3] > rec2[1]
 
 
 if __name__ == '__main__':
