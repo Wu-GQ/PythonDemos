@@ -1,4 +1,5 @@
 import bisect
+import heapq
 
 
 class MinStack:
@@ -918,7 +919,52 @@ class Solution:
 
         return count
 
+    def getLeastNumbers(self, arr: list, k: int) -> list:
+        """
+        最小的k个数
+        :see https://leetcode-cn.com/problems/zui-xiao-de-kge-shu-lcof/
+        """
+        # return [] if k < 1 else heapq.nsmallest(k, arr)
+        if k < 1:
+            return []
+        
+        result = []
+        for i in arr:
+            if len(result) < k:
+                heapq.heappush(result, -i)
+            elif result[0] < -i:
+                heapq.heapreplace(result, -i)
+            print(result)
+        return [-i for i in result]
+    
+    def quick_sort(self, array: list) -> list:
+        """
+        快速排序
+        """
+        # if len(array) < 2:
+        #     return array
+        # left_array = [i for i in array if i < array[0]]
+        # right_array = [i for i in array if i > array[0]]
+        # return self.quick_sort(left_array) + [array[0]] + self.quick_sort(right_array)
+        if len(array) < 2: 
+            return array
+        target = array[0]
+        left_index = 0
+        right_index = len(array) - 1
+        while left_index < right_index:
+            while left_index < len(array) and target > array[left_index]:
+                left_index += 1
+            while right_index >= 0 and target < array[right_index]:
+                right_index -= 1
+            
+            if left_index >= right_index:
+                break
+
+            array[left_index], array[right_index] = array[right_index], array[left_index]
+
+            print(left_index, right_index, array)
+        return []
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.reversePairs2([7, 5, 6, 4]))
+    print(s.quick_sort([7, 5, 10, 7, 8, 6, 4]))
