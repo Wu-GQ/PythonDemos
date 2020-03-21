@@ -1,4 +1,5 @@
 import bisect
+import heapq
 
 
 class MinStack:
@@ -918,7 +919,67 @@ class Solution:
 
         return count
 
+    def getLeastNumbers(self, arr: list, k: int) -> list:
+        """
+        最小的k个数
+        :see https://leetcode-cn.com/problems/zui-xiao-de-kge-shu-lcof/
+        """
+        # return [] if k < 1 else heapq.nsmallest(k, arr)
+        if k < 1:
+            return []
+
+        result = []
+        for i in arr:
+            if len(result) < k:
+                heapq.heappush(result, -i)
+            elif result[0] < -i:
+                heapq.heapreplace(result, -i)
+            print(result)
+        return [-i for i in result]
+
+    def quick_sort(self, array: list, left: int, right: int) -> None:
+        """
+        快速排序
+        """
+        # if len(array) < 2:
+        #     return array
+        # left_array = [i for i in array if i < array[0]]
+        # right_array = [i for i in array if i > array[0]]
+        # return self.quick_sort(left_array) + [array[0]] + self.quick_sort(right_array)
+
+        def quick_sort(start: int, end: int) -> None:
+            if end - start < 1:
+                return
+
+            target = array[start]
+            left_index = start
+            right_index = end
+
+            while left_index < right_index:
+                while right_index >= 0 and target <= array[right_index]:
+                    right_index -= 1
+
+                if left_index >= right_index:
+                    break
+                array[left_index], array[right_index] = array[right_index], array[left_index]
+                # print(f'1: {left_index}, {right_index}, {array}')
+
+                while left_index < len(array) and target > array[left_index]:
+                    left_index += 1
+
+                if left_index >= right_index:
+                    break
+                array[left_index], array[right_index] = array[right_index], array[left_index]
+                # print(f'2: {left_index}, {right_index}, {array}')
+
+            quick_sort(start, min(left_index, right_index))
+            quick_sort(max(left_index, right_index) + 1, end)
+
+        quick_sort(0, len(array) - 1)
+
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.reversePairs2([7, 5, 6, 4]))
+    a = [6, 2, 5, 3, 8, 5, 4, 9]
+    s.quick_sort(a, 0, len(a) - 1)
+    print(a)

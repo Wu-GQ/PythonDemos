@@ -504,5 +504,81 @@ class Solution:
                 string.write(str(i))
         return string.getvalue()
 
+    def countCharacters(self, words: list, chars: str) -> int:
+        """
+        1160. 拼写单词
+        :see https://leetcode-cn.com/problems/find-words-that-can-be-formed-by-characters/
+        """
+        # 先统计字母表的字符数量
+        char_count_dict = {}
+        for i in chars:
+            if i in char_count_dict:
+                char_count_dict[i] += 1
+            else:
+                char_count_dict[i] = 1
+        
+        # 逐个分析每个词汇的字符数量
+        count = 0
+        for word in words:
+            word_count_dict = {}
+            is_break = False
+
+            for i in word:
+                if i not in char_count_dict:
+                    is_break = True
+                    break
+                elif i in word_count_dict:
+                    word_count_dict[i] += 1
+                    if word_count_dict[i] > char_count_dict[i]:
+                        is_break = True
+                        break
+                else:
+                    word_count_dict[i] = 1
+            
+            if not is_break:
+                count += len(word)
+        
+        return count
+
+    def longestPalindrome(self, s: str) -> int:
+        """
+        409. 最长回文串
+        :see https://leetcode-cn.com/problems/longest-palindrome/
+        """
+        # 找有多少成对的字符，如果还有单个的字符，可以排在中间
+        """
+        if len(s) < 1:
+            return 0
+
+        char_set = set()
+        max_length = 0
+        for i in s:
+            if i in char_set:
+                char_set.remove(i)
+                max_length += 2
+            else:
+                char_set.add(i)
+        
+        return max_length + (1 if len(char_set) > 0 else 0)
+        """
+        if len(s) < 1:
+            return 0
+        
+        char_list = [0] * 52
+        max_length = 0
+        single_char = 0
+        
+        for i in s:
+            index = ord(i) - 64 if ord(i) < 91 else ord(i) - 71
+            if char_list[index] > 0:
+                max_length += 2
+                char_list[index] = 0
+                single_char -= 1
+            else:
+                char_list[index] = 1
+                single_char += 1
+
+        return max_length + (1 if single_char > 0 else 0)
+
 if __name__ == "__main__":
-    print(Solution().compressString('aabcccccaaa'))
+    print(Solution().longestPalindrome("abccccdd"))
