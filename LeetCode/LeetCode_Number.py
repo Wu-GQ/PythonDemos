@@ -107,6 +107,50 @@ class Solution:
 
         return True
 
+    def canMeasureWater(self, x: int, y: int, z: int) -> bool:
+        """
+        365. 水壶问题
+        :see https://leetcode-cn.com/problems/water-and-jug-problem/
+        """
+        if z > x + y:
+            return False
+
+        water_stack = [(0, 0)]
+        checked_water = set()
+
+        while water_stack:
+            remain_x, remain_y = water_stack.pop(0)
+            if remain_x == z or remain_y == z or remain_x + remain_y == z:
+                return True
+
+            if (remain_x, remain_y) in checked_water:
+                continue
+            else:
+                checked_water.add((remain_x, remain_y))
+
+            # x清空
+            water_stack.append((0, remain_y))
+            # y清空
+            water_stack.append((remain_x, 0))
+            # x加满
+            water_stack.append((x, remain_y))
+            # y加满
+            water_stack.append((remain_x, y))
+            # x->y
+            left_y = y - remain_y
+            if left_y >= remain_x:
+                water_stack.append((0, remain_x + remain_y))
+            else:
+                water_stack.append((left_y - remain_x, y))
+            # x<-y
+            left_x = x - remain_x
+            if left_x >= remain_y:
+                water_stack.append((remain_x + remain_y, 0))
+            else:
+                water_stack.append((x, left_x - remain_y))
+
+        return False
+
 
 if __name__ == '__main__':
-    print(Solution().isPalindrome(100))
+    print(Solution().canMeasureWater(2, 6, 3))
