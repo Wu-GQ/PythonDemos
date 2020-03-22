@@ -163,6 +163,26 @@ class Solution:
 
         return False
 
+    def minIncrementForUnique(self, A: list) -> int:
+        """
+        945. 使数组唯一的最小增量
+        :see https://leetcode-cn.com/problems/minimum-increment-to-make-array-unique/
+        """
+        if not A:
+            return 0
+        A.sort()
+        max_num = A[0] - 1
+        add_times = 0
+        # print(A)
+        for i in A:
+            # print(i, max_num, add_times)
+            if i <= max_num:
+                add_times += max_num - i + 1
+                max_num += 1
+            else:
+                max_num = i
+        return add_times
+
 
 if __name__ == '__main__':
-    print(Solution().isRectangleOverlap([0,0,1,1], [1,0,2,1]))
+    print(Solution().minIncrementForUnique([]))
