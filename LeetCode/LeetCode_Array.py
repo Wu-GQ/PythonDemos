@@ -927,7 +927,7 @@ class Solution:
         # return [] if k < 1 else heapq.nsmallest(k, arr)
         if k < 1:
             return []
-        
+
         result = []
         for i in arr:
             if len(result) < k:
@@ -936,8 +936,8 @@ class Solution:
                 heapq.heapreplace(result, -i)
             print(result)
         return [-i for i in result]
-    
-    def quick_sort(self, array: list) -> list:
+
+    def quick_sort(self, array: list, left: int, right: int) -> None:
         """
         快速排序
         """
@@ -946,25 +946,40 @@ class Solution:
         # left_array = [i for i in array if i < array[0]]
         # right_array = [i for i in array if i > array[0]]
         # return self.quick_sort(left_array) + [array[0]] + self.quick_sort(right_array)
-        if len(array) < 2: 
-            return array
-        target = array[0]
-        left_index = 0
-        right_index = len(array) - 1
-        while left_index < right_index:
-            while left_index < len(array) and target > array[left_index]:
-                left_index += 1
-            while right_index >= 0 and target < array[right_index]:
-                right_index -= 1
-            
-            if left_index >= right_index:
-                break
 
-            array[left_index], array[right_index] = array[right_index], array[left_index]
+        def quick_sort(start: int, end: int) -> None:
+            if end - start < 1:
+                return
 
-            print(left_index, right_index, array)
-        return []
+            target = array[start]
+            left_index = start
+            right_index = end
+
+            while left_index < right_index:
+                while right_index >= 0 and target <= array[right_index]:
+                    right_index -= 1
+
+                if left_index >= right_index:
+                    break
+                array[left_index], array[right_index] = array[right_index], array[left_index]
+                # print(f'1: {left_index}, {right_index}, {array}')
+
+                while left_index < len(array) and target > array[left_index]:
+                    left_index += 1
+
+                if left_index >= right_index:
+                    break
+                array[left_index], array[right_index] = array[right_index], array[left_index]
+                # print(f'2: {left_index}, {right_index}, {array}')
+
+            quick_sort(start, min(left_index, right_index))
+            quick_sort(max(left_index, right_index) + 1, end)
+
+        quick_sort(0, len(array) - 1)
+
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.quick_sort([7, 5, 10, 7, 8, 6, 4]))
+    a = [6, 2, 5, 3, 8, 5, 4, 9]
+    s.quick_sort(a, 0, len(a) - 1)
+    print(a)

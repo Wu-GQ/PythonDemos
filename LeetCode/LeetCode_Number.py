@@ -119,6 +119,70 @@ class Solution:
         # 矩形重叠 = 矩形1和矩形2之间的距离是否在一定范围内
         return rec1[0] < rec2[2] and rec1[2] > rec2[0] and rec1[1] < rec2[3] and rec1[3] > rec2[1]
 
+    def canMeasureWater(self, x: int, y: int, z: int) -> bool:
+        """
+        365. 水壶问题
+        :see https://leetcode-cn.com/problems/water-and-jug-problem/
+        """
+        if z > x + y:
+            return False
+
+        water_stack = [(0, 0)]
+        checked_water = set()
+
+        while water_stack:
+            remain_x, remain_y = water_stack.pop(0)
+            if remain_x == z or remain_y == z or remain_x + remain_y == z:
+                return True
+
+            if (remain_x, remain_y) in checked_water:
+                continue
+            else:
+                checked_water.add((remain_x, remain_y))
+
+            # x清空
+            water_stack.append((0, remain_y))
+            # y清空
+            water_stack.append((remain_x, 0))
+            # x加满
+            water_stack.append((x, remain_y))
+            # y加满
+            water_stack.append((remain_x, y))
+            # x->y
+            left_y = y - remain_y
+            if left_y >= remain_x:
+                water_stack.append((0, remain_x + remain_y))
+            else:
+                water_stack.append((left_y - remain_x, y))
+            # x<-y
+            left_x = x - remain_x
+            if left_x >= remain_y:
+                water_stack.append((remain_x + remain_y, 0))
+            else:
+                water_stack.append((x, left_x - remain_y))
+
+        return False
+
+    def minIncrementForUnique(self, A: list) -> int:
+        """
+        945. 使数组唯一的最小增量
+        :see https://leetcode-cn.com/problems/minimum-increment-to-make-array-unique/
+        """
+        if not A:
+            return 0
+        A.sort()
+        max_num = A[0] - 1
+        add_times = 0
+        # print(A)
+        for i in A:
+            # print(i, max_num, add_times)
+            if i <= max_num:
+                add_times += max_num - i + 1
+                max_num += 1
+            else:
+                max_num = i
+        return add_times
+
 
 if __name__ == '__main__':
-    print(Solution().isRectangleOverlap([0,0,1,1], [1,0,2,1]))
+    print(Solution().minIncrementForUnique([]))
