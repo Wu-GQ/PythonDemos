@@ -977,9 +977,18 @@ class Solution:
 
         quick_sort(0, len(array) - 1)
 
+    def massage(self, nums: list) -> int:
+        """
+        按摩师
+        :see https://leetcode-cn.com/problems/the-masseuse-lcci/
+        """
+        # f(x) = max(f(x - 2), f(x - 3)) + nums[x]
+        a, b, c = 0, 0, 0
+        for i in nums: a, b, c = b, c, max(a, b) + i
+        return max(b, c)
 
 if __name__ == "__main__":
     s = Solution()
-    a = [6, 2, 5, 3, 8, 5, 4, 9]
-    s.quick_sort(a, 0, len(a) - 1)
-    print(a)
+    a = [4, 5, 3, 1, 1, 3]
+    print(s.massage(a))
+    # print(a)
