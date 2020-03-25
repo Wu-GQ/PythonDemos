@@ -986,9 +986,42 @@ class Solution:
         a, b, c = 0, 0, 0
         for i in nums: a, b, c = b, c, max(a, b) + i
         return max(b, c)
+    
+    def surfaceArea(self, grid: list) -> int:
+        """
+        892. 三维形体的表面积
+        :see https://leetcode-cn.com/problems/surface-area-of-3d-shapes/
+        """
+        if not grid or not grid[0]:
+            return 0
+
+        # 每行的总面积
+        total_height_per_row = [0] * len(grid)
+        # 每列的总面积
+        total_height_per_column = [0] * len(grid[0])
+        # 非0的数量
+        not_zero_count = 0
+
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                height = grid[i][j]
+
+                total_height_per_row[i] += height if j == 0 else abs(height - grid[i][j - 1])
+                if j == len(grid[i]) - 1:
+                    total_height_per_row[i] += height
+
+                total_height_per_column[j] += height if i == 0 else abs(height - grid[i - 1][j])
+                if i == len(grid) - 1:
+                    total_height_per_column[j] += height
+                
+                if height != 0:
+                    not_zero_count += 1
+        
+        return sum(total_height_per_row) + sum(total_height_per_column) + 2 * not_zero_count
+
 
 if __name__ == "__main__":
     s = Solution()
-    a = [4, 5, 3, 1, 1, 3]
-    print(s.massage(a))
+    a = [[2,2,2],[2,1,2],[2,2,2]]
+    print(s.surfaceArea(a))
     # print(a)
