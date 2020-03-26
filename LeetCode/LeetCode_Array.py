@@ -1019,9 +1019,39 @@ class Solution:
         
         return sum(total_height_per_row) + sum(total_height_per_column) + 2 * not_zero_count
 
+    def numRookCaptures(self, board: list) -> int:
+        """
+        999. 车的可用捕获量
+        :see https://leetcode-cn.com/problems/available-captures-for-rook/
+        """
+        # 查找车的位置
+        rook_x, rook_y = -1, -1
+        for i in range(8):
+            for j in range(8):
+                if board[i][j] == 'R':
+                    rook_x, rook_y = i, j
+                    break
+        
+        # 四个方向查找是否有卒，顺序：上下左右
+        count_list = ['.', '.', '.', '.']
+
+        step = 1
+        while step < 8:
+            # 向上查找
+            if count_list[0] == '.' and rook_y - step >= 0: count_list[0] = board[rook_x][rook_y - step]
+            # 向下查找
+            if count_list[1] == '.' and rook_y + step < 8: count_list[1] = board[rook_x][rook_y + step]
+            # 向左查找
+            if count_list[2] == '.' and rook_x - step >= 0: count_list[2] = board[rook_x - step][rook_y]
+            # 向右查找
+            if count_list[3] == '.' and rook_x + step < 8: count_list[3] = board[rook_x + step][rook_y]
+
+            step += 1
+        
+        return count_list.count('p')
 
 if __name__ == "__main__":
     s = Solution()
-    a = [[2,2,2],[2,1,2],[2,2,2]]
-    print(s.surfaceArea(a))
+    a = [[".",".",".",".",".",".",".","."],[".",".",".","p",".",".",".","."],[".",".",".","p",".",".",".","."],["p","p",".","R",".","p","B","."],[".",".",".",".",".",".",".","."],[".",".",".","B",".",".",".","."],[".",".",".","p",".",".",".","."],[".",".",".",".",".",".",".","."]]
+    print(s.numRookCaptures(a))
     # print(a)
