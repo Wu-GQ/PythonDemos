@@ -183,6 +183,25 @@ class Solution:
                 max_num = i
         return add_times
 
+    def hasGroupsSizeX(self, deck: list) -> bool:
+        """
+        914. 卡牌分组
+        :see https://leetcode-cn.com/problems/x-of-a-kind-in-a-deck-of-cards/
+        """
+        if len(deck) < 2:
+            return False
+
+        count_dict = {}
+        for i in deck:
+            count_dict[i] = count_dict.get(i, 0) + 1
+
+        gcd_result = count_dict[deck[0]]
+        for i in count_dict.values():
+            gcd_result = math.gcd(gcd_result, i)
+            if gcd_result < 2:
+                return False
+        return gcd_result >= 2
+
 
 if __name__ == '__main__':
-    print(Solution().minIncrementForUnique([]))
+    print(Solution().hasGroupsSizeX([1, 1, 2, 2, 2, 2]))
