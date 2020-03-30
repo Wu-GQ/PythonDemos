@@ -202,6 +202,42 @@ class Solution:
                 return False
         return gcd_result >= 2
 
+    def lastRemaining(self, n: int, m: int) -> int:
+        """
+        圆圈中最后剩下的数字
+        https://leetcode-cn.com/problems/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-lcof/
+        """
+        # 下标的关系，n = 5, m = 3
+        # --------------
+        # 第一次删除：
+        # 0, 1, 2, 3, 4 
+        # 0, 1,  , 3, 4
+        # 2, 3,  , 0, 1
+        # --------------
+        # 删除一个数字后
+        # 3->0, 4->1, 0->2, 1->3
+        # 建立转换关系函数：
+        # f(n - 1) = (f(n) + m) % (n - 1)
+        # --------------
+        # 第二次删除：
+        # 0, 1, 2, 3
+        # 0, 1,  , 3
+        # 1, 2,  , 0
+        # --------------
+        # 验证第二次删除的情况
+        # 3->0, 0->1, 1->2
+        # 转换函数关系为：
+        # f(n - 2) = (f(n - 1) + m) % (n - 1)
+        # --------------
+        # 当n = 1时，只有一个数字，无论怎么转换，都是0
+        # 因此，f(1) = 0，即最后一次转换后，最后剩下的这个数字的下标为0
+        # 那么，通过上述的转换函数，可以一步步逆推回去，找到未转换时，该数的下标
+        if (n == 1):
+            return 0
+        
+        a = (self.lastRemaining(n - 1, m) + m) % (n - 1)
+        print(n , a)
+        return a
 
 if __name__ == '__main__':
-    print(Solution().hasGroupsSizeX([1, 1, 2, 2, 2, 2]))
+    print(Solution().lastRemaining(5, 3))
