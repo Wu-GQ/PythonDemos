@@ -1,38 +1,6 @@
 import bisect
 import heapq
 
-
-class MinStack:
-    """
-    最小栈
-    :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/24/design/59/
-    """
-
-    def __init__(self):
-        """
-        initialize your data structure here.
-        """
-        # 用来存正常的数据
-        self.stack = []
-        # 用来存最小的数据
-        self.min_stack = []
-
-    def push(self, x: int) -> None:
-        self.stack.append(x)
-        # 比较前一存入的数据,如果新加入的数据比较小，则在另一栈中存入新的数据
-        self.min_stack.append(self.min_stack[-1] if len(self.min_stack) > 0 and self.min_stack[-1] < x else x)
-
-    def pop(self) -> None:
-        self.stack.pop()
-        self.min_stack.pop()
-
-    def top(self) -> int:
-        return self.stack[-1]
-
-    def getMin(self) -> int:
-        return self.min_stack[-1]
-
-
 class Solution:
     def move_zeroes(self, nums: list) -> None:
         """
@@ -1049,9 +1017,20 @@ class Solution:
             step += 1
         
         return count_list.count('p')
+    
+    def sortArray(self, nums: list) -> list:
+        """
+        912. 排序数组
+        :see https://leetcode-cn.com/problems/sort-an-array/
+        """
+        if len(nums) < 2: 
+            return nums
+        target = nums.pop(0)
+        return self.sortArray([i for i in nums if i < target]) + [target] + self.sortArray([i for i in nums if i >= target])
+
 
 if __name__ == "__main__":
     s = Solution()
-    a = [[".",".",".",".",".",".",".","."],[".",".",".","p",".",".",".","."],[".",".",".","p",".",".",".","."],["p","p",".","R",".","p","B","."],[".",".",".",".",".",".",".","."],[".",".",".","B",".",".",".","."],[".",".",".","p",".",".",".","."],[".",".",".",".",".",".",".","."]]
-    print(s.numRookCaptures(a))
+    a = [5,2,3,1]
+    print(s.sortArray(a))
     # print(a)
