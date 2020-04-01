@@ -937,7 +937,7 @@ class Solution:
             print(result)
         return [-i for i in result]
 
-    def quick_sort(self, array: list, left: int, right: int) -> None:
+    def quick_sort(self, array: list) -> None:
         """
         快速排序
         """
@@ -981,5 +981,5 @@ class Solution:
 if __name__ == "__main__":
     s = Solution()
     a = [6, 2, 5, 3, 8, 5, 4, 9]
-    s.quick_sort(a, 0, len(a) - 1)
+    s.quick_sort(a)
     print(a)
