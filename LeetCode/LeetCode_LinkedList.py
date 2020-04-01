@@ -596,13 +596,28 @@ class LinkedList(object):
 
         return q
 
+    def middleNode(self, head: ListNode) -> ListNode:
+        """
+        876. 链表的中间结点
+        :see https://leetcode-cn.com/problems/middle-of-the-linked-list/
+        """
+        if head is None or head.next is None:
+            return head
+        
+        slow_node, quick_node = head, head
+
+        while quick_node and quick_node.next:
+            slow_node, quick_node = slow_node.next, quick_node.next.next
+
+        return slow_node
+
 
 if __name__ == '__main__':
-    data = [1, 2, 3, 4, 5]
+    data = [1, 2, 3, 4, 5, 6]
 
     linked_list = LinkedList(data)
 
     # p: ListNode = linked_list.addTwoNumbers(LinkedList(data1).head, LinkedList(data2).head)
-    p: ListNode = linked_list.swapPairs(linked_list.head)
+    p: ListNode = linked_list.middleNode(linked_list.head)
 
-    print(linked_list.description(p))
+    print(p.val)

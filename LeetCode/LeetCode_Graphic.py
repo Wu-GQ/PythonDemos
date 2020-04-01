@@ -332,18 +332,97 @@ class Solution:
 
         # print(board)
 
+    def maxDistance(self, grid: list) -> int:
+        """
+        1162. 地图分析
+        :see https://leetcode-cn.com/problems/as-far-from-land-as-possible/
+        """
+        """ 超时
+        def max_distance_for_ocean(x: int, y: int) -> int:
+            queue = [(x, y)]
+            checked_ocean = set()
+            _min_distance = float('inf')
+            # print(f'----------- {x, y} -----------')
+            while queue:
+                next_ocean = queue.pop(0)
+                distance = abs(next_ocean[0] - x) + abs(next_ocean[1] - y)
+
+                # print(next_ocean)
+
+                if grid[next_ocean[0]][next_ocean[1]] == 1:
+                    return distance
+
+                if distance >= _min_distance:
+                    return _min_distance
+
+                if next_ocean not in checked_ocean:
+                    checked_ocean.add(next_ocean)
+
+                    if next_ocean[0] - 1 >= 0:
+                        queue.append((next_ocean[0] - 1, next_ocean[1]))
+                        if (next_ocean[0] - 1, next_ocean[1]) in search_ocean_max_distance:
+                            _min_distance = min(_min_distance, search_ocean_max_distance[(next_ocean[0] - 1, next_ocean[1])] + abs(next_ocean[0] - 1 -x) + abs(next_ocean[1] - y))
+                    if next_ocean[1] - 1 >= 0:
+                        queue.append((next_ocean[0], next_ocean[1] - 1))
+                        if (next_ocean[0], next_ocean[1] - 1) in search_ocean_max_distance:
+                            _min_distance = min(_min_distance, search_ocean_max_distance[(next_ocean[0], next_ocean[1] - 1)] + abs(next_ocean[0] - x) + abs(next_ocean[1] - 1 -y))
+                    if next_ocean[0] + 1 < len(grid):
+                        queue.append((next_ocean[0] + 1, next_ocean[1]))
+                    if next_ocean[1] + 1 < len(grid[x]):
+                        queue.append((next_ocean[0], next_ocean[1] + 1))
+
+            return _min_distance
+
+        search_ocean_max_distance = {}
+
+        max_distance = 0
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                if grid[i][j] == 0:
+                    distance = max_distance_for_ocean(i, j)
+                    max_distance = max(max_distance, distance)
+                    search_ocean_max_distance[(i, j)] = distance
+        return -1 if max_distance == 0 or max_distance == float('inf') else max_distance
+        """
+        # 多源广度遍历
+        ocean_queue = []
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                if grid[i][j] == 1:
+                    ocean_queue.append((i, j, 0))
+
+        search_ocean_set = set()
+        min_distance = 0
+        while ocean_queue:
+            next_ocean = ocean_queue.pop(0)
+            x, y, distance = next_ocean
+
+            if (x, y) in search_ocean_set:
+                continue
+
+            search_ocean_set.add((x, y))
+            min_distance = max(distance, min_distance)
+
+            if x > 0:
+                ocean_queue.append((x - 1, y, distance + 1))
+            if x + 1 < len(grid):
+                ocean_queue.append((x + 1, y, distance + 1))
+            if y > 0:
+                ocean_queue.append((x, y - 1, distance + 1))
+            if y + 1 < len(grid[0]):
+                ocean_queue.append((x, y + 1, distance + 1))
+
+        # print(grid)
+
+        return min_distance if min_distance != 0 else -1
+
 
 if __name__ == '__main__':
     # print(Solution().ladderLength("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"]))
     # print(Solution().scheduleCourse([[5, 15], [3, 19], [6, 7], [2, 10], [5, 16], [8, 14], [10, 11], [2, 19]]))
     # print(Solution().scheduleCourse([[5, 5], [4, 6], [2, 6]]))
     s = Solution()
-    a = [["X", "X", "X", "O", "X", "O", "X"],
-         ["X", "O", "X", "O", "X", "O", "O"],
-         ["X", "X", "X", "X", "X", "X", "O"],
-         ["X", "X", "X", "X", "O", "X", "O"],
-         ["X", "X", "X", "X", "X", "X", "O"],
-         ["X", "X", "X", "X", "X", "X", "X"],
-         ["O", "X", "X", "O", "O", "O", "X"]]
-    print(s.solve(a))
-    print(a)
+    # a = [[1, 0, 0], [0, 0, 0], [0, 1, 0]]
+    a = [[1, 1, 1, 1, 1], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1], [1, 1, 1, 1, 1]]
+    print(s.maxDistance(a))
+    # print(a)

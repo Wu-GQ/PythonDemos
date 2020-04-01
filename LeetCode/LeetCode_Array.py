@@ -1,38 +1,6 @@
 import bisect
 import heapq
 
-
-class MinStack:
-    """
-    最小栈
-    :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/24/design/59/
-    """
-
-    def __init__(self):
-        """
-        initialize your data structure here.
-        """
-        # 用来存正常的数据
-        self.stack = []
-        # 用来存最小的数据
-        self.min_stack = []
-
-    def push(self, x: int) -> None:
-        self.stack.append(x)
-        # 比较前一存入的数据,如果新加入的数据比较小，则在另一栈中存入新的数据
-        self.min_stack.append(self.min_stack[-1] if len(self.min_stack) > 0 and self.min_stack[-1] < x else x)
-
-    def pop(self) -> None:
-        self.stack.pop()
-        self.min_stack.pop()
-
-    def top(self) -> int:
-        return self.stack[-1]
-
-    def getMin(self) -> int:
-        return self.min_stack[-1]
-
-
 class Solution:
     def move_zeroes(self, nums: list) -> None:
         """
@@ -977,9 +945,92 @@ class Solution:
 
         quick_sort(0, len(array) - 1)
 
+    def massage(self, nums: list) -> int:
+        """
+        按摩师
+        :see https://leetcode-cn.com/problems/the-masseuse-lcci/
+        """
+        # f(x) = max(f(x - 2), f(x - 3)) + nums[x]
+        a, b, c = 0, 0, 0
+        for i in nums: a, b, c = b, c, max(a, b) + i
+        return max(b, c)
+
+    def surfaceArea(self, grid: list) -> int:
+        """
+        892. 三维形体的表面积
+        :see https://leetcode-cn.com/problems/surface-area-of-3d-shapes/
+        """
+        if not grid or not grid[0]:
+            return 0
+
+        # 每行的总面积
+        total_height_per_row = [0] * len(grid)
+        # 每列的总面积
+        total_height_per_column = [0] * len(grid[0])
+        # 非0的数量
+        not_zero_count = 0
+
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                height = grid[i][j]
+
+                total_height_per_row[i] += height if j == 0 else abs(height - grid[i][j - 1])
+                if j == len(grid[i]) - 1:
+                    total_height_per_row[i] += height
+
+                total_height_per_column[j] += height if i == 0 else abs(height - grid[i - 1][j])
+                if i == len(grid) - 1:
+                    total_height_per_column[j] += height
+
+                if height != 0:
+                    not_zero_count += 1
+
+        return sum(total_height_per_row) + sum(total_height_per_column) + 2 * not_zero_count
+
+    def numRookCaptures(self, board: list) -> int:
+        """
+        999. 车的可用捕获量
+        :see https://leetcode-cn.com/problems/available-captures-for-rook/
+        """
+        # 查找车的位置
+        rook_x, rook_y = -1, -1
+        for i in range(8):
+            for j in range(8):
+                if board[i][j] == 'R':
+                    rook_x, rook_y = i, j
+                    break
+
+        # 四个方向查找是否有卒，顺序：上下左右
+        count_list = ['.', '.', '.', '.']
+
+        step = 1
+        while step < 8:
+            # 向上查找
+            if count_list[0] == '.' and rook_y - step >= 0: count_list[0] = board[rook_x][rook_y - step]
+            # 向下查找
+            if count_list[1] == '.' and rook_y + step < 8: count_list[1] = board[rook_x][rook_y + step]
+            # 向左查找
+            if count_list[2] == '.' and rook_x - step >= 0: count_list[2] = board[rook_x - step][rook_y]
+            # 向右查找
+            if count_list[3] == '.' and rook_x + step < 8: count_list[3] = board[rook_x + step][rook_y]
+
+            step += 1
+
+        return count_list.count('p')
+
+    def sortArray(self, nums: list) -> list:
+        """
+        912. 排序数组
+        :see https://leetcode-cn.com/problems/sort-an-array/
+        """
+        if len(nums) < 2:
+            return nums
+        target = nums.pop(0)
+        return self.sortArray([i for i in nums if i < target]) + [target] + self.sortArray([i for i in nums if i >= target])
+
 
 if __name__ == "__main__":
     s = Solution()
-    a = [6, 2, 5, 3, 8, 5, 4, 9]
-    s.quick_sort(a)
-    print(a)
+    a = [5,2,3,1]
+    print(s.sortArray(a))
+    # print(a)

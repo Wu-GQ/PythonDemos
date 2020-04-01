@@ -119,6 +119,121 @@ class Solution:
         # 矩形重叠 = 矩形1和矩形2之间的距离是否在一定范围内
         return rec1[0] < rec2[2] and rec1[2] > rec2[0] and rec1[1] < rec2[3] and rec1[3] > rec2[1]
 
+    def canMeasureWater(self, x: int, y: int, z: int) -> bool:
+        """
+        365. 水壶问题
+        :see https://leetcode-cn.com/problems/water-and-jug-problem/
+        """
+        if z > x + y:
+            return False
+
+        water_stack = [(0, 0)]
+        checked_water = set()
+
+        while water_stack:
+            remain_x, remain_y = water_stack.pop(0)
+            if remain_x == z or remain_y == z or remain_x + remain_y == z:
+                return True
+
+            if (remain_x, remain_y) in checked_water:
+                continue
+            else:
+                checked_water.add((remain_x, remain_y))
+
+            # x清空
+            water_stack.append((0, remain_y))
+            # y清空
+            water_stack.append((remain_x, 0))
+            # x加满
+            water_stack.append((x, remain_y))
+            # y加满
+            water_stack.append((remain_x, y))
+            # x->y
+            left_y = y - remain_y
+            if left_y >= remain_x:
+                water_stack.append((0, remain_x + remain_y))
+            else:
+                water_stack.append((left_y - remain_x, y))
+            # x<-y
+            left_x = x - remain_x
+            if left_x >= remain_y:
+                water_stack.append((remain_x + remain_y, 0))
+            else:
+                water_stack.append((x, left_x - remain_y))
+
+        return False
+
+    def minIncrementForUnique(self, A: list) -> int:
+        """
+        945. 使数组唯一的最小增量
+        :see https://leetcode-cn.com/problems/minimum-increment-to-make-array-unique/
+        """
+        if not A:
+            return 0
+        A.sort()
+        max_num = A[0] - 1
+        add_times = 0
+        # print(A)
+        for i in A:
+            # print(i, max_num, add_times)
+            if i <= max_num:
+                add_times += max_num - i + 1
+                max_num += 1
+            else:
+                max_num = i
+        return add_times
+
+    def hasGroupsSizeX(self, deck: list) -> bool:
+        """
+        914. 卡牌分组
+        :see https://leetcode-cn.com/problems/x-of-a-kind-in-a-deck-of-cards/
+        """
+        if len(deck) < 2:
+            return False
+
+        count_dict = {}
+        for i in deck:
+            count_dict[i] = count_dict.get(i, 0) + 1
+
+        gcd_result = count_dict[deck[0]]
+        for i in count_dict.values():
+            gcd_result = math.gcd(gcd_result, i)
+            if gcd_result < 2:
+                return False
+        return gcd_result >= 2
+
+    def lastRemaining(self, n: int, m: int) -> int:
+        """
+        圆圈中最后剩下的数字
+        https://leetcode-cn.com/problems/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-lcof/
+        """
+        # 下标的关系，n = 5, m = 3
+        # --------------
+        # 第一次删除：
+        # 0, 1, 2, 3, 4 
+        # 0, 1,  , 3, 4
+        # 2, 3,  , 0, 1
+        # --------------
+        # 删除一个数字后
+        # 3->0, 4->1, 0->2, 1->3
+        # 建立转换关系函数：
+        # f(n) = (f(n - 1) + m) % n
+        # f(n - 1) = (x - m) % n if (x - m) % n >= 0 else (x - m) % n + n
+        # --------------
+        # 第二次删除：
+        # 0, 1, 2, 3
+        # 0, 1,  , 3
+        # 1, 2,  , 0
+        # --------------
+        # 验证第二次删除的情况
+        # 3->0, 0->1, 1->2
+        # 转换函数关系成立
+        # --------------
+        # 当n = 1时，只有一个数字，无论怎么转换，都是0
+        # 因此，f(1) = 0，即最后一次转换后，最后剩下的这个数字的下标为0
+        # 那么，通过上述的转换函数，可以一步步逆推回去，找到未转换时，该数的下标n
+        return (self.lastRemaining(n - 1, m) + m) % n if n > 1 else 0
+
 
 if __name__ == '__main__':
-    print(Solution().isRectangleOverlap([0,0,1,1], [1,0,2,1]))
+    print(Solution().lastRemaining(5, 3))
