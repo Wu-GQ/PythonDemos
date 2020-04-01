@@ -1,6 +1,7 @@
 import bisect
 import heapq
 
+
 class Solution:
     def move_zeroes(self, nums: list) -> None:
         """
@@ -909,6 +910,7 @@ class Solution:
         """
         快速排序
         """
+
         # if len(array) < 2:
         #     return array
         # left_array = [i for i in array if i < array[0]]
@@ -1028,9 +1030,49 @@ class Solution:
         target = nums.pop(0)
         return self.sortArray([i for i in nums if i < target]) + [target] + self.sortArray([i for i in nums if i >= target])
 
+    def maxDepthAfterSplit(self, seq: str) -> list:
+        """
+        1111. 有效括号的嵌套深度
+        :see https://leetcode-cn.com/problems/maximum-nesting-depth-of-two-valid-parentheses-strings/
+        """
+        """
+        以下方法可进行简化，奇数层分配给a，偶数层给b即可
+        """
+        # a 和 b 的深度
+        a_depth, b_depth = 0, 0
+        # 上一个括号属于 a 或者 b
+        a_or_b_stack = []
+
+        result_list = []
+
+        for i in seq:
+            if i == '(':
+                if a_depth <= b_depth:
+                    result_list.append(0)
+                    a_or_b_stack.append(0)
+                    a_depth += 1
+                else:
+                    result_list.append(1)
+                    a_or_b_stack.append(1)
+                    b_depth += 1
+            else:
+                if not a_or_b_stack:
+                    print('Error: ' + str(result_list))
+                elif a_or_b_stack[-1] == 1:
+                    result_list.append(1)
+                    a_or_b_stack.pop()
+                    b_depth -= 1
+                elif a_or_b_stack[-1] == 0:
+                    result_list.append(0)
+                    a_or_b_stack.pop()
+                    a_depth -= 1
+            # print(i, result_list, a_or_b_stack)
+
+        return result_list
+
 
 if __name__ == "__main__":
     s = Solution()
-    a = [5,2,3,1]
-    print(s.sortArray(a))
+    a = [5, 2, 3, 1]
+    print(s.maxDepthAfterSplit('(()())'))
     # print(a)
