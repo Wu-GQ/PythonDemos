@@ -416,13 +416,43 @@ class Solution:
 
         return min_distance if min_distance != 0 else -1
 
+    def gameOfLife(self, board: list) -> None:
+        """
+        289. 生命游戏
+        :see https://leetcode-cn.com/problems/game-of-life/
+        """
+
+        def is_alive_for_cell(x: int, y: int, is_alive: int) -> bool:
+            """ 确认某一位置的细胞是否存活 """
+            alive_cell_count = 0
+            for i, j in [(x - 1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y - 1), (x, y + 1), (x + 1, y - 1), (x + 1, y), (x + 1, y + 1)]:
+                if 0 <= i < len(another_board) and 0 <= j < len(another_board[x]):
+                    alive_cell_count += another_board[i][j]
+
+            if is_alive == 0:
+                return alive_cell_count == 3
+            elif is_alive == 1:
+                return alive_cell_count == 2 or alive_cell_count == 3
+            return False
+
+        # 此处使用额外数组来进行计算。当然也可以通过拓展状态的方式，来解决这道题以降低空间复杂度，比如说2代表之前死的后面还是死的，3代表前死后活，4代表前活后死，5代表前活后活
+        # ！！！大佬的解法：使用位运算，末位代表当前状态，前一位代表下一状态
+        another_board = []
+        for i in board:
+            another_board.append(i.copy())
+
+        for i in range(len(another_board)):
+            for j in range(len(another_board[i])):
+                board[i][j] = int(is_alive_for_cell(i, j, board[i][j]))
+
 
 if __name__ == '__main__':
-    # print(Solution().ladderLength("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"]))
-    # print(Solution().scheduleCourse([[5, 15], [3, 19], [6, 7], [2, 10], [5, 16], [8, 14], [10, 11], [2, 19]]))
-    # print(Solution().scheduleCourse([[5, 5], [4, 6], [2, 6]]))
     s = Solution()
-    # a = [[1, 0, 0], [0, 0, 0], [0, 1, 0]]
-    a = [[1, 1, 1, 1, 1], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1], [1, 1, 1, 1, 1]]
-    print(s.maxDistance(a))
-    # print(a)
+    a = [
+        [0, 1, 0],
+        [0, 0, 1],
+        [1, 1, 1],
+        [0, 0, 0]
+    ]
+    print(s.gameOfLife(a))
+    print(a)
