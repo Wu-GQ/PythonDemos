@@ -516,7 +516,7 @@ class Solution:
                 char_count_dict[i] += 1
             else:
                 char_count_dict[i] = 1
-        
+
         # 逐个分析每个词汇的字符数量
         count = 0
         for word in words:
@@ -534,10 +534,10 @@ class Solution:
                         break
                 else:
                     word_count_dict[i] = 1
-            
+
             if not is_break:
                 count += len(word)
-        
+
         return count
 
     def longestPalindrome(self, s: str) -> int:
@@ -563,11 +563,11 @@ class Solution:
         """
         if len(s) < 1:
             return 0
-        
+
         char_list = [0] * 52
         max_length = 0
         single_char = 0
-        
+
         for i in s:
             index = ord(i) - 64 if ord(i) < 91 else ord(i) - 71
             if char_list[index] > 0:
@@ -580,5 +580,51 @@ class Solution:
 
         return max_length + (1 if single_char > 0 else 0)
 
+    def myAtoi(self, str: str) -> int:
+        """
+        8. 字符串转换整数 (atoi)
+        :see https://leetcode-cn.com/problems/string-to-integer-atoi/
+        """
+        min_int = -2 << 30
+        max_int = (2 << 30) - 1
+
+        ord_zero = ord('0')
+        ord_nine = ord('9')
+
+        # 0-正负可选，1代表正号，2表示负号
+        symbol_type = 0
+        # 是否允许空格
+        is_spaces_allowed = True
+
+        result = 0
+
+        for i in str:
+            if i == ' ':
+                if is_spaces_allowed:
+                    continue
+                else:
+                    break
+            elif i == '-' or i == '+':
+                if symbol_type > 0:
+                    break
+                else:
+                    symbol_type = 1 if i == '+' else 2
+                is_spaces_allowed = False
+            elif ord_zero <= ord(i) <= ord_nine:
+                result = result * 10 - ord_zero + ord(i)
+                if (symbol_type != 2) and result >= max_int:
+                    return max_int
+                elif symbol_type == 2 and -result <= min_int:
+                    return min_int
+
+                is_spaces_allowed = False
+                if symbol_type == 0:
+                    symbol_type = 1
+            else:
+                break
+
+        return -result if symbol_type == 2 else result
+
+
 if __name__ == "__main__":
-    print(Solution().longestPalindrome("abccccdd"))
+    print(Solution().myAtoi("0-1"))
