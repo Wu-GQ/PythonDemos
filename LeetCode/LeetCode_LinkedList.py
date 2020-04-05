@@ -603,7 +603,7 @@ class LinkedList(object):
         """
         if head is None or head.next is None:
             return head
-        
+
         slow_node, quick_node = head, head
 
         while quick_node and quick_node.next:

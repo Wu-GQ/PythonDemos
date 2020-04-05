@@ -1070,9 +1070,47 @@ class Solution:
 
         return result_list
 
+    def maxSatisfaction(self, satisfaction: list) -> int:
+        """
+        做菜顺序
+        """
+        max_result = -float('inf')
+        satisfaction.sort()
+
+        for i in range(len(satisfaction)):
+            result = 0
+            for j in range(len(satisfaction) - i):
+                result += satisfaction[i + j] * (j + 1)
+
+            if result >= max_result:
+                max_result = result
+            else:
+                break
+
+        return max_result if max_result > 0 else 0
+
+    def minSubsequence(self, nums: list) -> list:
+        """
+        非递增顺序的最小子序列
+        :param nums:
+        :return:
+        """
+        nums_sum = sum(nums)
+        nums.sort(reverse=True)
+
+        result = []
+        part_sum = 0
+
+        for i in nums:
+            part_sum += i
+            result.append(i)
+            if nums_sum < part_sum * 2:
+                break
+        return result
+
 
 if __name__ == "__main__":
     s = Solution()
-    a = [5, 2, 3, 1]
-    print(s.maxDepthAfterSplit('(()())'))
+    a = [6]
+    print(s.minSubsequence(a))
     # print(a)

@@ -234,6 +234,57 @@ class Solution:
         # 那么，通过上述的转换函数，可以一步步逆推回去，找到未转换时，该数的下标n
         return (self.lastRemaining(n - 1, m) + m) % n if n > 1 else 0
 
+    def checkOverlap(self, radius: int, x_center: int, y_center: int, x1: int, y1: int, x2: int, y2: int) -> bool:
+        """
+        圆和矩形是否有重叠
+        :param radius:
+        :param x_center:
+        :param y_center:
+        :param x1:
+        :param y1:
+        :param x2:
+        :param y2:
+        :return:
+        """
+
+        def distance(x, y) -> float:
+            return (x_center - x) ** 2 + (y_center - y) ** 2
+
+        return (x1 - radius <= x_center <= x2 + radius and y1 <= y_center <= y2) or (
+                x1 <= x_center <= x2 and y1 - radius <= y_center <= y2 + x_center) or (distance(x1, y2) <= radius ** 2) or (
+                       distance(x2, y2) <= radius ** 2) or (distance(x1, y1) <= radius ** 2) or (distance(x2, y1) <= radius ** 2)
+
+    def numSteps(self, s: str) -> int:
+        """
+        将二进制表示减到 1 的步骤数
+        :param s:
+        :return:
+        """
+
+        def step_count(nums: list) -> int:
+            if len(nums) == 1:
+                return 0
+
+            if nums[-1] == '0':
+                nums = nums[:-1]
+            else:
+                nums[-1] = '0'
+                changed = False
+                for i in range(len(nums) - 2, -1, -1):
+                    if nums[i] == '0':
+                        nums[i] = '1'
+                        changed = True
+                        break
+                    else:
+                        nums[i] = '0'
+                if not changed:
+                    nums.insert(0, '1')
+            # print(nums)
+            return step_count(nums) + 1
+
+        nums_list = [i for i in s]
+        return step_count(nums_list)
+
 
 if __name__ == '__main__':
-    print(Solution().lastRemaining(5, 3))
+    print(Solution().numSteps("1011"))

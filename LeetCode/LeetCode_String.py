@@ -625,6 +625,68 @@ class Solution:
 
         return -result if symbol_type == 2 else result
 
+    def canConstruct(self, s: str, k: int) -> bool:
+        """
+        构造 K 个回文字符串
+        :param s:
+        :param k:
+        :return:
+        """
+        char_dict = {}
+        for i in s:
+            char_dict[i] = char_dict.get(i, 0) + 1
+
+        pair_count = 0
+        not_pair_count = 0
+        for i in char_dict:
+            if char_dict[i] % 2 == 0:
+                pair_count += 1
+            else:
+                not_pair_count += 1
+
+        # min_count = not_pair_count if not_pair_count >= pair_count else not_pair_count
+        return not_pair_count <= k <= len(s)
+
+    def longestDiverseString(self, a: int, b: int, c: int) -> str:
+        """
+        最长快乐字符串
+        :param a:
+        :param b:
+        :param c:
+        :return:
+        """
+        nums = [[a, 'a'], [b, 'b'], [c, 'c']]
+        nums.sort(key=lambda num: num[0], reverse=True)
+
+        result = []
+        last_char = ''
+        while nums[0][0] > 0:
+            if last_char == nums[0][1]:
+                if nums[1][0] == 0:
+                    break
+                nums[1][0] -= 1
+                result.append(nums[1][1])
+                last_char = nums[1][1]
+            else:
+                if nums[0][0] == 1:
+                    result.append(nums[0][1])
+                    nums[0][0] = 0
+                else:
+                    result.append(nums[0][1])
+                    result.append(nums[0][1])
+                    nums[0][0] -= 2
+                last_char = nums[0][1]
+
+            # if nums[1][0] == 0:
+            #     break
+            # nums[1][0] -= 1
+            # result.append(nums[1][1])
+            # last_char = nums[1][1]
+
+            nums.sort(key=lambda num: num[0], reverse=True)
+
+        return ''.join(result)
+
 
 if __name__ == "__main__":
-    print(Solution().myAtoi("0-1"))
+    print(Solution().longestDiverseString(0, 1, 7))
