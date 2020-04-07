@@ -445,14 +445,36 @@ class Solution:
             for j in range(len(another_board[i])):
                 board[i][j] = int(is_alive_for_cell(i, j, board[i][j]))
 
+    def rotate(self, matrix: list) -> None:
+        """
+        面试题 01.07. 旋转矩阵
+        :see https://leetcode-cn.com/problems/rotate-matrix-lcci/
+        """
+        if not matrix or not matrix[0]:
+            return
+
+        length = len(matrix)
+
+        for i in range(0, length // 2 + 1):
+            for j in range(0, length - 1 - 2 * i):
+                a = i
+                b = i + j
+                c = length - 1 - i
+                d = length - 1 - i - j
+                matrix[a][b], matrix[b][c], matrix[c][d], matrix[d][a] = matrix[d][a], matrix[a][b], matrix[b][c], matrix[c][d]
+
 
 if __name__ == '__main__':
     s = Solution()
     a = [
-        [0, 1, 0],
-        [0, 0, 1],
-        [1, 1, 1],
-        [0, 0, 0]
+        [0, 1, 2, 3, 4, 5, 6],
+        [7, 8, 9, 10, 11, 12, 13],
+        [14, 15, 16, 17, 18, 19, 20],
+        [21, 22, 23, 24, 25, 26, 27],
+        [28, 29, 30, 31, 32, 33, 34],
+        [35, 36, 37, 38, 39, 40, 41],
+        [42, 43, 44, 45, 46, 47, 48]
     ]
-    print(s.gameOfLife(a))
-    print(a)
+    print(s.rotate(a))
+    for i in a:
+        print(i)
