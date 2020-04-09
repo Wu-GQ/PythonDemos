@@ -877,22 +877,17 @@ class Solution:
         for i in range(0, len(piles)):
             first_dp[i][i] = piles[i]
 
-        for i in range(0, len(piles)):
-            for j in range(i + 1, len(piles)):
-                left = back_dp[i + 1][j] + piles[i]
-                right = back_dp[i][j - 1] + piles[j]
-                if left >= right:
-                    first_dp[i][j] = left
-                    back_dp[i][j] = first_dp[i + 1][j]
-                else:
-                    first_dp[i][j] = right
-                    back_dp[i][j] = first_dp[i][j - 1]
+        for i in range(1, len(piles)):
+            for j in range(0, len(piles) - i):
+                left = back_dp[j + 1][i + j] + piles[j]
+                right = back_dp[j][i + j - 1] + piles[i + j]
 
-        for i in first_dp:
-            print(i)
-        print('----------')
-        for i in back_dp:
-            print(i)
+                if left >= right:
+                    first_dp[j][i + j] = left
+                    back_dp[j][i + j] = first_dp[j + 1][i + j]
+                else:
+                    first_dp[j][i + j] = right
+                    back_dp[j][i + j] = first_dp[j][i + j - 1]
 
         return first_dp[0][-1] > back_dp[0][-1]
 
