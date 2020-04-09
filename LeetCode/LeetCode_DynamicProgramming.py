@@ -858,6 +858,44 @@ class Solution:
 
         return result_list[-1][-1]
 
+    def stoneGame(self, piles: list) -> bool:
+        """
+        877. 石子游戏
+        :see https://leetcode-cn.com/problems/stone-game/
+        """
+        # A先手，如果0堆石子，A获胜
+        # A[i][j]表示先手最高分数，B[i][j]表示后手最高分数，最优得分之差 = A[0][N-1] - B[0][N-1]
+        # 先手：
+        # A[i][j] = max(B[i+1][j] + piles[i], B[i][j-1] + piles[j])
+        # 后手：
+        # B[i][j] = A[i+1][j], A[i][j-1]
+        # 当i=j时，只有一个石子堆，先手为piles[i]，后手为0
+
+        first_dp = [[0] * len(piles) for _ in piles]
+        back_dp = [[0] * len(piles) for _ in piles]
+
+        for i in range(0, len(piles)):
+            first_dp[i][i] = piles[i]
+
+        for i in range(0, len(piles)):
+            for j in range(i + 1, len(piles)):
+                left = back_dp[i + 1][j] + piles[i]
+                right = back_dp[i][j - 1] + piles[j]
+                if left >= right:
+                    first_dp[i][j] = left
+                    back_dp[i][j] = first_dp[i + 1][j]
+                else:
+                    first_dp[i][j] = right
+                    back_dp[i][j] = first_dp[i][j - 1]
+
+        for i in first_dp:
+            print(i)
+        print('----------')
+        for i in back_dp:
+            print(i)
+
+        return first_dp[0][-1] > back_dp[0][-1]
+
 
 if __name__ == "__main__":
-    print(Solution().minDistance("ros", "horse"))
+    print(Solution().stoneGame([3, 2, 10, 4]))
