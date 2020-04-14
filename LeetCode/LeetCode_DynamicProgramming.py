@@ -901,7 +901,7 @@ class Solution:
         #
         # 先手：
         # A[i][j] 表示从第i堆开始，最多取 j 堆的数量, 1 <= k <= 2j
-        # A[i][j] = max(B[i + k][j...2j] + sum(piles[i:i + k]))
+        # A[i][j] = max(B[i + k][max(j, k)] + sum(piles[i:i + k]))
         #
         # 后手：
         # 根据先手选择的堆数 k
@@ -924,13 +924,13 @@ class Solution:
                 if i + 2 * j >= len(piles):
                     continue
 
-                # 从 j 到 2 * j 之间查找，可以获得的最多的石头数量
+                # 从 1 到 2 * j 之间查找，可以获得的最多的石头数量
                 max_k = 0
                 max_stones = 0
                 for k in range(1, 2 * j + 1):
                     if i + k >= len(piles):
                         break
-                    stones = back_dp[i + k][k] + sum(piles[i:i + k])
+                    stones = back_dp[i + k][max(j, k)] + sum(piles[i:i + k])
                     if stones > max_stones:
                         max_stones = stones
                         max_k = k
@@ -940,8 +940,15 @@ class Solution:
                 # 后手可以获得最多的石头数量就是，去掉这次先手取的 k 个石子之后的先手的数量
                 back_dp[i][j] = first_dp[i + max_k][max(j, max_k)]
 
+        # for i in range(len(first_dp)):
+        #     for j in range(1, len(back_dp)):
+        #         print(f'({first_dp[i][j]}, {back_dp[i][j]}, {first_dp[i][j] + back_dp[i][j]})', end=' ')
+        #     print()
+
         return first_dp[0][1]
 
 
 if __name__ == "__main__":
-    print(Solution().stoneGameII([8, 9, 5, 4, 5, 4, 1, 1, 9, 3, 1, 10, 5, 9, 6, 2, 7, 6, 6, 9]))
+    print(Solution().stoneGameII(
+        [8270, 7145, 575, 5156, 5126, 2905, 8793, 7817, 5532, 5726, 7071, 7730, 5200, 5369, 5763, 7148, 8287, 9449, 7567, 4850, 1385, 2135, 1737,
+         9511, 8065, 7063, 8023, 7729, 7084, 8407]))
