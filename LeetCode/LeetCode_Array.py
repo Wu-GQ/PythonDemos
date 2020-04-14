@@ -434,7 +434,7 @@ class Solution:
 
     def generateParenthesis(self, n: int) -> list:
         """
-        括号生成
+        22. 括号生成
         :see https://leetcode-cn.com/problems/generate-parentheses/
         """
         if n < 1:
@@ -447,7 +447,7 @@ class Solution:
                 result_list.append(string)
                 return
 
-            if 0 < left_count < n and left_count > right_count:
+            if right_count < left_count < n:
                 backtrace(f'{string}(', left_count + 1, right_count)
                 backtrace(f'{string})', left_count, right_count + 1)
             elif left_count == 0 or left_count == right_count:
