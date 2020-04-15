@@ -365,6 +365,33 @@ class Solution:
             # print(a, b)
         return (a + b) % (10 ** 9 + 7)
 
+    def movingCount(self, m: int, n: int, k: int) -> int:
+        """
+        机器人的运动范围
+        :see https://leetcode-cn.com/problems/ji-qi-ren-de-yun-dong-fan-wei-lcof/
+        """
+        # 可达的格子
+        num_set = set()
+
+        for i in range(0, m):
+            m_sum = i // 10 + i % 10
+            # x 坐标超过 k 时，不用继续搜索
+            if m_sum > k:
+                break
+
+            for j in range(0, n):
+                n_sum = j // 10 + j % 10
+                # y 坐标超过 k 时，不用继续搜索
+                if n_sum > k:
+                    break
+
+                # 只要左边的格子或者上边的格子可达，该格子即可达
+                if m_sum + n_sum <= k and (i == 0 or (i - 1, j) in num_set or (i, j - 1) in num_set):
+                    num_set.add((i, j))
+                    # print(i, j)
+
+        return len(num_set)
+
 
 if __name__ == '__main__':
-    print(Solution().intersection([1, 1], [-1, 1], [1, 0], [-3, 2]))
+    print(Solution().numSteps("1011"))
