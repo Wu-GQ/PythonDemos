@@ -898,4 +898,4 @@ class Solution:
 
 
 if __name__ == "__main__":
-    print(Solution().stoneGame([3, 2, 10, 4]))
+    print(Solution().superEggDrop(2, 6))

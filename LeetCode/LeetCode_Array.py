@@ -1108,9 +1108,44 @@ class Solution:
                 break
         return result
 
+    def stringMatching(self, words: list) -> list:
+        """
+        5380. 数组中的字符串匹配
+        :param words:
+        :return:
+        """
+        words.sort(key=lambda word: len(word))
+
+        result = []
+        for i in range(0, len(words)):
+            for j in range(i + 1, len(words)):
+                if words[i] in words[j]:
+                    result.append(words[i])
+                    break
+        return result
+
+    def processQueries(self, queries: list, m: int) -> list:
+        """
+        5381. 查询带键的排列
+        :param queries:
+        :param m:
+        :return:
+        """
+        num_index_dict = {i + 1: i for i in range(m)}
+
+        result = []
+        for num in queries:
+            old_index = num_index_dict[num]
+            for i in num_index_dict:
+                if num_index_dict[i] < old_index:
+                    num_index_dict[i] += 1
+            num_index_dict[num] = 0
+            result.append(old_index)
+        return result
+
 
 if __name__ == "__main__":
     s = Solution()
-    a = [6]
-    print(s.minSubsequence(a))
+    a = [7, 5, 5, 8, 3]
+    print(s.processQueries(a, 8))
     # print(a)

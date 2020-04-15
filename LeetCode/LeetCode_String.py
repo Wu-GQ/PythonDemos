@@ -687,6 +687,15 @@ class Solution:
 
         return ''.join(result)
 
+    def entityParser(self, text: str) -> str:
+        """
+        5382. HTML 实体解析器
+        :param text:
+        :return:
+        """
+        return text.replace('&quot;', '\\"').replace('&apos;', "\\'").replace('&amp;', '&').replace('&gt;', '>').replace('&lt;', '<').replace(
+            '&frasl;', '/')
+
 
 if __name__ == "__main__":
-    print(Solution().longestDiverseString(0, 1, 7))
+    print(Solution().entityParser('and I quote: &quot;...&quot;'))

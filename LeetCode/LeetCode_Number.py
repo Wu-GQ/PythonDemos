@@ -285,6 +285,86 @@ class Solution:
         nums_list = [i for i in s]
         return step_count(nums_list)
 
+    def intersection(self, start1: list, end1: list, start2: list, end2: list) -> list:
+        """
+        面试题 16.03. 交点
+        :see https://leetcode-cn.com/problems/intersection-lcci/
+        """
+        if start1[0] > end1[0]:
+            start1, end1 = end1, start1
+        if start2[0] > end2[0]:
+            start2, end2 = end2, start2
+
+        a_y_distance = end1[1] - start1[1]
+        a_x_distance = end1[0] - start1[0]
+        b_y_distance = end2[1] - start2[1]
+        b_x_distance = end2[0] - start2[0]
+
+        if a_x_distance == 0 and b_x_distance == 0:
+            # 水平的两根线
+            if start1[0] == start2[0] and (start1[1] <= start2[1] <= end1[1] or start2[1] <= start1[1] <= end2[1]):
+                return [start1[0], max(start1[1], start2[1])]
+            else:
+                return []
+        elif a_x_distance * b_y_distance == a_y_distance * b_x_distance:
+            # 平行线，判断是否重叠
+            a_y0 = (end1[0] * start1[1] - start1[0] * end1[1]) / (end1[0] - start1[0])
+            b_y0 = (end2[0] * start2[1] - start2[0] * end2[1]) / (end2[0] - start2[0])
+            if a_y0 == b_y0 and (start1[0] <= start2[0] <= end1[0] or start2[0] <= start1[0] <= end2[0]):
+                a = [start1, end1, start2, end2]
+                a.sort(key=lambda x: x[0])
+                return a[1]
+            else:
+                return []
+        elif a_x_distance == 0 and (start2[0] <= start1[0] <= end2[0]):
+            # a 线是水平的
+            y = b_y_distance * start1[0] / b_x_distance + start2[1] - b_y_distance * start2[0] / b_x_distance
+            if start1[1] <= y <= end1[1]:
+                return [start1[0], y]
+            else:
+                return []
+        elif b_x_distance == 0:
+            # b 线是水平的
+            y = a_y_distance * start2[0] / a_x_distance + start1[1] - b_y_distance * start1[0] / b_x_distance
+            if start2[1] <= y <= end2[1]:
+                return [start2[0], y]
+            else:
+                return []
+        else:
+            x = (start2[1] - start2[0] * b_y_distance / b_x_distance - start1[1] + start1[0] * a_y_distance / a_x_distance) / (
+                    a_y_distance / a_x_distance - b_y_distance / b_x_distance)
+            if start1[0] <= x <= end1[0] or start2[0] <= x <= end2[0]:
+                y = (a_y_distance / a_x_distance) * x + (start1[1] - start1[0] * a_y_distance / a_x_distance)
+                if (start1[1] <= y <= end1[1] or end1[1] <= y <= start1[1]) and (start2[1] <= y <= end2[1] or end2[1] <= y <= start2[1]):
+                    return [x, y]
+        return []
+
+    def numOfWays(self, n: int) -> int:
+        """
+        5383. 给 N x 3 网格图涂色的方案数
+        :param n:
+        :return:
+        """
+        # aba = (aba * 0.6 + 0.5 * abc) * 5
+        # abc = (aba * 0.4 + 0.5 * abc) * 4
+        # 当 N = 1 时，直接返回 12
+        # 当 N = 2 时，初始值 30 和 24
+
+        # if n == 1:
+        #     return 12
+        # aba, abc = 30, 24
+        # for i in range(2, n):
+        #     aba, abc = int(3 * aba + 2.5 * abc) % (10 ** 9 + 7), int(1.6 * aba + 2 * abc) % (10 ** 9 + 7)
+        #     print(f'{i}: {aba}, {abc}, {aba + abc}')
+        # return (aba + abc) % (10 ** 9 + 7)
+
+        a, b = 6, 6
+        while n > 1:
+            n -= 1
+            a, b = 2 * a + 2 * b, 2 * a + 3 * b
+            # print(a, b)
+        return (a + b) % (10 ** 9 + 7)
+
 
 if __name__ == '__main__':
-    print(Solution().numSteps("1011"))
+    print(Solution().intersection([1, 1], [-1, 1], [1, 0], [-3, 2]))
