@@ -696,6 +696,16 @@ class Solution:
         return text.replace('&quot;', '\\"').replace('&apos;', "\\'").replace('&amp;', '&').replace('&gt;', '>').replace('&lt;', '<').replace(
             '&frasl;', '/')
 
+    def reverseWords(self, s: str) -> str:
+        """
+        151. 翻转字符串里的单词
+        :see https://leetcode-cn.com/problems/reverse-words-in-a-string/
+        """
+        string_list = s.split()
+        # print(string_list)
+        string_list.reverse()
+        return ' '.join(string_list)
+
 
 if __name__ == "__main__":
-    print(Solution().entityParser('and I quote: &quot;...&quot;'))
+    print(Solution().longestDiverseString(0, 1, 7))

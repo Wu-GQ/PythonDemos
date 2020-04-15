@@ -463,18 +463,44 @@ class Solution:
                 d = length - 1 - i - j
                 matrix[a][b], matrix[b][c], matrix[c][d], matrix[d][a] = matrix[d][a], matrix[a][b], matrix[b][c], matrix[c][d]
 
+    def updateMatrix(self, matrix: list) -> list:
+        """
+        542. 01 矩阵
+        :see https://leetcode-cn.com/problems/01-matrix/
+        """
+        # 多源广度优先遍历
+        checked_index_set = set()
+        zero_index_set = set()
+
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                if matrix[i][j] == 0:
+                    zero_index_set.add((i, j))
+                    checked_index_set.add((i, j))
+
+        distance = 0
+        while zero_index_set:
+            next_index_set = set()
+            for i, j in zero_index_set:
+                checked_index_set.add((i, j))
+                matrix[i][j] = distance
+                for x, y in [(i - 1, j), (i, j - 1), (i, j + 1), (i + 1, j)]:
+                    if 0 <= x < len(matrix) and 0 <= y < len(matrix[x]) and (x, y) not in checked_index_set and (x, y) not in zero_index_set:
+                        next_index_set.add((x, y))
+            zero_index_set = next_index_set
+            distance += 1
+            # print(zero_index_set)
+
+        return matrix
+
 
 if __name__ == '__main__':
     s = Solution()
     a = [
-        [0, 1, 2, 3, 4, 5, 6],
-        [7, 8, 9, 10, 11, 12, 13],
-        [14, 15, 16, 17, 18, 19, 20],
-        [21, 22, 23, 24, 25, 26, 27],
-        [28, 29, 30, 31, 32, 33, 34],
-        [35, 36, 37, 38, 39, 40, 41],
-        [42, 43, 44, 45, 46, 47, 48]
+        [0, 1, 0],
+        [0, 1, 0],
+        [0, 1, 0]
     ]
-    print(s.rotate(a))
-    for i in a:
-        print(i)
+    print(s.updateMatrix(a))
+    # for i in a:
+    #     print(i)

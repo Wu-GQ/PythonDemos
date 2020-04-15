@@ -905,7 +905,7 @@ class Solution:
         #
         # 后手：
         # 根据先手选择的堆数 k
-        # B[i][j] = max(A[i + k][max(j, k)])
+        # B[i][j] = A[i + k][max(j, k)]
         #
         # 基础条件：
         # i + 2 * j >= N, A[i][j] = sum(piles[i:]), B[i][j] = 0
@@ -947,6 +947,47 @@ class Solution:
 
         return first_dp[0][1]
 
+    def stoneGameIII(self, stoneValue: list) -> str:
+        """
+        1406. 石子游戏 III
+        :see https://leetcode-cn.com/problems/stone-game-iii/
+        """
+        # 先手first_dp[i]，表示先手从第 i 堆开始取，可以取的最大数量
+        # first_dp[i] = max(back_dp[i + k] + sum(stoneValue[i:i + k])), 1 <= k <= 3
+        #
+        # 后手back_dp[i]，表示后手在先手取完前 k 堆后，从第 i + k 堆开始取，可以取的最大数量
+        # back_dp[i] = first_dp[i + k]
+        #
+        # 初始条件，当只剩最后 1 堆时，先手取全部，后手取0
+        # 当 i == len(stoneValue) - 1 时, first_dp[i] = stoneValue[-1], back_dp[i] = 0
+
+        first_dp = [-1000] * len(stoneValue)
+        back_dp = [-1000] * len(stoneValue)
+
+        first_dp[-1] = stoneValue[-1]
+        back_dp[-1] = 0
+
+        for i in range(len(stoneValue) - 2, -1, -1):
+            max_k = 0
+            max_stone = -1000
+            for k in [1, 2, 3]:
+                if i + k > len(stoneValue):
+                    break
+                stones = (back_dp[i + k] if i + k < len(stoneValue) else 0) + sum(stoneValue[i:i + k])
+                if stones > max_stone:
+                    max_stone = stones
+                    max_k = k
+
+            first_dp[i] = max_stone
+            back_dp[i] = first_dp[i + max_k] if i + max_k < len(stoneValue) else 0
+
+        if first_dp[0] > back_dp[0]:
+            return 'Alice'
+        elif first_dp[0] == back_dp[0]:
+            return 'Tie'
+        else:
+            return 'Bob'
+
 
 if __name__ == "__main__":
-    print(Solution().stoneGame([3, 2, 10, 4]))
+    print(Solution().stoneGameIII([-1, -2, -3]))

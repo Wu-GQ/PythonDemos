@@ -7,7 +7,7 @@ class Solution:
         3的幂
         :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/274/math/1194/
         """
-        return False if n <= 0 else 3 ** int(math.log(n, 3)) == n
+        return n == 3 ** (round(math.log(n, 3) * 1000) / 1000) if n > 0 else False
 
     def missingNumber(self, nums: list) -> int:
         nums_sum = 0
@@ -394,4 +394,4 @@ class Solution:
 
 
 if __name__ == '__main__':
-    print(Solution().numSteps("1011"))
+    print(Solution().movingCount(14, 14, 5))
