@@ -9,7 +9,7 @@ class Solution:
         :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/264/array/1130/
         """
 
-        def update_first_zero_index(self, nums: list, start_index: int) -> int:
+        def update_first_zero_index(nums: list, start_index: int) -> int:
             for i in range(start_index, len(nums)):
                 if nums[i] == 0:
                     return i
@@ -1165,9 +1165,37 @@ class Solution:
 
         return result
 
+    def insert_interval(self, intervals: list, newInterval: list) -> list:
+        """
+        57. 插入区间
+        :see https://leetcode-cn.com/problems/insert-interval/
+        """
+
+        def append_interval(interval: list) -> None:
+            if not result:
+                result.append(interval)
+                return
+
+            last_interval = result[-1]
+            if last_interval[0] <= interval[0] <= last_interval[1]:
+                last_interval[1] = max(interval[1], last_interval[1])
+            else:
+                result.append(interval)
+
+        # 获得插入的位置
+        index = bisect.bisect_left(intervals, newInterval)
+
+        result = intervals[:index]
+        append_interval(newInterval)
+
+        for i in range(index, len(intervals)):
+            append_interval(intervals[i])
+
+        return result
+
 
 if __name__ == "__main__":
     s = Solution()
-    a = [[1, 4], [2, 3]]
-    print(s.merge_intervals(a))
+    a = [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]]
+    print(s.insert_interval(a, [4, 8]))
     # print(a)
