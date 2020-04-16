@@ -1143,9 +1143,31 @@ class Solution:
             result.append(old_index)
         return result
 
+    def merge_intervals(self, intervals: list) -> list:
+        """
+        56. 合并区间
+        :see https://leetcode-cn.com/problems/merge-intervals/
+        """
+        intervals.sort(key=lambda interval: (interval[0], interval[1]))
+        result = []
+
+        while intervals:
+            interval = intervals.pop(0)
+            if not result:
+                result.append(interval)
+                continue
+
+            last_interval = result[-1]
+            if last_interval[0] <= interval[0] <= last_interval[1]:
+                last_interval[1] = max(interval[1], last_interval[1])
+            else:
+                result.append(interval)
+
+        return result
+
 
 if __name__ == "__main__":
     s = Solution()
-    a = [7, 5, 5, 8, 3]
-    print(s.processQueries(a, 8))
+    a = [[1, 4], [2, 3]]
+    print(s.merge_intervals(a))
     # print(a)
