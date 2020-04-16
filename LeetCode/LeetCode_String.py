@@ -706,6 +706,22 @@ class Solution:
         string_list.reverse()
         return ' '.join(string_list)
 
+    def breakPalindrome(self, palindrome: str) -> str:
+        """
+        1328. 破坏回文串
+        :see https://leetcode-cn.com/problems/break-a-palindrome/
+        """
+        if len(palindrome) < 2:
+            return ''
+
+        index = -1
+        for i in range(len(palindrome) // 2):
+            if palindrome[i] != 'a':
+                index = i
+                break
+
+        return f'{palindrome[:index]}a{palindrome[index + 1:]}' if index != -1 else f'{palindrome[:-1]}b'
+
 
 if __name__ == "__main__":
-    print(Solution().longestDiverseString(0, 1, 7))
+    print(Solution().breakPalindrome('ababa'))
