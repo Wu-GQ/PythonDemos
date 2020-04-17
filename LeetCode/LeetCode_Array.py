@@ -526,7 +526,7 @@ class Solution:
 
     def canJump(self, nums: list) -> bool:
         """
-        跳跃游戏
+        55. 跳跃游戏
         :see https://leetcode-cn.com/problems/jump-game/
         """
         # # 参考深度优先遍历（超时）
@@ -558,20 +558,13 @@ class Solution:
         # return jump(0)
 
         # 贪心算法，只保存右侧最大可达的坐标
-        length = len(nums)
-        if length < 1:
-            return False
-        elif length == 1:
-            return True
-
-        max_index = nums[0]
-        i = 0
-        while i < length - 1 and i <= max_index:
-            max_index = max(max_index, i + nums[i])
-            if max_index >= length - 1:
+        max_length = 0
+        for i in range(len(nums)):
+            if i > max_length:
+                break
+            max_length = max(max_length, i + nums[i])
+            if max_length >= len(nums) - 1:
                 return True
-            i += 1
-
         return False
 
     def jump(self, nums: list) -> int:
@@ -1028,7 +1021,8 @@ class Solution:
         if len(nums) < 2:
             return nums
         target = nums.pop(0)
-        return self.sortArray([i for i in nums if i < target]) + [target] + self.sortArray([i for i in nums if i >= target])
+        return self.sortArray([i for i in nums if i < target]) + [target] + self.sortArray(
+            [i for i in nums if i >= target])
 
     def maxDepthAfterSplit(self, seq: str) -> list:
         """
@@ -1196,6 +1190,6 @@ class Solution:
 
 if __name__ == "__main__":
     s = Solution()
-    a = [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]]
-    print(s.insert_interval(a, [4, 8]))
+    a = [3, 2, 1, 0, 4]
+    print(s.canJump(a))
     # print(a)
