@@ -9,7 +9,7 @@ class Solution:
         :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/264/array/1130/
         """
 
-        def update_first_zero_index(self, nums: list, start_index: int) -> int:
+        def update_first_zero_index(nums: list, start_index: int) -> int:
             for i in range(start_index, len(nums)):
                 if nums[i] == 0:
                     return i
@@ -526,7 +526,7 @@ class Solution:
 
     def canJump(self, nums: list) -> bool:
         """
-        跳跃游戏
+        55. 跳跃游戏
         :see https://leetcode-cn.com/problems/jump-game/
         """
         # # 参考深度优先遍历（超时）
@@ -558,20 +558,13 @@ class Solution:
         # return jump(0)
 
         # 贪心算法，只保存右侧最大可达的坐标
-        length = len(nums)
-        if length < 1:
-            return False
-        elif length == 1:
-            return True
-
-        max_index = nums[0]
-        i = 0
-        while i < length - 1 and i <= max_index:
-            max_index = max(max_index, i + nums[i])
-            if max_index >= length - 1:
+        max_length = 0
+        for i in range(len(nums)):
+            if i > max_length:
+                break
+            max_length = max(max_length, i + nums[i])
+            if max_length >= len(nums) - 1:
                 return True
-            i += 1
-
         return False
 
     def jump(self, nums: list) -> int:
@@ -1028,7 +1021,8 @@ class Solution:
         if len(nums) < 2:
             return nums
         target = nums.pop(0)
-        return self.sortArray([i for i in nums if i < target]) + [target] + self.sortArray([i for i in nums if i >= target])
+        return self.sortArray([i for i in nums if i < target]) + [target] + self.sortArray(
+            [i for i in nums if i >= target])
 
     def maxDepthAfterSplit(self, seq: str) -> list:
         """
@@ -1143,6 +1137,56 @@ class Solution:
             result.append(old_index)
         return result
 
+    def merge_intervals(self, intervals: list) -> list:
+        """
+        56. 合并区间
+        :see https://leetcode-cn.com/problems/merge-intervals/
+        """
+        intervals.sort(key=lambda interval: (interval[0], interval[1]))
+        result = []
+
+        while intervals:
+            interval = intervals.pop(0)
+            if not result:
+                result.append(interval)
+                continue
+
+            last_interval = result[-1]
+            if last_interval[0] <= interval[0] <= last_interval[1]:
+                last_interval[1] = max(interval[1], last_interval[1])
+            else:
+                result.append(interval)
+
+        return result
+
+    def insert_interval(self, intervals: list, newInterval: list) -> list:
+        """
+        57. 插入区间
+        :see https://leetcode-cn.com/problems/insert-interval/
+        """
+
+        def append_interval(interval: list) -> None:
+            if not result:
+                result.append(interval)
+                return
+
+            last_interval = result[-1]
+            if last_interval[0] <= interval[0] <= last_interval[1]:
+                last_interval[1] = max(interval[1], last_interval[1])
+            else:
+                result.append(interval)
+
+        # 获得插入的位置
+        index = bisect.bisect_left(intervals, newInterval)
+
+        result = intervals[:index]
+        append_interval(newInterval)
+
+        for i in range(index, len(intervals)):
+            append_interval(intervals[i])
+
+        return result
+
     def minCount(self, coins: list) -> int:
         """
         拿硬币
@@ -1254,5 +1298,6 @@ class Solution:
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.minStartValue([1, 2]))
+    a = [3, 2, 1, 0, 4]
+    print(s.canJump(a))
     # print(a)
