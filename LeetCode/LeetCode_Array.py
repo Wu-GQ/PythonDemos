@@ -1143,9 +1143,116 @@ class Solution:
             result.append(old_index)
         return result
 
+    def minCount(self, coins: list) -> int:
+        """
+        拿硬币
+        :param coins:
+        :return:
+        """
+        result = 0
+        for i in coins:
+            if i % 2 == 1:
+                result += i // 2 + 1
+            else:
+                result += i // 2
+        return result
+
+    def getTriggerTime(self, increase: list, requirements: list) -> list:
+        """剧情触发时间"""
+        # result = [-1] * len(requirements)
+        # current = [0, 0, 0]
+        # for i in range(len(increase)):
+        #     current[0] += increase[i][0]
+        #     current[1] += increase[i][1]
+        #     current[2] += increase[i][2]
+        #
+        #     for j in range(len(requirements)):
+        #         if result[j] < 0 and requirements[j][0] <= current[0] and requirements[j][1] <= current[1] and requirements[j][2] <= current[2]:
+        #             result[j] = i + 1
+        #
+        # return result
+        property_a_list = [0]
+        property_b_list = [0]
+        property_c_list = [0]
+        for i in range(len(increase)):
+            property_a_list.append(property_a_list[-1] + increase[i][0])
+            property_b_list.append(property_b_list[-1] + increase[i][1])
+            property_c_list.append(property_c_list[-1] + increase[i][2])
+
+        result = []
+        for i in requirements:
+            a = bisect.bisect_left(property_a_list, i[0])
+            b = bisect.bisect_left(property_b_list, i[1])
+            c = bisect.bisect_left(property_c_list, i[2])
+
+            index = max(a, b, c)
+            if index > len(increase):
+                index = -1
+            result.append(index)
+
+        return result
+
+    def minJump(self, jump: list) -> int:
+        """最小跳跃次数"""
+        # step = 1
+        # last_max_length = 0
+        # max_length = jump[0]
+        #
+        # while max_length < len(jump):
+        #     length = max_length
+        #     for i in range(last_max_length + 1, max_length):
+        #         length = max(length, jump[i] + i)
+        #
+        #     last_max_length = max_length
+        #     if jump[max_length] + max_length >= length:
+        #         max_length = jump[max_length] + max_length
+        #         step += 1
+        #     else:
+        #         max_length = length
+        #         step += 2
+        #
+        #     print(last_max_length, max_length)
+        # return step
+
+        result = [1E6] * len(jump)
+        result[0] = 0
+        step = 1E6
+
+        for i in range(len(jump)):
+            max_length = i + jump[i]
+            if max_length >= len(jump):
+                step = min(step, result[i] + 1)
+                continue
+
+            result[max_length] = min(result[max_length], result[i] + 1)
+
+            for j in range(i + 1, max_length):
+                result[j] = min(result[j], result[i] + 2)
+
+        return step
+
+    def minStartValue(self, nums: list) -> int:
+        """逐步求和得到正数的最小值"""
+        min_value = nums[0]
+        for i in range(1, len(nums)):
+            nums[i] += nums[i - 1]
+            min_value = min(min_value, nums[i])
+        return -min_value + 1 if min_value < 0 else 1
+
+    def findMinFibonacciNumbers(self, k: int) -> int:
+        """和为 K 的最少斐波那契数字数目"""
+        while self.fibonacci_list[-1] < k:
+            self.fibonacci_list.append(self.fibonacci_list[- 1] + self.fibonacci_list[- 2])
+
+        step = 0
+        while k > 0:
+            index = bisect.bisect_right(self.fibonacci_list, k)
+            k -= self.fibonacci_list[index - 1]
+            step += 1
+        return step
+
 
 if __name__ == "__main__":
     s = Solution()
-    a = [7, 5, 5, 8, 3]
-    print(s.processQueries(a, 8))
+    print(s.minStartValue([1, 2]))
     # print(a)

@@ -706,6 +706,55 @@ class Solution:
         string_list.reverse()
         return ' '.join(string_list)
 
+    def getHappyString(self, n: int, k: int) -> str:
+        """长度为 n 的开心字符串中字典序第 k 小的字符串"""
+
+        def add_one() -> bool:
+            string_list[-1] += 1
+            carry = 0
+            for i in range(len(string_list) - 1, -1, -1):
+                a = string_list[i] + carry
+                if a > 2:
+                    carry = a // 3
+                    string_list[i] = a % 3
+                else:
+                    string_list[i] = a
+                    carry = 0
+                    break
+
+            if carry > 0:
+                return False
+
+            repeat = False
+            for i in range(len(string_list) - 1):
+                if string_list[i] == string_list[i + 1]:
+                    repeat = True
+                    break
+
+            if repeat:
+                return add_one()
+            else:
+                return True
+
+        string_list = []
+        for i in range(n):
+            string_list.append(i % 2)
+
+        for i in range(k - 1):
+            if not add_one():
+                return ""
+
+        for i in range(len(string_list)):
+            if string_list[i] == 0:
+                string_list[i] = 'a'
+            elif string_list[i] == 1:
+                string_list[i] = 'b'
+            elif string_list[i] == 2:
+                string_list[i] = 'c'
+            else:
+                print('Error')
+
+        return ''.join(string_list)
 
 if __name__ == "__main__":
-    print(Solution().longestDiverseString(0, 1, 7))
+    print(Solution().getHappyString(10, 100))

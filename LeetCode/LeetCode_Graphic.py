@@ -493,14 +493,41 @@ class Solution:
 
         return matrix
 
+    def numWays(self, n: int, relation: list, k: int) -> int:
+        """
+        传递信息
+        :param n:
+        :param relation:
+        :param k:
+        :return:
+        """
+        next_person_list = [[] for _ in range(n)]
+        for i in relation:
+            next_person_list[i[0]].append(i[1])
+
+        for i in next_person_list:
+            print(i)
+
+        result = [0] * n
+        current_list = [0]
+        while k > 0:
+            next_list = []
+            result = [0] * n
+            for i in current_list:
+                for person in next_person_list[i]:
+                    next_list.append(person)
+                    result[person] += 1
+            current_list = next_list
+            k -= 1
+
+            # print(result)
+
+        return result[-1]
+
 
 if __name__ == '__main__':
     s = Solution()
-    a = [
-        [0, 1, 0],
-        [0, 1, 0],
-        [0, 1, 0]
-    ]
-    print(s.updateMatrix(a))
+    a = [[0, 2], [2, 1], [3, 4], [2, 3], [1, 4], [2, 0], [0, 4]]
+    print(s.numWays(5, a, 3))
     # for i in a:
     #     print(i)

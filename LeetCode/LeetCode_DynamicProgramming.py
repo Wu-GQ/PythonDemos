@@ -189,7 +189,7 @@ class Solution:
 
     def maxArea(self, height: list) -> int:
         """
-        盛水最多的容器，S = max((j-i) * min(a[i], a[j]))
+        11. 盛水最多的容器，S = max((j-i) * min(a[i], a[j]))
         :see https://leetcode-cn.com/problems/container-with-most-water/
         """
         if len(height) < 2:
@@ -988,6 +988,7 @@ class Solution:
         else:
             return 'Bob'
 
+    fibonacci_list = [1, 1]
 
 if __name__ == "__main__":
-    print(Solution().stoneGameIII([-1, -2, -3]))
+    print(Solution().stoneGameIII([]))
