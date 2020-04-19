@@ -1283,6 +1283,8 @@ class Solution:
             min_value = min(min_value, nums[i])
         return -min_value + 1 if min_value < 0 else 1
 
+    fibonacci_list = [1, 1]
+
     def findMinFibonacciNumbers(self, k: int) -> int:
         """和为 K 的最少斐波那契数字数目"""
         while self.fibonacci_list[-1] < k:
@@ -1295,9 +1297,105 @@ class Solution:
             step += 1
         return step
 
+    def displayTable(self, orders: list) -> list:
+        """点菜展示表"""
+        tables = [dict() for _ in range(501)]
+        menus = set()
+        for i in orders:
+            table = int(i[1])
+            food = i[2]
+            tables[table][food] = tables[table].get(food, 0) + 1
+
+            menus.add(food)
+
+        menus_list = list(menus)
+        menus_list.sort()
+
+        result = [['Table']]
+        for i in menus_list:
+            result[0].append(i)
+
+        for i in range(501):
+            if len(tables[i]) == 0:
+                continue
+
+            table_menu = [str(i)]
+            for j in menus_list:
+                table_menu.append(str(tables[i].get(j, 0)))
+
+            result.append(table_menu)
+        return result
+
+    def minNumberOfFrogs(self, croakOfFrogs: str) -> int:
+        """数青蛙"""
+        croak_list = []
+        frogs_num = 0
+
+        for i in croakOfFrogs:
+            if i == 'c':
+                croak_list.insert(0, 1)
+            elif i == 'r':
+                index = bisect.bisect_right(croak_list, 1)
+                if index == -1 or croak_list[index - 1] != 1:
+                    return -1
+                else:
+                    croak_list[index - 1] += 1
+            elif i == 'o':
+                index = bisect.bisect_right(croak_list, 2)
+                if index == 0 or croak_list[index - 1] != 2:
+                    return -1
+                else:
+                    croak_list[index - 1] += 1
+            elif i == 'a':
+                index = bisect.bisect_right(croak_list, 3)
+                if index == 0 or croak_list[index - 1] != 3:
+                    return -1
+                else:
+                    croak_list[index - 1] += 1
+            elif i == 'k':
+                index = bisect.bisect_right(croak_list, 4)
+                if index == 0 or croak_list[index - 1] != 4:
+                    return -1
+                else:
+                    frogs_num = max(frogs_num, len(croak_list))
+                    del croak_list[index - 1]
+            else:
+                return -1
+
+            # print(croak_list)
+
+        return frogs_num if not croak_list else -1
+
+    def numOfArrays(self, n: int, m: int, k: int) -> int:
+        """生成数组"""
+
+        def add_one() -> bool:
+            num[-1] += 1
+            carry = 0
+            for i in range(len(num) - 1, -1, -1):
+                a = num[i] + carry
+                if a > m:
+                    carry = a // m
+                    num[i] = a % m
+                else:
+                    num[i] = a
+                    carry = 0
+                    break
+
+            return carry == 0
+
+        if k > m or k > n:
+            return 0
+
+        num = [1] * n
+        while add_one():
+            print(num)
+
+        return 0
 
 if __name__ == "__main__":
     s = Solution()
     a = [3, 2, 1, 0, 4]
-    print(s.canJump(a))
+    print(s.numOfArrays(2, 3, 1))
+    print(s.numOfArrays(3, 3, 1))
     # print(a)

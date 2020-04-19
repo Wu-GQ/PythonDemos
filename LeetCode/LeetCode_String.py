@@ -755,6 +755,7 @@ class Solution:
                 print('Error')
 
         return ''.join(string_list)
+
     def breakPalindrome(self, palindrome: str) -> str:
         """
         1328. 破坏回文串
@@ -771,6 +772,33 @@ class Solution:
 
         return f'{palindrome[:index]}a{palindrome[index + 1:]}' if index != -1 else f'{palindrome[:-1]}b'
 
+    def reformat(self, s: str) -> str:
+        """重新格式化字符串"""
+        ch_list = []
+        num_list = []
+
+        for i in s:
+            if i.isdigit():
+                num_list.append(i)
+            else:
+                ch_list.append(i)
+
+        if abs(len(num_list) - len(ch_list)) > 1:
+            return ''
+
+        string_list = []
+        length = len(s)
+        if len(num_list) > len(ch_list):
+            string_list.append(num_list.pop(0))
+            length -= 1
+        for i in range(length):
+            if i % 2 == 0:
+                string_list.append(ch_list[i // 2])
+            else:
+                string_list.append(num_list[i // 2])
+
+        return ''.join(string_list)
+
 
 if __name__ == "__main__":
-    print(Solution().breakPalindrome('ababa'))
+    print(Solution().reformat('ab123'))

@@ -988,7 +988,5 @@ class Solution:
         else:
             return 'Bob'
 
-    fibonacci_list = [1, 1]
-
 if __name__ == "__main__":
     print(Solution().stoneGameIII([]))

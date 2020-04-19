@@ -1,4 +1,16 @@
+def sort(a: list, x):
+    lo = 0
+    hi = len(a)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        print(lo, hi, mid)
+        if a[mid] < x:
+            lo = mid + 1
+        else:
+            hi = mid
+
+    return lo
+
 
 if __name__ == '__main__':
-    a = [1, 2, 3]
-    print(sum([8, 9, 5, 4, 5, 4, 1, 1, 9, 3, 1, 10, 5, 9, 6, 2, 7, 6, 6, 9]))
+    print(sort([0, 1, 2, 3, 5, 6], 4))
