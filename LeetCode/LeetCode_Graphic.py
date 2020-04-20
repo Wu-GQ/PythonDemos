@@ -313,7 +313,8 @@ class Solution:
                     while len(area_queue) > 0:
                         next_area = area_queue.pop(0)
                         if board[next_area[0]][next_area[1]] == 'O':
-                            need_not_change = need_not_change or next_area[0] == 0 or next_area[0] == len(board) - 1 or next_area[1] == 0 or \
+                            need_not_change = need_not_change or next_area[0] == 0 or next_area[0] == len(board) - 1 or \
+                                              next_area[1] == 0 or \
                                               next_area[1] == len(board[0]) - 1
                             checked_area.append(next_area)
                             board[next_area[0]][next_area[1]] = 'o'
@@ -425,7 +426,8 @@ class Solution:
         def is_alive_for_cell(x: int, y: int, is_alive: int) -> bool:
             """ 确认某一位置的细胞是否存活 """
             alive_cell_count = 0
-            for i, j in [(x - 1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y - 1), (x, y + 1), (x + 1, y - 1), (x + 1, y), (x + 1, y + 1)]:
+            for i, j in [(x - 1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y - 1), (x, y + 1), (x + 1, y - 1), (x + 1, y),
+                         (x + 1, y + 1)]:
                 if 0 <= i < len(another_board) and 0 <= j < len(another_board[x]):
                     alive_cell_count += another_board[i][j]
 
@@ -461,7 +463,8 @@ class Solution:
                 b = i + j
                 c = length - 1 - i
                 d = length - 1 - i - j
-                matrix[a][b], matrix[b][c], matrix[c][d], matrix[d][a] = matrix[d][a], matrix[a][b], matrix[b][c], matrix[c][d]
+                matrix[a][b], matrix[b][c], matrix[c][d], matrix[d][a] = matrix[d][a], matrix[a][b], matrix[b][c], \
+                                                                         matrix[c][d]
 
     def updateMatrix(self, matrix: list) -> list:
         """
@@ -485,7 +488,8 @@ class Solution:
                 checked_index_set.add((i, j))
                 matrix[i][j] = distance
                 for x, y in [(i - 1, j), (i, j - 1), (i, j + 1), (i + 1, j)]:
-                    if 0 <= x < len(matrix) and 0 <= y < len(matrix[x]) and (x, y) not in checked_index_set and (x, y) not in zero_index_set:
+                    if 0 <= x < len(matrix) and 0 <= y < len(matrix[x]) and (x, y) not in checked_index_set and (
+                            x, y) not in zero_index_set:
                         next_index_set.add((x, y))
             zero_index_set = next_index_set
             distance += 1
@@ -524,10 +528,34 @@ class Solution:
 
         return result[-1]
 
+    def numIslands(self, grid: list) -> int:
+        """
+        200. 岛屿数量
+        :see https://leetcode-cn.com/problems/number-of-islands/
+        """
+
+        # 使用深度遍历标记小岛
+        def island(x: int, y: int, current_count: int):
+            grid[x][y] = current_count
+            for i, j in [(x - 1, y), (x, y - 1), (x + 1, y), (x, y + 1)]:
+                if 0 <= i < len(grid) and 0 <= j < len(grid[i]) and grid[i][j] == '1':
+                    island(i, j, current_count)
+
+        # 初始化为2，以免与1和0冲突
+        islands_count = 2
+
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                if grid[i][j] == '1':
+                    island(i, j, islands_count)
+                    islands_count += 1
+        # print(grid)
+        return islands_count - 2
+
 
 if __name__ == '__main__':
     s = Solution()
-    a = [[0, 2], [2, 1], [3, 4], [2, 3], [1, 4], [2, 0], [0, 4]]
-    print(s.numWays(5, a, 3))
+    a = [["1", "1", "1", "1", "0"], ["1", "1", "0", "1", "0"], ["1", "1", "0", "0", "0"], ["0", "0", "0", "0", "0"]]
+    print(s.numIslands(a))
     # for i in a:
     #     print(i)
