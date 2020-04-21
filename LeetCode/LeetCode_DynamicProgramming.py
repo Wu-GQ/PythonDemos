@@ -475,8 +475,10 @@ class Solution:
                 elif column == 0:
                     result_list[row][0] = result_list[row - 1][0] and s2[row - 1] == s3[row - 1]
                 else:
-                    result_list[row][column] = (result_list[row - 1][column] and s2[row - 1] == s3[row - 1 + column]) or (
-                            result_list[row][column - 1] and s1[column - 1] == s3[column - 1 + row])
+                    result_list[row][column] = (result_list[row - 1][column] and s2[row - 1] == s3[
+                        row - 1 + column]) or (
+                                                       result_list[row][column - 1] and s1[column - 1] == s3[
+                                                   column - 1 + row])
 
         return result_list[len(s2)][len(s1)]
 
@@ -493,7 +495,8 @@ class Solution:
         for row in range(0, len(t)):
             for column in range(row, len(s)):
                 if s[column] == t[row]:
-                    result_list[row][column] = result_list[row][column - 1] + (result_list[row - 1][column - 1] if row > 0 else 1)
+                    result_list[row][column] = result_list[row][column - 1] + (
+                        result_list[row - 1][column - 1] if row > 0 else 1)
                 else:
                     result_list[row][column] = result_list[row][column - 1]
 
@@ -560,7 +563,8 @@ class Solution:
         # 动态规划
         for i in range(0, length):
             if i == 0:
-                possess_one_profit, possess_two_profit, none_one_profit, none_two_profit_list = -prices[i], -float('inf'), 0, -float('inf')
+                possess_one_profit, possess_two_profit, none_one_profit, none_two_profit_list = -prices[i], -float(
+                    'inf'), 0, -float('inf')
             else:
                 possess_one_profit, possess_two_profit, none_one_profit, none_two_profit = \
                     max(possess_one_profit, -prices[i]), \
@@ -652,7 +656,8 @@ class Solution:
                     temp_zero_count = two_count + 1
                     temp_zero_sum = two_sum + digit
 
-                    if temp_zero_count < zero_count or (temp_zero_count == zero_count and compare_nums(zero_nums, temp_zero_nums)):
+                    if temp_zero_count < zero_count or (
+                            temp_zero_count == zero_count and compare_nums(zero_nums, temp_zero_nums)):
                         temp_zero_nums = zero_nums
                         temp_zero_count = zero_count
                         temp_zero_sum = zero_sum
@@ -667,7 +672,8 @@ class Solution:
                     temp_one_count = zero_count + 1
                     temp_one_sum = zero_sum + digit
 
-                    if temp_one_count < one_count or (temp_one_count == one_count and compare_nums(one_nums, temp_one_nums)):
+                    if temp_one_count < one_count or (
+                            temp_one_count == one_count and compare_nums(one_nums, temp_one_nums)):
                         temp_one_nums = one_nums
                         temp_one_count = one_count
                         temp_one_sum = one_sum
@@ -682,7 +688,8 @@ class Solution:
                     temp_two_count = one_count + 1
                     temp_two_sum = one_sum + digit
 
-                    if temp_two_count < two_count or (temp_two_count == two_count and compare_nums(two_nums, temp_two_nums)):
+                    if temp_two_count < two_count or (
+                            temp_two_count == two_count and compare_nums(two_nums, temp_two_nums)):
                         temp_two_nums = two_nums
                         temp_two_count = two_count
                         temp_two_sum = two_sum
@@ -701,7 +708,8 @@ class Solution:
                     temp_zero_count = one_count + 1
                     temp_zero_sum = one_sum + digit
 
-                    if temp_zero_count < zero_count or (temp_zero_count == zero_count and compare_nums(zero_nums, temp_zero_nums)):
+                    if temp_zero_count < zero_count or (
+                            temp_zero_count == zero_count and compare_nums(zero_nums, temp_zero_nums)):
                         temp_zero_nums = zero_nums
                         temp_zero_count = zero_count
                         temp_zero_sum = zero_sum
@@ -716,7 +724,8 @@ class Solution:
                     temp_one_count = two_count + 1
                     temp_one_sum = two_sum + digit
 
-                    if temp_one_count < one_count or (temp_one_count == one_count and compare_nums(one_nums, temp_one_nums)):
+                    if temp_one_count < one_count or (
+                            temp_one_count == one_count and compare_nums(one_nums, temp_one_nums)):
                         temp_one_nums = one_nums
                         temp_one_count = one_count
                         temp_one_sum = one_sum
@@ -731,7 +740,8 @@ class Solution:
                     temp_two_count = zero_count + 1
                     temp_two_sum = zero_sum + digit
 
-                    if temp_two_count < two_count or (temp_two_count == two_count and compare_nums(two_nums, temp_two_nums)):
+                    if temp_two_count < two_count or (
+                            temp_two_count == two_count and compare_nums(two_nums, temp_two_nums)):
                         temp_two_nums = two_nums
                         temp_two_count = two_count
                         temp_two_sum = two_sum
@@ -988,5 +998,56 @@ class Solution:
         else:
             return 'Bob'
 
+    def smallestSufficientTeam(self, req_skills: list, people: list) -> list:
+        """
+        1125. 最小的必要团队
+        :see https://leetcode-cn.com/problems/smallest-sufficient-team/
+        """
+        req_skills_dict = {req_skills[i]: len(req_skills) - 1 - i for i in range(len(req_skills))}
+
+        # ---- 剪枝 ----
+        # 将每个人的技能整理成列表
+        people_skills_list = []
+        for i in range(len(people)):
+            # 计算该成员所掌握的技能
+            skills = 0
+            for skill in people[i]:
+                index = req_skills_dict.get(skill, -1)
+                if index >= 0:
+                    skills |= 1 << index
+
+            # 遍历判断该成员的技能是否已被他人掌握或者掌握他人技能
+            for j in range(len(people_skills_list)):
+                tmp_skill = people_skills_list[j][1] | skills
+                if tmp_skill == people_skills_list[j][1]:
+                    # 该成员的技能已被另一成员完全包含
+                    skills = 0
+                    break
+                elif tmp_skill == skills:
+                    # 该成员的技能完全包含另一成员
+                    people_skills_list[j][1] = 0
+
+            if skills > 0:
+                people_skills_list.append((i, skills))
+
+        # 去除无技能的成员
+        people_skills_list = [i for i in people_skills_list if i[1] != 0]
+
+        # for index, skill in people_skill_list:
+        #     print(f'({index}, {bin(skill)})')
+
+        # ---- 动态规划 ----
+        # dp[i]表示，满足掌握技能i的最少人数及其成员
+        dp = [[0, []] for _ in range((1 << len(req_skills)) + 1)]
+        for index, skills in people_skills_list:
+
+
+        return dp[-1]
+
+
 if __name__ == "__main__":
-    print(Solution().stoneGameIII([]))
+    print(Solution().smallestSufficientTeam(["algorithms", "math", "java", "reactjs", "csharp", "aws"],
+                                            [["algorithms", "math", "java"], ["algorithms", "math", "reactjs"],
+                                             ["java", "csharp", "aws"], ["reactjs", "csharp"], ["csharp", "math"],
+                                             ["aws", "java"]]
+                                            ))
