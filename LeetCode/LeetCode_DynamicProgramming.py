@@ -1028,7 +1028,7 @@ class Solution:
                     people_skills_list[j][1] = 0
 
             if skills > 0:
-                people_skills_list.append((i, skills))
+                people_skills_list.append([i, skills])
 
         # 去除无技能的成员
         people_skills_list = [i for i in people_skills_list if i[1] != 0]
@@ -1038,11 +1038,20 @@ class Solution:
 
         # ---- 动态规划 ----
         # dp[i]表示，满足掌握技能i的最少人数及其成员
-        dp = [[0, []] for _ in range((1 << len(req_skills)) + 1)]
+        dp = [[0, []] for _ in range(1 << len(req_skills))]
         for index, skills in people_skills_list:
+            dp[skills] = [1, [index]]
+            for i in range(len(dp)):
+                if dp[i][0] == 0:
+                    continue
+                next_skills = skills | i
+                if dp[next_skills][0] == 0 or dp[i][0] + 1 < dp[next_skills][0]:
+                    dp[next_skills] = [dp[i][0] + 1, dp[i][1] + [index]]
 
+        # for i in range(len(dp)):
+        #     print(f'{bin(i)}: {dp[i][0]}, {dp[i][1]}')
 
-        return dp[-1]
+        return dp[-1][1]
 
 
 if __name__ == "__main__":
