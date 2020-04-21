@@ -1393,9 +1393,48 @@ class Solution:
 
         return 0
 
+    def numberOfSubarrays(self, nums: list, k: int) -> int:
+        """
+        1248. 统计「优美子数组」
+        :see https://leetcode-cn.com/problems/count-number-of-nice-subarrays/
+        """
+        """ 此方法不够简洁，仅次于暴力。只需要统计奇数所在的下标，根据左右两侧的可扩展距离相乘后相加即可。 """
+        # 滑动窗口的左右下标
+        left_index = 0
+        right_index = -1
+        # 奇数的数量
+        odd_number_count = 0
+        # 子数组的数量
+        sub_array_count = 0
+        # 统计过的右下标
+        checked_right_index = -1
+
+        while left_index < len(nums):
+            # 若满足奇数的数量，则统计以当前右下标结尾的子序列数量
+            if odd_number_count == k and checked_right_index != right_index:
+                checked_right_index = right_index
+                # 遍历所有[left_index, right_index]之间满足条件的情况
+                for i in range(left_index, right_index + 1):
+                    sub_array_count += 1
+                    # print(f'{i}, {right_index}: {nums[i:right_index + 1]}')
+                    if nums[i] & 1 == 1:
+                        break
+
+            if odd_number_count <= k and right_index < len(nums) - 1:
+                right_index += 1
+                # 判断新加入数字的奇偶性
+                if nums[right_index] & 1 == 1:
+                    odd_number_count += 1
+            else:
+                # 判断被删除数字的奇偶性
+                if nums[left_index] & 1 == 1:
+                    odd_number_count -= 1
+                left_index += 1
+
+        return sub_array_count
+
+
 if __name__ == "__main__":
     s = Solution()
-    a = [3, 2, 1, 0, 4]
-    print(s.numOfArrays(2, 3, 1))
-    print(s.numOfArrays(3, 3, 1))
+    print(s.numberOfSubarrays([2, 4, 6], 2))
     # print(a)

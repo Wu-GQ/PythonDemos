@@ -451,7 +451,8 @@ class Solution:
                 if selected_ch_total_count == t_length:
                     length = selected_ch_index_stack[-1] - selected_ch_index_stack[0]
                     if length < min_length:
-                        start_index, end_index, min_length = selected_ch_index_stack[0], selected_ch_index_stack[-1], length
+                        start_index, end_index, min_length = selected_ch_index_stack[0], selected_ch_index_stack[
+                            -1], length
 
         return s[start_index:end_index + 1] if start_index != -1 and end_index != -1 else ""
 
@@ -693,7 +694,9 @@ class Solution:
         :param text:
         :return:
         """
-        return text.replace('&quot;', '\\"').replace('&apos;', "\\'").replace('&amp;', '&').replace('&gt;', '>').replace('&lt;', '<').replace(
+        return text.replace('&quot;', '\\"').replace('&apos;', "\\'").replace('&amp;', '&').replace('&gt;',
+                                                                                                    '>').replace('&lt;',
+                                                                                                                 '<').replace(
             '&frasl;', '/')
 
     def reverseWords(self, s: str) -> str:
