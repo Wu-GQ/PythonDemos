@@ -1053,10 +1053,45 @@ class Solution:
 
         return dp[-1][1]
 
+    def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+        """
+        1143. 最长公共子序列
+        :see https://leetcode-cn.com/problems/longest-common-subsequence/
+        """
+        text1 = ' ' + text1
+        text2 = ' ' + text2
+
+        result = [[0] * len(text1) for _ in text2]
+        for i in range(len(text2)):
+            for j in range(len(text1)):
+                if text2[i] == text1[j]:
+                    result[i][j] = result[i - 1][j - 1] + 1
+                else:
+                    result[i][j] = max(result[i - 1][j], result[i][j - 1])
+        # for i in result:
+        #     print(i)
+        return result[-1][-1] - 1
+
+    def maxEnvelopes(self, envelopes: list) -> int:
+        """
+        354. 俄罗斯套娃信封问题
+        :see https://leetcode-cn.com/problems/russian-doll-envelopes/
+        """
+        # 最长上升子序列进阶版
+        # 因为当宽度相同时，即使高度比较大，也不能放入。因此，宽度升序排列，高度降序排列
+        envelopes.sort(key=lambda x: (x[0], -x[1]))
+        # print(envelopes)
+
+        result = []
+        for width, height in envelopes:
+            index = bisect.bisect_left(result, height)
+            if index == len(result):
+                result.append(height)
+            else:
+                result[index] = height
+        # print(result)
+        return len(result)
+
 
 if __name__ == "__main__":
-    print(Solution().smallestSufficientTeam(["algorithms", "math", "java", "reactjs", "csharp", "aws"],
-                                            [["algorithms", "math", "java"], ["algorithms", "math", "reactjs"],
-                                             ["java", "csharp", "aws"], ["reactjs", "csharp"], ["csharp", "math"],
-                                             ["aws", "java"]]
-                                            ))
+    print(Solution().maxEnvelopes([[10, 8], [1, 12], [6, 15], [2, 18]]))
