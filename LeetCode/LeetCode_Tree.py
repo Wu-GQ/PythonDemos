@@ -71,8 +71,9 @@ class Solution(object):
         elif left_tree_node is None or right_tree_node is None:
             return False
         elif left_tree_node.val == right_tree_node.val:
-            return self.compare_tree_node(left_tree_node.left, right_tree_node.right) and self.compare_tree_node(left_tree_node.right,
-                                                                                                                 right_tree_node.left)
+            return self.compare_tree_node(left_tree_node.left, right_tree_node.right) and self.compare_tree_node(
+                left_tree_node.right,
+                right_tree_node.left)
         else:
             return False
 
@@ -499,11 +500,37 @@ class Solution(object):
             """ 以root为根节点的树的最长路径 """
             if root is None:
                 return 0
-            return max(max_path_of_tree(root.left), max_path_of_tree(root.right), max_deep_of_tree(root.left) + max_deep_of_tree(root.right) - 1)
+            return max(max_path_of_tree(root.left), max_path_of_tree(root.right),
+                       max_deep_of_tree(root.left) + max_deep_of_tree(root.right) - 1)
 
         max_deep_dict = {}
 
         return max_deep_of_tree(root) - 1 if root is not None else 0
+
+    def rightSideView(self, root: TreeNode) -> list:
+        """
+        199. 二叉树的右视图
+        :see https://leetcode-cn.com/problems/binary-tree-right-side-view/
+        """
+        # 层次遍历即可，等同于广度优先遍历
+        if not root:
+            return []
+
+        result = []
+        current_queue = [root]
+        while current_queue:
+            result.append(current_queue[-1].val)
+
+            next_queue = []
+            while current_queue:
+                next_node = current_queue.pop(0)
+                if next_node.left:
+                    next_queue.append(next_node.left)
+                if next_node.right:
+                    next_queue.append(next_node.right)
+            current_queue = next_queue
+
+        return result
 
 
 if __name__ == '__main__':
@@ -526,4 +553,4 @@ if __name__ == '__main__':
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
 
     s = Solution()
-    print(s.diameterOfBinaryTree(root))
+    print(s.rightSideView(root))
