@@ -115,8 +115,11 @@ class Solution:
         打家劫舍
         :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/272/dynamic-programming/1177/
         """
-        money_list = [0] * len(nums)
+        # dp[i] = nums[i] + max(dp[i-2], dp[i-3])
+        # i < 2, dp[i] = nums[i]
+        # i == 2, dp[i] = dp[0] + nums[2]
 
+        money_list = [0] * len(nums)
         max_money = 0
 
         for i in range(len(nums)):
@@ -1092,6 +1095,31 @@ class Solution:
         # print(result)
         return len(result)
 
+    def robII(self, nums: list) -> int:
+        """
+        213. 打家劫舍 II
+        :see https://leetcode-cn.com/problems/house-robber-ii/
+        """
+
+        def rob(nums: list) -> int:
+            money_list = [0] * len(nums)
+            max_money = 0
+
+            for i in range(len(nums)):
+                if i < 2:
+                    money_list[i] = nums[i]
+                elif i == 2:
+                    money_list[i] = nums[0] + nums[2]
+                else:
+                    money_list[i] = max(money_list[i - 3], money_list[i - 2]) + nums[i]
+
+                max_money = max(max_money, money_list[i])
+
+            return max_money
+
+        # 核心原则是第一个和最后一个不能同时抢，那么取max(nums[:-1], nums[1:])即可
+        return max(rob(nums[:-1]), rob(nums[1:])) if len(nums) > 1 else sum(nums)
+
 
 if __name__ == "__main__":
-    print(Solution().maxEnvelopes([[10, 8], [1, 12], [6, 15], [2, 18]]))
+    print(Solution().robII([1, 2]))
