@@ -1148,6 +1148,36 @@ class Solution:
         # print(self.ways_to_change_result_list)
         return self.ways_to_change_result_list[n]
 
+    def maxProfitV(self, prices: list) -> int:
+        """
+        309. 最佳买卖股票时机含冷冻期
+        :see https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
+        """
+        # 没有，dp_zero[i] = max(dp_zero[i - 1], dp_one[i - 1] + price[i])
+        # 持有，dp_one[i] = max(dp_one[i - 1], dp_zero[i - 2] - price[i])
+        if len(prices) < 2:
+            return 0
+        dp = [(0, -prices[0]), (max(0, prices[1] - prices[0]), max(-prices[0], -prices[1]))]
+        for i in range(2, len(prices)):
+            dp.append((max(dp[i - 1][0], dp[i - 1][1] + prices[i]), max(dp[i - 1][1], dp[i - 2][0] - prices[i])))
+        # print(dp)
+        return dp[-1][0]
+
+    def maxProfitVI(self, prices: list, fee: int) -> int:
+        """
+        714. 买卖股票的最佳时机含手续费
+        :see https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/
+        """
+        # 没有，dp_zero[i] = max(dp_zero[i - 1], dp_one[i - 1] + price[i] - fee)
+        # 持有，dp_one[i] = max(dp_one[i - 1], dp_zero[i - 1] - price[i])
+        if len(prices) < 2:
+            return 0
+        dp = [(0, -prices[0] - fee), (max(0, prices[1] - prices[0] - fee), max(-prices[0], -prices[1]))]
+        for i in range(2, len(prices)):
+            dp.append((max(dp[i - 1][0], dp[i - 1][1] + prices[i] - fee), max(dp[i - 1][1], dp[i - 1][0] - prices[i])))
+        print(dp)
+        return dp[-1][0]
+
 
 if __name__ == "__main__":
-    print(Solution().waysToChange(10))
+    print(Solution().maxProfitVI([1, 3, 2, 8, 4, 9], 2))
