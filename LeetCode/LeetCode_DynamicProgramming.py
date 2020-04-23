@@ -1120,6 +1120,34 @@ class Solution:
         # 核心原则是第一个和最后一个不能同时抢，那么取max(nums[:-1], nums[1:])即可
         return max(rob(nums[:-1]), rob(nums[1:])) if len(nums) > 1 else sum(nums)
 
+    def waysToChange(self, n: int) -> int:
+        """
+        面试题 08.11. 硬币
+        :see https://leetcode-cn.com/problems/coin-lcci/
+        """
+        # 错误思路：f(n) = f(n - 25) + f(n - 10) + f(n - 5) + f(n - 1)
+        # 错误思路中存在这种情况f(6) = 1 + 5, f(6) = 5 + 1的重复计算
+        # 换一种思路，先计算只有1，再计算5，然后计算10，最后计算25的数量
+        # 当只有1时，f(n) = f(n - 1)
+        # 当有5时，f(n) += f(n - 5)，因为此时的f(n - 5)是只有1的情况，所以不存在重复运算
+        # 10和25以此类推
+        self.ways_to_change_result_list = [1]
+
+        if len(self.ways_to_change_result_list) > n:
+            return self.ways_to_change_result_list[n]
+
+        last_length = len(self.ways_to_change_result_list)
+
+        for coin in [1, 5, 10, 25]:
+            for i in range(last_length, n + 1):
+                if i >= len(self.ways_to_change_result_list):
+                    self.ways_to_change_result_list.append(0)
+                if i >= coin:
+                    self.ways_to_change_result_list[i] = (self.ways_to_change_result_list[i] +
+                                                          self.ways_to_change_result_list[i - coin]) % 1000000007
+        # print(self.ways_to_change_result_list)
+        return self.ways_to_change_result_list[n]
+
 
 if __name__ == "__main__":
-    print(Solution().robII([1, 2]))
+    print(Solution().waysToChange(10))
