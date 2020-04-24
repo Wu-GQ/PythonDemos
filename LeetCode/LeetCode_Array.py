@@ -1442,8 +1442,29 @@ class Solution:
 
         return sub_array_count
 
+    def firstMissingPositive(self, nums: list) -> int:
+        """
+        41. 缺失的第一个正数
+        :see https://leetcode-cn.com/problems/first-missing-positive/
+        """
+        if not nums:
+            return 1
+
+        result_list = [0] * (len(nums) + 1)
+        for i in nums:
+            if i <= 0 or i >= len(result_list):
+                result_list[0] = 1
+            else:
+                result_list[i] = 1
+        print(result_list)
+
+        for i in range(1, len(result_list)):
+            if result_list[i] != 1:
+                return i
+        return len(result_list)
+
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.reversePairs([7, 5, 6, 4]))
+    print(s.firstMissingPositive([0]))
     # print(a)
