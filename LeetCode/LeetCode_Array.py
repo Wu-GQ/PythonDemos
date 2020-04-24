@@ -826,7 +826,7 @@ class Solution:
         面试题51. 数组中的逆序对
         :see https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/
         """
-
+        """
         # 利用归并排序的思想
         def part_list(sub_nums: list) -> list:
             if len(sub_nums) < 2:
@@ -860,6 +860,15 @@ class Solution:
         part_list(nums)
 
         return self.count
+        """
+        # 利用二分插入的原理
+        num_list = []
+        count = 0
+        for i in nums[::-1]:
+            index = bisect.bisect_left(num_list, i)
+            count += index
+            num_list.insert(index, i)
+        return count
 
     def reversePairs2(self, nums: list) -> int:
         """
@@ -1436,5 +1445,5 @@ class Solution:
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.numberOfSubarrays([2, 4, 6], 2))
+    print(s.reversePairs([7, 5, 6, 4]))
     # print(a)
