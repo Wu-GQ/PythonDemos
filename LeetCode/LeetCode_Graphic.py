@@ -313,7 +313,8 @@ class Solution:
                     while len(area_queue) > 0:
                         next_area = area_queue.pop(0)
                         if board[next_area[0]][next_area[1]] == 'O':
-                            need_not_change = need_not_change or next_area[0] == 0 or next_area[0] == len(board) - 1 or next_area[1] == 0 or \
+                            need_not_change = need_not_change or next_area[0] == 0 or next_area[0] == len(board) - 1 or \
+                                              next_area[1] == 0 or \
                                               next_area[1] == len(board[0]) - 1
                             checked_area.append(next_area)
                             board[next_area[0]][next_area[1]] = 'o'
@@ -416,13 +417,145 @@ class Solution:
 
         return min_distance if min_distance != 0 else -1
 
+    def gameOfLife(self, board: list) -> None:
+        """
+        289. 生命游戏
+        :see https://leetcode-cn.com/problems/game-of-life/
+        """
+
+        def is_alive_for_cell(x: int, y: int, is_alive: int) -> bool:
+            """ 确认某一位置的细胞是否存活 """
+            alive_cell_count = 0
+            for i, j in [(x - 1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y - 1), (x, y + 1), (x + 1, y - 1), (x + 1, y),
+                         (x + 1, y + 1)]:
+                if 0 <= i < len(another_board) and 0 <= j < len(another_board[x]):
+                    alive_cell_count += another_board[i][j]
+
+            if is_alive == 0:
+                return alive_cell_count == 3
+            elif is_alive == 1:
+                return alive_cell_count == 2 or alive_cell_count == 3
+            return False
+
+        # 此处使用额外数组来进行计算。当然也可以通过拓展状态的方式，来解决这道题以降低空间复杂度，比如说2代表之前死的后面还是死的，3代表前死后活，4代表前活后死，5代表前活后活
+        # ！！！大佬的解法：使用位运算，末位代表当前状态，前一位代表下一状态
+        another_board = []
+        for i in board:
+            another_board.append(i.copy())
+
+        for i in range(len(another_board)):
+            for j in range(len(another_board[i])):
+                board[i][j] = int(is_alive_for_cell(i, j, board[i][j]))
+
+    def rotate(self, matrix: list) -> None:
+        """
+        面试题 01.07. 旋转矩阵
+        :see https://leetcode-cn.com/problems/rotate-matrix-lcci/
+        """
+        if not matrix or not matrix[0]:
+            return
+
+        length = len(matrix)
+
+        for i in range(0, length // 2 + 1):
+            for j in range(0, length - 1 - 2 * i):
+                a = i
+                b = i + j
+                c = length - 1 - i
+                d = length - 1 - i - j
+                matrix[a][b], matrix[b][c], matrix[c][d], matrix[d][a] = matrix[d][a], matrix[a][b], matrix[b][c], \
+                                                                         matrix[c][d]
+
+    def updateMatrix(self, matrix: list) -> list:
+        """
+        542. 01 矩阵
+        :see https://leetcode-cn.com/problems/01-matrix/
+        """
+        # 多源广度优先遍历
+        checked_index_set = set()
+        zero_index_set = set()
+
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                if matrix[i][j] == 0:
+                    zero_index_set.add((i, j))
+                    checked_index_set.add((i, j))
+
+        distance = 0
+        while zero_index_set:
+            next_index_set = set()
+            for i, j in zero_index_set:
+                checked_index_set.add((i, j))
+                matrix[i][j] = distance
+                for x, y in [(i - 1, j), (i, j - 1), (i, j + 1), (i + 1, j)]:
+                    if 0 <= x < len(matrix) and 0 <= y < len(matrix[x]) and (x, y) not in checked_index_set and (
+                            x, y) not in zero_index_set:
+                        next_index_set.add((x, y))
+            zero_index_set = next_index_set
+            distance += 1
+            # print(zero_index_set)
+
+        return matrix
+
+    def numWays(self, n: int, relation: list, k: int) -> int:
+        """
+        传递信息
+        :param n:
+        :param relation:
+        :param k:
+        :return:
+        """
+        next_person_list = [[] for _ in range(n)]
+        for i in relation:
+            next_person_list[i[0]].append(i[1])
+
+        for i in next_person_list:
+            print(i)
+
+        result = [0] * n
+        current_list = [0]
+        while k > 0:
+            next_list = []
+            result = [0] * n
+            for i in current_list:
+                for person in next_person_list[i]:
+                    next_list.append(person)
+                    result[person] += 1
+            current_list = next_list
+            k -= 1
+
+            # print(result)
+
+        return result[-1]
+
+    def numIslands(self, grid: list) -> int:
+        """
+        200. 岛屿数量
+        :see https://leetcode-cn.com/problems/number-of-islands/
+        """
+
+        # 使用深度遍历标记小岛
+        def island(x: int, y: int, current_count: int):
+            grid[x][y] = current_count
+            for i, j in [(x - 1, y), (x, y - 1), (x + 1, y), (x, y + 1)]:
+                if 0 <= i < len(grid) and 0 <= j < len(grid[i]) and grid[i][j] == '1':
+                    island(i, j, current_count)
+
+        # 初始化为2，以免与1和0冲突
+        islands_count = 2
+
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                if grid[i][j] == '1':
+                    island(i, j, islands_count)
+                    islands_count += 1
+        # print(grid)
+        return islands_count - 2
+
 
 if __name__ == '__main__':
-    # print(Solution().ladderLength("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"]))
-    # print(Solution().scheduleCourse([[5, 15], [3, 19], [6, 7], [2, 10], [5, 16], [8, 14], [10, 11], [2, 19]]))
-    # print(Solution().scheduleCourse([[5, 5], [4, 6], [2, 6]]))
     s = Solution()
-    # a = [[1, 0, 0], [0, 0, 0], [0, 1, 0]]
-    a = [[1, 1, 1, 1, 1], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1], [1, 1, 1, 1, 1]]
-    print(s.maxDistance(a))
-    # print(a)
+    a = [["1", "1", "1", "1", "0"], ["1", "1", "0", "1", "0"], ["1", "1", "0", "0", "0"], ["0", "0", "0", "0", "0"]]
+    print(s.numIslands(a))
+    # for i in a:
+    #     print(i)

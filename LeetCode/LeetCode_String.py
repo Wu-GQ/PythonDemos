@@ -451,7 +451,8 @@ class Solution:
                 if selected_ch_total_count == t_length:
                     length = selected_ch_index_stack[-1] - selected_ch_index_stack[0]
                     if length < min_length:
-                        start_index, end_index, min_length = selected_ch_index_stack[0], selected_ch_index_stack[-1], length
+                        start_index, end_index, min_length = selected_ch_index_stack[0], selected_ch_index_stack[
+                            -1], length
 
         return s[start_index:end_index + 1] if start_index != -1 and end_index != -1 else ""
 
@@ -516,7 +517,7 @@ class Solution:
                 char_count_dict[i] += 1
             else:
                 char_count_dict[i] = 1
-        
+
         # 逐个分析每个词汇的字符数量
         count = 0
         for word in words:
@@ -534,10 +535,10 @@ class Solution:
                         break
                 else:
                     word_count_dict[i] = 1
-            
+
             if not is_break:
                 count += len(word)
-        
+
         return count
 
     def longestPalindrome(self, s: str) -> int:
@@ -563,11 +564,11 @@ class Solution:
         """
         if len(s) < 1:
             return 0
-        
+
         char_list = [0] * 52
         max_length = 0
         single_char = 0
-        
+
         for i in s:
             index = ord(i) - 64 if ord(i) < 91 else ord(i) - 71
             if char_list[index] > 0:
@@ -580,5 +581,227 @@ class Solution:
 
         return max_length + (1 if single_char > 0 else 0)
 
+    def myAtoi(self, str: str) -> int:
+        """
+        8. 字符串转换整数 (atoi)
+        :see https://leetcode-cn.com/problems/string-to-integer-atoi/
+        """
+        min_int = -2 << 30
+        max_int = (2 << 30) - 1
+
+        ord_zero = ord('0')
+        ord_nine = ord('9')
+
+        # 0-正负可选，1代表正号，2表示负号
+        symbol_type = 0
+        # 是否允许空格
+        is_spaces_allowed = True
+
+        result = 0
+
+        for i in str:
+            if i == ' ':
+                if is_spaces_allowed:
+                    continue
+                else:
+                    break
+            elif i == '-' or i == '+':
+                if symbol_type > 0:
+                    break
+                else:
+                    symbol_type = 1 if i == '+' else 2
+                is_spaces_allowed = False
+            elif ord_zero <= ord(i) <= ord_nine:
+                result = result * 10 - ord_zero + ord(i)
+                if (symbol_type != 2) and result >= max_int:
+                    return max_int
+                elif symbol_type == 2 and -result <= min_int:
+                    return min_int
+
+                is_spaces_allowed = False
+                if symbol_type == 0:
+                    symbol_type = 1
+            else:
+                break
+
+        return -result if symbol_type == 2 else result
+
+    def canConstruct(self, s: str, k: int) -> bool:
+        """
+        构造 K 个回文字符串
+        :param s:
+        :param k:
+        :return:
+        """
+        char_dict = {}
+        for i in s:
+            char_dict[i] = char_dict.get(i, 0) + 1
+
+        pair_count = 0
+        not_pair_count = 0
+        for i in char_dict:
+            if char_dict[i] % 2 == 0:
+                pair_count += 1
+            else:
+                not_pair_count += 1
+
+        # min_count = not_pair_count if not_pair_count >= pair_count else not_pair_count
+        return not_pair_count <= k <= len(s)
+
+    def longestDiverseString(self, a: int, b: int, c: int) -> str:
+        """
+        最长快乐字符串
+        :param a:
+        :param b:
+        :param c:
+        :return:
+        """
+        nums = [[a, 'a'], [b, 'b'], [c, 'c']]
+        nums.sort(key=lambda num: num[0], reverse=True)
+
+        result = []
+        last_char = ''
+        while nums[0][0] > 0:
+            if last_char == nums[0][1]:
+                if nums[1][0] == 0:
+                    break
+                nums[1][0] -= 1
+                result.append(nums[1][1])
+                last_char = nums[1][1]
+            else:
+                if nums[0][0] == 1:
+                    result.append(nums[0][1])
+                    nums[0][0] = 0
+                else:
+                    result.append(nums[0][1])
+                    result.append(nums[0][1])
+                    nums[0][0] -= 2
+                last_char = nums[0][1]
+
+            # if nums[1][0] == 0:
+            #     break
+            # nums[1][0] -= 1
+            # result.append(nums[1][1])
+            # last_char = nums[1][1]
+
+            nums.sort(key=lambda num: num[0], reverse=True)
+
+        return ''.join(result)
+
+    def entityParser(self, text: str) -> str:
+        """
+        5382. HTML 实体解析器
+        :param text:
+        :return:
+        """
+        return text.replace('&quot;', '\\"').replace('&apos;', "\\'").replace('&amp;', '&').replace('&gt;',
+                                                                                                    '>').replace('&lt;',
+                                                                                                                 '<').replace(
+            '&frasl;', '/')
+
+    def reverseWords(self, s: str) -> str:
+        """
+        151. 翻转字符串里的单词
+        :see https://leetcode-cn.com/problems/reverse-words-in-a-string/
+        """
+        string_list = s.split()
+        # print(string_list)
+        string_list.reverse()
+        return ' '.join(string_list)
+
+    def getHappyString(self, n: int, k: int) -> str:
+        """长度为 n 的开心字符串中字典序第 k 小的字符串"""
+
+        def add_one() -> bool:
+            string_list[-1] += 1
+            carry = 0
+            for i in range(len(string_list) - 1, -1, -1):
+                a = string_list[i] + carry
+                if a > 2:
+                    carry = a // 3
+                    string_list[i] = a % 3
+                else:
+                    string_list[i] = a
+                    carry = 0
+                    break
+
+            if carry > 0:
+                return False
+
+            repeat = False
+            for i in range(len(string_list) - 1):
+                if string_list[i] == string_list[i + 1]:
+                    repeat = True
+                    break
+
+            if repeat:
+                return add_one()
+            else:
+                return True
+
+        string_list = []
+        for i in range(n):
+            string_list.append(i % 2)
+
+        for i in range(k - 1):
+            if not add_one():
+                return ""
+
+        for i in range(len(string_list)):
+            if string_list[i] == 0:
+                string_list[i] = 'a'
+            elif string_list[i] == 1:
+                string_list[i] = 'b'
+            elif string_list[i] == 2:
+                string_list[i] = 'c'
+            else:
+                print('Error')
+
+        return ''.join(string_list)
+
+    def breakPalindrome(self, palindrome: str) -> str:
+        """
+        1328. 破坏回文串
+        :see https://leetcode-cn.com/problems/break-a-palindrome/
+        """
+        if len(palindrome) < 2:
+            return ''
+
+        index = -1
+        for i in range(len(palindrome) // 2):
+            if palindrome[i] != 'a':
+                index = i
+                break
+
+        return f'{palindrome[:index]}a{palindrome[index + 1:]}' if index != -1 else f'{palindrome[:-1]}b'
+
+    def reformat(self, s: str) -> str:
+        """重新格式化字符串"""
+        ch_list = []
+        num_list = []
+
+        for i in s:
+            if i.isdigit():
+                num_list.append(i)
+            else:
+                ch_list.append(i)
+
+        if abs(len(num_list) - len(ch_list)) > 1:
+            return ''
+
+        string_list = []
+        length = len(s)
+        if len(num_list) > len(ch_list):
+            string_list.append(num_list.pop(0))
+            length -= 1
+        for i in range(length):
+            if i % 2 == 0:
+                string_list.append(ch_list[i // 2])
+            else:
+                string_list.append(num_list[i // 2])
+
+        return ''.join(string_list)
+
+
 if __name__ == "__main__":
-    print(Solution().longestPalindrome("abccccdd"))
+    print(Solution().reformat('ab123'))

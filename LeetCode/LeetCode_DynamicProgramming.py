@@ -115,8 +115,11 @@ class Solution:
         打家劫舍
         :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/272/dynamic-programming/1177/
         """
-        money_list = [0] * len(nums)
+        # dp[i] = nums[i] + max(dp[i-2], dp[i-3])
+        # i < 2, dp[i] = nums[i]
+        # i == 2, dp[i] = dp[0] + nums[2]
 
+        money_list = [0] * len(nums)
         max_money = 0
 
         for i in range(len(nums)):
@@ -189,7 +192,7 @@ class Solution:
 
     def maxArea(self, height: list) -> int:
         """
-        盛水最多的容器，S = max((j-i) * min(a[i], a[j]))
+        11. 盛水最多的容器，S = max((j-i) * min(a[i], a[j]))
         :see https://leetcode-cn.com/problems/container-with-most-water/
         """
         if len(height) < 2:
@@ -475,8 +478,10 @@ class Solution:
                 elif column == 0:
                     result_list[row][0] = result_list[row - 1][0] and s2[row - 1] == s3[row - 1]
                 else:
-                    result_list[row][column] = (result_list[row - 1][column] and s2[row - 1] == s3[row - 1 + column]) or (
-                            result_list[row][column - 1] and s1[column - 1] == s3[column - 1 + row])
+                    result_list[row][column] = (result_list[row - 1][column] and s2[row - 1] == s3[
+                        row - 1 + column]) or (
+                                                       result_list[row][column - 1] and s1[column - 1] == s3[
+                                                   column - 1 + row])
 
         return result_list[len(s2)][len(s1)]
 
@@ -493,7 +498,8 @@ class Solution:
         for row in range(0, len(t)):
             for column in range(row, len(s)):
                 if s[column] == t[row]:
-                    result_list[row][column] = result_list[row][column - 1] + (result_list[row - 1][column - 1] if row > 0 else 1)
+                    result_list[row][column] = result_list[row][column - 1] + (
+                        result_list[row - 1][column - 1] if row > 0 else 1)
                 else:
                     result_list[row][column] = result_list[row][column - 1]
 
@@ -560,7 +566,8 @@ class Solution:
         # 动态规划
         for i in range(0, length):
             if i == 0:
-                possess_one_profit, possess_two_profit, none_one_profit, none_two_profit_list = -prices[i], -float('inf'), 0, -float('inf')
+                possess_one_profit, possess_two_profit, none_one_profit, none_two_profit_list = -prices[i], -float(
+                    'inf'), 0, -float('inf')
             else:
                 possess_one_profit, possess_two_profit, none_one_profit, none_two_profit = \
                     max(possess_one_profit, -prices[i]), \
@@ -652,7 +659,8 @@ class Solution:
                     temp_zero_count = two_count + 1
                     temp_zero_sum = two_sum + digit
 
-                    if temp_zero_count < zero_count or (temp_zero_count == zero_count and compare_nums(zero_nums, temp_zero_nums)):
+                    if temp_zero_count < zero_count or (
+                            temp_zero_count == zero_count and compare_nums(zero_nums, temp_zero_nums)):
                         temp_zero_nums = zero_nums
                         temp_zero_count = zero_count
                         temp_zero_sum = zero_sum
@@ -667,7 +675,8 @@ class Solution:
                     temp_one_count = zero_count + 1
                     temp_one_sum = zero_sum + digit
 
-                    if temp_one_count < one_count or (temp_one_count == one_count and compare_nums(one_nums, temp_one_nums)):
+                    if temp_one_count < one_count or (
+                            temp_one_count == one_count and compare_nums(one_nums, temp_one_nums)):
                         temp_one_nums = one_nums
                         temp_one_count = one_count
                         temp_one_sum = one_sum
@@ -682,7 +691,8 @@ class Solution:
                     temp_two_count = one_count + 1
                     temp_two_sum = one_sum + digit
 
-                    if temp_two_count < two_count or (temp_two_count == two_count and compare_nums(two_nums, temp_two_nums)):
+                    if temp_two_count < two_count or (
+                            temp_two_count == two_count and compare_nums(two_nums, temp_two_nums)):
                         temp_two_nums = two_nums
                         temp_two_count = two_count
                         temp_two_sum = two_sum
@@ -701,7 +711,8 @@ class Solution:
                     temp_zero_count = one_count + 1
                     temp_zero_sum = one_sum + digit
 
-                    if temp_zero_count < zero_count or (temp_zero_count == zero_count and compare_nums(zero_nums, temp_zero_nums)):
+                    if temp_zero_count < zero_count or (
+                            temp_zero_count == zero_count and compare_nums(zero_nums, temp_zero_nums)):
                         temp_zero_nums = zero_nums
                         temp_zero_count = zero_count
                         temp_zero_sum = zero_sum
@@ -716,7 +727,8 @@ class Solution:
                     temp_one_count = two_count + 1
                     temp_one_sum = two_sum + digit
 
-                    if temp_one_count < one_count or (temp_one_count == one_count and compare_nums(one_nums, temp_one_nums)):
+                    if temp_one_count < one_count or (
+                            temp_one_count == one_count and compare_nums(one_nums, temp_one_nums)):
                         temp_one_nums = one_nums
                         temp_one_count = one_count
                         temp_one_sum = one_sum
@@ -731,7 +743,8 @@ class Solution:
                     temp_two_count = zero_count + 1
                     temp_two_sum = zero_sum + digit
 
-                    if temp_two_count < two_count or (temp_two_count == two_count and compare_nums(two_nums, temp_two_nums)):
+                    if temp_two_count < two_count or (
+                            temp_two_count == two_count and compare_nums(two_nums, temp_two_nums)):
                         temp_two_nums = two_nums
                         temp_two_count = two_count
                         temp_two_sum = two_sum
@@ -858,6 +871,313 @@ class Solution:
 
         return result_list[-1][-1]
 
+    def stoneGame(self, piles: list) -> bool:
+        """
+        877. 石子游戏
+        :see https://leetcode-cn.com/problems/stone-game/
+        """
+        # A[i][j]表示先手最高分数，B[i][j]表示后手最高分数，最优得分之差 = A[0][N-1] - B[0][N-1]
+        # 先手：
+        # A[i][j] = max(B[i+1][j] + piles[i], B[i][j-1] + piles[j])
+        # 后手：
+        # B[i][j] = A[i+1][j], A[i][j-1]
+        # 当i=j时，只有一个石子堆，先手为piles[i]，后手为0
+
+        first_dp = [[0] * len(piles) for _ in piles]
+        back_dp = [[0] * len(piles) for _ in piles]
+
+        for i in range(0, len(piles)):
+            first_dp[i][i] = piles[i]
+
+        for i in range(1, len(piles)):
+            for j in range(0, len(piles) - i):
+                # print(j, i + j)
+                left = back_dp[j + 1][i + j] + piles[j]
+                right = back_dp[j][i + j - 1] + piles[i + j]
+
+                if left >= right:
+                    first_dp[j][i + j] = left
+                    back_dp[j][i + j] = first_dp[j + 1][i + j]
+                else:
+                    first_dp[j][i + j] = right
+                    back_dp[j][i + j] = first_dp[j][i + j - 1]
+
+        return first_dp[0][-1] > back_dp[0][-1]
+
+    def stoneGameII(self, piles: list) -> int:
+        """
+        1140. 石子游戏 II
+        :see https://leetcode-cn.com/problems/stone-game-ii/
+        """
+        # 最开始，A可选 1 或 2，即 piles[0]，或者 piles[0] + piles[1]
+        # 然后，后手变成先手，从 i = 1, M = 1 或者 i = 2, M = 2 开始
+        #
+        # 先手：
+        # A[i][j] 表示从第i堆开始，最多取 j 堆的数量, 1 <= k <= 2j
+        # A[i][j] = max(B[i + k][max(j, k)] + sum(piles[i:i + k]))
+        #
+        # 后手：
+        # 根据先手选择的堆数 k
+        # B[i][j] = A[i + k][max(j, k)]
+        #
+        # 基础条件：
+        # i + 2 * j >= N, A[i][j] = sum(piles[i:]), B[i][j] = 0
+
+        first_dp = [[0] * len(piles) for _ in piles]
+        back_dp = [[0] * len(piles) for _ in piles]
+
+        for i in range(len(piles)):
+            for j in range(len(piles)):
+                if i + 2 * j >= len(piles):
+                    first_dp[i][j] = sum(piles[i:])
+
+        # 从倒数第三行开始逆序遍历
+        for i in range(len(piles) - 3, -1, -1):
+            for j in range(1, len(piles)):
+                if i + 2 * j >= len(piles):
+                    continue
+
+                # 从 1 到 2 * j 之间查找，可以获得的最多的石头数量
+                max_k = 0
+                max_stones = 0
+                for k in range(1, 2 * j + 1):
+                    if i + k >= len(piles):
+                        break
+                    stones = back_dp[i + k][max(j, k)] + sum(piles[i:i + k])
+                    if stones > max_stones:
+                        max_stones = stones
+                        max_k = k
+
+                # 先手可以获得的最多的石头数量就是max_stones
+                first_dp[i][j] = max_stones
+                # 后手可以获得最多的石头数量就是，去掉这次先手取的 k 个石子之后的先手的数量
+                back_dp[i][j] = first_dp[i + max_k][max(j, max_k)]
+
+        # for i in range(len(first_dp)):
+        #     for j in range(1, len(back_dp)):
+        #         print(f'({first_dp[i][j]}, {back_dp[i][j]}, {first_dp[i][j] + back_dp[i][j]})', end=' ')
+        #     print()
+
+        return first_dp[0][1]
+
+    def stoneGameIII(self, stoneValue: list) -> str:
+        """
+        1406. 石子游戏 III
+        :see https://leetcode-cn.com/problems/stone-game-iii/
+        """
+        # 先手first_dp[i]，表示先手从第 i 堆开始取，可以取的最大数量
+        # first_dp[i] = max(back_dp[i + k] + sum(stoneValue[i:i + k])), 1 <= k <= 3
+        #
+        # 后手back_dp[i]，表示后手在先手取完前 k 堆后，从第 i + k 堆开始取，可以取的最大数量
+        # back_dp[i] = first_dp[i + k]
+        #
+        # 初始条件，当只剩最后 1 堆时，先手取全部，后手取0
+        # 当 i == len(stoneValue) - 1 时, first_dp[i] = stoneValue[-1], back_dp[i] = 0
+
+        first_dp = [-1000] * len(stoneValue)
+        back_dp = [-1000] * len(stoneValue)
+
+        first_dp[-1] = stoneValue[-1]
+        back_dp[-1] = 0
+
+        for i in range(len(stoneValue) - 2, -1, -1):
+            max_k = 0
+            max_stone = -1000
+            for k in [1, 2, 3]:
+                if i + k > len(stoneValue):
+                    break
+                stones = (back_dp[i + k] if i + k < len(stoneValue) else 0) + sum(stoneValue[i:i + k])
+                if stones > max_stone:
+                    max_stone = stones
+                    max_k = k
+
+            first_dp[i] = max_stone
+            back_dp[i] = first_dp[i + max_k] if i + max_k < len(stoneValue) else 0
+
+        if first_dp[0] > back_dp[0]:
+            return 'Alice'
+        elif first_dp[0] == back_dp[0]:
+            return 'Tie'
+        else:
+            return 'Bob'
+
+    def smallestSufficientTeam(self, req_skills: list, people: list) -> list:
+        """
+        1125. 最小的必要团队
+        :see https://leetcode-cn.com/problems/smallest-sufficient-team/
+        """
+        req_skills_dict = {req_skills[i]: len(req_skills) - 1 - i for i in range(len(req_skills))}
+
+        # ---- 剪枝 ----
+        # 将每个人的技能整理成列表
+        people_skills_list = []
+        for i in range(len(people)):
+            # 计算该成员所掌握的技能
+            skills = 0
+            for skill in people[i]:
+                index = req_skills_dict.get(skill, -1)
+                if index >= 0:
+                    skills |= 1 << index
+
+            # 遍历判断该成员的技能是否已被他人掌握或者掌握他人技能
+            for j in range(len(people_skills_list)):
+                tmp_skill = people_skills_list[j][1] | skills
+                if tmp_skill == people_skills_list[j][1]:
+                    # 该成员的技能已被另一成员完全包含
+                    skills = 0
+                    break
+                elif tmp_skill == skills:
+                    # 该成员的技能完全包含另一成员
+                    people_skills_list[j][1] = 0
+
+            if skills > 0:
+                people_skills_list.append([i, skills])
+
+        # 去除无技能的成员
+        people_skills_list = [i for i in people_skills_list if i[1] != 0]
+
+        # for index, skill in people_skill_list:
+        #     print(f'({index}, {bin(skill)})')
+
+        # ---- 动态规划 ----
+        # dp[i]表示，满足掌握技能i的最少人数及其成员
+        dp = [[0, []] for _ in range(1 << len(req_skills))]
+        for index, skills in people_skills_list:
+            dp[skills] = [1, [index]]
+            for i in range(len(dp)):
+                if dp[i][0] == 0:
+                    continue
+                next_skills = skills | i
+                if dp[next_skills][0] == 0 or dp[i][0] + 1 < dp[next_skills][0]:
+                    dp[next_skills] = [dp[i][0] + 1, dp[i][1] + [index]]
+
+        # for i in range(len(dp)):
+        #     print(f'{bin(i)}: {dp[i][0]}, {dp[i][1]}')
+
+        return dp[-1][1]
+
+    def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+        """
+        1143. 最长公共子序列
+        :see https://leetcode-cn.com/problems/longest-common-subsequence/
+        """
+        text1 = ' ' + text1
+        text2 = ' ' + text2
+
+        result = [[0] * len(text1) for _ in text2]
+        for i in range(len(text2)):
+            for j in range(len(text1)):
+                if text2[i] == text1[j]:
+                    result[i][j] = result[i - 1][j - 1] + 1
+                else:
+                    result[i][j] = max(result[i - 1][j], result[i][j - 1])
+        # for i in result:
+        #     print(i)
+        return result[-1][-1] - 1
+
+    def maxEnvelopes(self, envelopes: list) -> int:
+        """
+        354. 俄罗斯套娃信封问题
+        :see https://leetcode-cn.com/problems/russian-doll-envelopes/
+        """
+        # 最长上升子序列进阶版
+        # 因为当宽度相同时，即使高度比较大，也不能放入。因此，宽度升序排列，高度降序排列
+        envelopes.sort(key=lambda x: (x[0], -x[1]))
+        # print(envelopes)
+
+        result = []
+        for width, height in envelopes:
+            index = bisect.bisect_left(result, height)
+            if index == len(result):
+                result.append(height)
+            else:
+                result[index] = height
+        # print(result)
+        return len(result)
+
+    def robII(self, nums: list) -> int:
+        """
+        213. 打家劫舍 II
+        :see https://leetcode-cn.com/problems/house-robber-ii/
+        """
+
+        def rob(nums: list) -> int:
+            money_list = [0] * len(nums)
+            max_money = 0
+
+            for i in range(len(nums)):
+                if i < 2:
+                    money_list[i] = nums[i]
+                elif i == 2:
+                    money_list[i] = nums[0] + nums[2]
+                else:
+                    money_list[i] = max(money_list[i - 3], money_list[i - 2]) + nums[i]
+
+                max_money = max(max_money, money_list[i])
+
+            return max_money
+
+        # 核心原则是第一个和最后一个不能同时抢，那么取max(nums[:-1], nums[1:])即可
+        return max(rob(nums[:-1]), rob(nums[1:])) if len(nums) > 1 else sum(nums)
+
+    def waysToChange(self, n: int) -> int:
+        """
+        面试题 08.11. 硬币
+        :see https://leetcode-cn.com/problems/coin-lcci/
+        """
+        # 错误思路：f(n) = f(n - 25) + f(n - 10) + f(n - 5) + f(n - 1)
+        # 错误思路中存在这种情况f(6) = 1 + 5, f(6) = 5 + 1的重复计算
+        # 换一种思路，先计算只有1，再计算5，然后计算10，最后计算25的数量
+        # 当只有1时，f(n) = f(n - 1)
+        # 当有5时，f(n) += f(n - 5)，因为此时的f(n - 5)是只有1的情况，所以不存在重复运算
+        # 10和25以此类推
+        self.ways_to_change_result_list = [1]
+
+        if len(self.ways_to_change_result_list) > n:
+            return self.ways_to_change_result_list[n]
+
+        last_length = len(self.ways_to_change_result_list)
+
+        for coin in [1, 5, 10, 25]:
+            for i in range(last_length, n + 1):
+                if i >= len(self.ways_to_change_result_list):
+                    self.ways_to_change_result_list.append(0)
+                if i >= coin:
+                    self.ways_to_change_result_list[i] = (self.ways_to_change_result_list[i] +
+                                                          self.ways_to_change_result_list[i - coin]) % 1000000007
+        # print(self.ways_to_change_result_list)
+        return self.ways_to_change_result_list[n]
+
+    def maxProfitV(self, prices: list) -> int:
+        """
+        309. 最佳买卖股票时机含冷冻期
+        :see https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
+        """
+        # 没有，dp_zero[i] = max(dp_zero[i - 1], dp_one[i - 1] + price[i])
+        # 持有，dp_one[i] = max(dp_one[i - 1], dp_zero[i - 2] - price[i])
+        if len(prices) < 2:
+            return 0
+        dp = [(0, -prices[0]), (max(0, prices[1] - prices[0]), max(-prices[0], -prices[1]))]
+        for i in range(2, len(prices)):
+            dp.append((max(dp[i - 1][0], dp[i - 1][1] + prices[i]), max(dp[i - 1][1], dp[i - 2][0] - prices[i])))
+        # print(dp)
+        return dp[-1][0]
+
+    def maxProfitVI(self, prices: list, fee: int) -> int:
+        """
+        714. 买卖股票的最佳时机含手续费
+        :see https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/
+        """
+        # 没有，dp_zero[i] = max(dp_zero[i - 1], dp_one[i - 1] + price[i] - fee)
+        # 持有，dp_one[i] = max(dp_one[i - 1], dp_zero[i - 1] - price[i])
+        if len(prices) < 2:
+            return 0
+        dp = [(0, -prices[0] - fee), (max(0, prices[1] - prices[0] - fee), max(-prices[0], -prices[1]))]
+        for i in range(2, len(prices)):
+            dp.append((max(dp[i - 1][0], dp[i - 1][1] + prices[i] - fee), max(dp[i - 1][1], dp[i - 1][0] - prices[i])))
+        print(dp)
+        return dp[-1][0]
+
 
 if __name__ == "__main__":
-    print(Solution().minDistance("ros", "horse"))
+    print(Solution().maxProfitVI([1, 3, 2, 8, 4, 9], 2))

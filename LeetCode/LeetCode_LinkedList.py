@@ -603,7 +603,7 @@ class LinkedList(object):
         """
         if head is None or head.next is None:
             return head
-        
+
         slow_node, quick_node = head, head
 
         while quick_node and quick_node.next:
@@ -611,13 +611,59 @@ class LinkedList(object):
 
         return slow_node
 
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        """
+        445. 两数相加 II
+        :see https://leetcode-cn.com/problems/add-two-numbers-ii/
+        """
+        # 使用栈来存储所有节点
+        l1_stack = []
+        l2_stack = []
+
+        p = l1
+        while p is not None:
+            l1_stack.append(p)
+            p = p.next
+        p = l2
+        while p is not None:
+            l2_stack.append(p)
+            p = p.next
+
+        # 进位
+        carry = 0
+        # 入栈后，从末位开始取即可
+        while l1_stack or l2_stack or carry > 0:
+            # 当 l1 的节点被取完时，需要构建新的0节点，并把 l1 的头指针往前移
+            if l1_stack:
+                p = l1_stack.pop()
+            else:
+                p = ListNode(0)
+                p.next = l1
+                l1 = p
+
+            q_val = l2_stack.pop().val if l2_stack else 0
+            result = p.val + q_val + carry
+
+            # 计算当前位
+            p.val = result % 10
+            # 进位
+            carry = result // 10
+
+        return l1
+
 
 if __name__ == '__main__':
-    data = [1, 2, 3, 4, 5, 6]
-
+    data = [9, 9]
     linked_list = LinkedList(data)
 
-    # p: ListNode = linked_list.addTwoNumbers(LinkedList(data1).head, LinkedList(data2).head)
-    p: ListNode = linked_list.middleNode(linked_list.head)
+    data1 = [9]
+    linked_list1 = LinkedList(data1)
 
-    print(p.val)
+    # p: ListNode = linked_list.addTwoNumbers(LinkedList(data1).head, LinkedList(data2).head)
+    # p: ListNode = linked_list.middleNode(linked_list.head)
+    result_list: ListNode = linked_list.addTwoNumbers(linked_list.head, linked_list1.head)
+    # print(result_list)
+    p = result_list
+    while p is not None:
+        print(p.val, end=' ')
+        p = p.next

@@ -9,7 +9,7 @@ class Solution:
         :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/264/array/1130/
         """
 
-        def update_first_zero_index(self, nums: list, start_index: int) -> int:
+        def update_first_zero_index(nums: list, start_index: int) -> int:
             for i in range(start_index, len(nums)):
                 if nums[i] == 0:
                     return i
@@ -434,7 +434,7 @@ class Solution:
 
     def generateParenthesis(self, n: int) -> list:
         """
-        括号生成
+        22. 括号生成
         :see https://leetcode-cn.com/problems/generate-parentheses/
         """
         if n < 1:
@@ -447,7 +447,7 @@ class Solution:
                 result_list.append(string)
                 return
 
-            if 0 < left_count < n and left_count > right_count:
+            if right_count < left_count < n:
                 backtrace(f'{string}(', left_count + 1, right_count)
                 backtrace(f'{string})', left_count, right_count + 1)
             elif left_count == 0 or left_count == right_count:
@@ -526,7 +526,7 @@ class Solution:
 
     def canJump(self, nums: list) -> bool:
         """
-        跳跃游戏
+        55. 跳跃游戏
         :see https://leetcode-cn.com/problems/jump-game/
         """
         # # 参考深度优先遍历（超时）
@@ -558,20 +558,13 @@ class Solution:
         # return jump(0)
 
         # 贪心算法，只保存右侧最大可达的坐标
-        length = len(nums)
-        if length < 1:
-            return False
-        elif length == 1:
-            return True
-
-        max_index = nums[0]
-        i = 0
-        while i < length - 1 and i <= max_index:
-            max_index = max(max_index, i + nums[i])
-            if max_index >= length - 1:
+        max_length = 0
+        for i in range(len(nums)):
+            if i > max_length:
+                break
+            max_length = max(max_length, i + nums[i])
+            if max_length >= len(nums) - 1:
                 return True
-            i += 1
-
         return False
 
     def jump(self, nums: list) -> int:
@@ -1028,7 +1021,8 @@ class Solution:
         if len(nums) < 2:
             return nums
         target = nums.pop(0)
-        return self.sortArray([i for i in nums if i < target]) + [target] + self.sortArray([i for i in nums if i >= target])
+        return self.sortArray([i for i in nums if i < target]) + [target] + self.sortArray(
+            [i for i in nums if i >= target])
 
     def maxDepthAfterSplit(self, seq: str) -> list:
         """
@@ -1079,8 +1073,377 @@ class Solution:
         # 因此，本题是求不同的数字个数
         return len(set(scores))
 
+    def maxSatisfaction(self, satisfaction: list) -> int:
+        """
+        做菜顺序
+        """
+        max_result = -float('inf')
+        satisfaction.sort()
+
+        for i in range(len(satisfaction)):
+            result = 0
+            for j in range(len(satisfaction) - i):
+                result += satisfaction[i + j] * (j + 1)
+
+            if result >= max_result:
+                max_result = result
+            else:
+                break
+
+        return max_result if max_result > 0 else 0
+
+    def minSubsequence(self, nums: list) -> list:
+        """
+        非递增顺序的最小子序列
+        :param nums:
+        :return:
+        """
+        nums_sum = sum(nums)
+        nums.sort(reverse=True)
+
+        result = []
+        part_sum = 0
+
+        for i in nums:
+            part_sum += i
+            result.append(i)
+            if nums_sum < part_sum * 2:
+                break
+        return result
+
+    def stringMatching(self, words: list) -> list:
+        """
+        5380. 数组中的字符串匹配
+        :param words:
+        :return:
+        """
+        words.sort(key=lambda word: len(word))
+
+        result = []
+        for i in range(0, len(words)):
+            for j in range(i + 1, len(words)):
+                if words[i] in words[j]:
+                    result.append(words[i])
+                    break
+        return result
+
+    def processQueries(self, queries: list, m: int) -> list:
+        """
+        5381. 查询带键的排列
+        :param queries:
+        :param m:
+        :return:
+        """
+        num_index_dict = {i + 1: i for i in range(m)}
+
+        result = []
+        for num in queries:
+            old_index = num_index_dict[num]
+            for i in num_index_dict:
+                if num_index_dict[i] < old_index:
+                    num_index_dict[i] += 1
+            num_index_dict[num] = 0
+            result.append(old_index)
+        return result
+
+    def merge_intervals(self, intervals: list) -> list:
+        """
+        56. 合并区间
+        :see https://leetcode-cn.com/problems/merge-intervals/
+        """
+        intervals.sort(key=lambda interval: (interval[0], interval[1]))
+        result = []
+
+        while intervals:
+            interval = intervals.pop(0)
+            if not result:
+                result.append(interval)
+                continue
+
+            last_interval = result[-1]
+            if last_interval[0] <= interval[0] <= last_interval[1]:
+                last_interval[1] = max(interval[1], last_interval[1])
+            else:
+                result.append(interval)
+
+        return result
+
+    def insert_interval(self, intervals: list, newInterval: list) -> list:
+        """
+        57. 插入区间
+        :see https://leetcode-cn.com/problems/insert-interval/
+        """
+
+        def append_interval(interval: list) -> None:
+            if not result:
+                result.append(interval)
+                return
+
+            last_interval = result[-1]
+            if last_interval[0] <= interval[0] <= last_interval[1]:
+                last_interval[1] = max(interval[1], last_interval[1])
+            else:
+                result.append(interval)
+
+        # 获得插入的位置
+        index = bisect.bisect_left(intervals, newInterval)
+
+        result = intervals[:index]
+        append_interval(newInterval)
+
+        for i in range(index, len(intervals)):
+            append_interval(intervals[i])
+
+        return result
+
+    def minCount(self, coins: list) -> int:
+        """
+        拿硬币
+        :param coins:
+        :return:
+        """
+        result = 0
+        for i in coins:
+            if i % 2 == 1:
+                result += i // 2 + 1
+            else:
+                result += i // 2
+        return result
+
+    def getTriggerTime(self, increase: list, requirements: list) -> list:
+        """剧情触发时间"""
+        # result = [-1] * len(requirements)
+        # current = [0, 0, 0]
+        # for i in range(len(increase)):
+        #     current[0] += increase[i][0]
+        #     current[1] += increase[i][1]
+        #     current[2] += increase[i][2]
+        #
+        #     for j in range(len(requirements)):
+        #         if result[j] < 0 and requirements[j][0] <= current[0] and requirements[j][1] <= current[1] and requirements[j][2] <= current[2]:
+        #             result[j] = i + 1
+        #
+        # return result
+        property_a_list = [0]
+        property_b_list = [0]
+        property_c_list = [0]
+        for i in range(len(increase)):
+            property_a_list.append(property_a_list[-1] + increase[i][0])
+            property_b_list.append(property_b_list[-1] + increase[i][1])
+            property_c_list.append(property_c_list[-1] + increase[i][2])
+
+        result = []
+        for i in requirements:
+            a = bisect.bisect_left(property_a_list, i[0])
+            b = bisect.bisect_left(property_b_list, i[1])
+            c = bisect.bisect_left(property_c_list, i[2])
+
+            index = max(a, b, c)
+            if index > len(increase):
+                index = -1
+            result.append(index)
+
+        return result
+
+    def minJump(self, jump: list) -> int:
+        """最小跳跃次数"""
+        # step = 1
+        # last_max_length = 0
+        # max_length = jump[0]
+        #
+        # while max_length < len(jump):
+        #     length = max_length
+        #     for i in range(last_max_length + 1, max_length):
+        #         length = max(length, jump[i] + i)
+        #
+        #     last_max_length = max_length
+        #     if jump[max_length] + max_length >= length:
+        #         max_length = jump[max_length] + max_length
+        #         step += 1
+        #     else:
+        #         max_length = length
+        #         step += 2
+        #
+        #     print(last_max_length, max_length)
+        # return step
+
+        result = [1E6] * len(jump)
+        result[0] = 0
+        step = 1E6
+
+        for i in range(len(jump)):
+            max_length = i + jump[i]
+            if max_length >= len(jump):
+                step = min(step, result[i] + 1)
+                continue
+
+            result[max_length] = min(result[max_length], result[i] + 1)
+
+            for j in range(i + 1, max_length):
+                result[j] = min(result[j], result[i] + 2)
+
+        return step
+
+    def minStartValue(self, nums: list) -> int:
+        """逐步求和得到正数的最小值"""
+        min_value = nums[0]
+        for i in range(1, len(nums)):
+            nums[i] += nums[i - 1]
+            min_value = min(min_value, nums[i])
+        return -min_value + 1 if min_value < 0 else 1
+
+    fibonacci_list = [1, 1]
+
+    def findMinFibonacciNumbers(self, k: int) -> int:
+        """和为 K 的最少斐波那契数字数目"""
+        while self.fibonacci_list[-1] < k:
+            self.fibonacci_list.append(self.fibonacci_list[- 1] + self.fibonacci_list[- 2])
+
+        step = 0
+        while k > 0:
+            index = bisect.bisect_right(self.fibonacci_list, k)
+            k -= self.fibonacci_list[index - 1]
+            step += 1
+        return step
+
+    def displayTable(self, orders: list) -> list:
+        """点菜展示表"""
+        tables = [dict() for _ in range(501)]
+        menus = set()
+        for i in orders:
+            table = int(i[1])
+            food = i[2]
+            tables[table][food] = tables[table].get(food, 0) + 1
+
+            menus.add(food)
+
+        menus_list = list(menus)
+        menus_list.sort()
+
+        result = [['Table']]
+        for i in menus_list:
+            result[0].append(i)
+
+        for i in range(501):
+            if len(tables[i]) == 0:
+                continue
+
+            table_menu = [str(i)]
+            for j in menus_list:
+                table_menu.append(str(tables[i].get(j, 0)))
+
+            result.append(table_menu)
+        return result
+
+    def minNumberOfFrogs(self, croakOfFrogs: str) -> int:
+        """数青蛙"""
+        croak_list = []
+        frogs_num = 0
+
+        for i in croakOfFrogs:
+            if i == 'c':
+                croak_list.insert(0, 1)
+            elif i == 'r':
+                index = bisect.bisect_right(croak_list, 1)
+                if index == -1 or croak_list[index - 1] != 1:
+                    return -1
+                else:
+                    croak_list[index - 1] += 1
+            elif i == 'o':
+                index = bisect.bisect_right(croak_list, 2)
+                if index == 0 or croak_list[index - 1] != 2:
+                    return -1
+                else:
+                    croak_list[index - 1] += 1
+            elif i == 'a':
+                index = bisect.bisect_right(croak_list, 3)
+                if index == 0 or croak_list[index - 1] != 3:
+                    return -1
+                else:
+                    croak_list[index - 1] += 1
+            elif i == 'k':
+                index = bisect.bisect_right(croak_list, 4)
+                if index == 0 or croak_list[index - 1] != 4:
+                    return -1
+                else:
+                    frogs_num = max(frogs_num, len(croak_list))
+                    del croak_list[index - 1]
+            else:
+                return -1
+
+            # print(croak_list)
+
+        return frogs_num if not croak_list else -1
+
+    def numOfArrays(self, n: int, m: int, k: int) -> int:
+        """生成数组"""
+
+        def add_one() -> bool:
+            num[-1] += 1
+            carry = 0
+            for i in range(len(num) - 1, -1, -1):
+                a = num[i] + carry
+                if a > m:
+                    carry = a // m
+                    num[i] = a % m
+                else:
+                    num[i] = a
+                    carry = 0
+                    break
+
+            return carry == 0
+
+        if k > m or k > n:
+            return 0
+
+        num = [1] * n
+        while add_one():
+            print(num)
+
+        return 0
+
+    def numberOfSubarrays(self, nums: list, k: int) -> int:
+        """
+        1248. 统计「优美子数组」
+        :see https://leetcode-cn.com/problems/count-number-of-nice-subarrays/
+        """
+        """ 此方法不够简洁，仅次于暴力。只需要统计奇数所在的下标，根据左右两侧的可扩展距离相乘后相加即可。 """
+        # 滑动窗口的左右下标
+        left_index = 0
+        right_index = -1
+        # 奇数的数量
+        odd_number_count = 0
+        # 子数组的数量
+        sub_array_count = 0
+        # 统计过的右下标
+        checked_right_index = -1
+
+        while left_index < len(nums):
+            # 若满足奇数的数量，则统计以当前右下标结尾的子序列数量
+            if odd_number_count == k and checked_right_index != right_index:
+                checked_right_index = right_index
+                # 遍历所有[left_index, right_index]之间满足条件的情况
+                for i in range(left_index, right_index + 1):
+                    sub_array_count += 1
+                    # print(f'{i}, {right_index}: {nums[i:right_index + 1]}')
+                    if nums[i] & 1 == 1:
+                        break
+
+            if odd_number_count <= k and right_index < len(nums) - 1:
+                right_index += 1
+                # 判断新加入数字的奇偶性
+                if nums[right_index] & 1 == 1:
+                    odd_number_count += 1
+            else:
+                # 判断被删除数字的奇偶性
+                if nums[left_index] & 1 == 1:
+                    odd_number_count -= 1
+                left_index += 1
+
+        return sub_array_count
+
+
 if __name__ == "__main__":
     s = Solution()
-    a = [5, 2, 3, 1]
-    print(s.maxDepthAfterSplit('(()())'))
+    print(s.numberOfSubarrays([2, 4, 6], 2))
     # print(a)
