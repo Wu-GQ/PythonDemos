@@ -1178,6 +1178,32 @@ class Solution:
         print(dp)
         return dp[-1][0]
 
+    def constrainedSubsetSum(self, nums: list, k: int) -> int:
+        """
+        5180. 带限制的子序列和
+        :param nums:
+        :param k:
+        :return:
+        """
+        # 单调栈
+        # max_dp: (i, sum, list)
+        max_sum_dp = []
+        for i in range(len(nums)):
+            max_sum = 0
+            for j in range(len(max_sum_dp) - 1, -1, -1):
+                if max_sum_dp[j][0] < i - k:
+                    break
+                if max_sum_dp[j][1] > max_sum:
+                    index, max_sum = max_sum_dp[j]
+
+            while len(max_sum_dp) > 0 and max_sum_dp[-1][1] < max_sum + nums[i]:
+                max_sum_dp.pop()
+
+            max_sum_dp.append((i, max_sum + nums[i]))
+            # print(max_sum_dp)
+
+        return max(i[1] for i in max_sum_dp)
+
 
 if __name__ == "__main__":
-    print(Solution().maxProfitVI([1, 3, 2, 8, 4, 9], 2))
+    print(Solution().constrainedSubsetSum([-1, -2, -3], 2))

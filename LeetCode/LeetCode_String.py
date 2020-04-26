@@ -802,6 +802,37 @@ class Solution:
 
         return ''.join(string_list)
 
+    def maxScore(self, s: str) -> int:
+        """
+        5392. 分割字符串的最大得分
+        :param s:
+        :return:
+        """
+        one_total_count = 0
+        for i in s:
+            if i == '1':
+                one_total_count += 1
+
+        max_result = one_total_count
+        result = one_total_count
+
+        if s[0] == '1':
+            max_result -= 1
+            result -= 1
+        else:
+            max_result += 1
+            result += 1
+
+        for i in range(1, len(s) - 1):
+            if s[i] == '0':
+                result += 1
+            else:
+                result -= 1
+            max_result = max(max_result, result)
+            # print(s[i], result, max_result)
+
+        return max_result
+
 
 if __name__ == "__main__":
-    print(Solution().reformat('ab123'))
+    print(Solution().maxScore('100'))

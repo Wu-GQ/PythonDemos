@@ -1433,8 +1433,36 @@ class Solution:
 
         return sub_array_count
 
+    def maxScore(self, cardPoints: list, k: int) -> int:
+        """
+        5393. 可获得的最大点数
+        :param cardPoints:
+        :param k:
+        :return:
+        """
+        # 找到和为最小的连续子数组
+        if k >= len(cardPoints) or k < 1:
+            return sum(cardPoints)
+
+        left_card = len(cardPoints) - k
+        total_sum = 0
+
+        # cardPoints[i...i+left_card] 的点数和
+        card_sum = sum(cardPoints[:left_card])
+        # 最小点数和
+        min_card_sum = card_sum
+
+        for i in range(len(cardPoints)):
+            total_sum += cardPoints[i]
+            if 0 < i < len(cardPoints) - left_card + 1:
+                card_sum = card_sum - cardPoints[i - 1] + cardPoints[i + left_card - 1]
+                min_card_sum = min(min_card_sum, card_sum)
+            print(i, card_sum, min_card_sum)
+
+        return total_sum - min_card_sum
+
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.numberOfSubarrays([2, 4, 6], 2))
+    print(s.maxScore([1, 2, 3, 4, 5, 6, 1], 3))
     # print(a)

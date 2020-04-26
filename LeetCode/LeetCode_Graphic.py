@@ -552,10 +552,24 @@ class Solution:
         # print(grid)
         return islands_count - 2
 
+    def findDiagonalOrder(self, nums: list) -> list:
+        """
+        5394. 对角线遍历 II
+        :param nums:
+        :return:
+        """
+        num_list = []
+        for i in range(len(nums)):
+            for j in range(len(nums[i])):
+                num_list.append((i + j, j, nums[i][j]))
+
+        num_list.sort()
+        return [i[2] for i in num_list]
+
 
 if __name__ == '__main__':
     s = Solution()
-    a = [["1", "1", "1", "1", "0"], ["1", "1", "0", "1", "0"], ["1", "1", "0", "0", "0"], ["0", "0", "0", "0", "0"]]
-    print(s.numIslands(a))
+    a = [[1, 2, 3], [4], [5, 6, 7], [8], [9, 10, 11]]
+    print(s.findDiagonalOrder(a))
     # for i in a:
     #     print(i)
