@@ -1073,6 +1073,15 @@ class Solution:
 
         return result_list
 
+    def expectNumber(self, scores: list) -> int:
+        """
+        LCP 11. 期望个数统计
+        :see https://leetcode-cn.com/problems/qi-wang-ge-shu-tong-ji/
+        """
+        # 当同一相同的数字的期望为1，不同的每个数字的期望也为1
+        # 因此，本题是求不同的数字个数
+        return len(set(scores))
+
     def maxSatisfaction(self, satisfaction: list) -> int:
         """
         做菜顺序
