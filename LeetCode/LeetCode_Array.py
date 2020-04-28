@@ -1,5 +1,6 @@
 import bisect
 import heapq
+from functools import reduce
 
 
 class Solution:
@@ -1472,8 +1473,33 @@ class Solution:
                 return i
         return len(result_list)
 
+    def singleNumbers(self, nums: list) -> list:
+        """
+        面试题56 - I. 数组中数字出现的次数
+        :see https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/
+        """
+        # 通过第一遍历，获得所有数字的异或结果。根据异或结果中某一个‘1’的位置，将数组分成两组。对两组数据分别异或，即可获得两个只出现一次的数字
+        all_xor_result = reduce(lambda x, y: x ^ y, nums)
+
+        index = 0
+        while all_xor_result & 1 == 0:
+            index += 1
+            all_xor_result >>= 1
+
+        target = 1 << index
+
+        a_xor_result = 0
+        b_xor_result = 0
+        for i in nums:
+            if i & target == target:
+                a_xor_result ^= i
+            else:
+                b_xor_result ^= i
+
+        return [a_xor_result, b_xor_result]
+
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.firstMissingPositive([0]))
+    print(s.singleNumbers([6, 2, 2, 1, 4, 4, 1, 3]))
     # print(a)
