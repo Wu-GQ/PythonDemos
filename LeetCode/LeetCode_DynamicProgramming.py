@@ -1178,6 +1178,26 @@ class Solution:
         print(dp)
         return dp[-1][0]
 
+    def longestPalindromeSubseq(self, s: str) -> int:
+        """
+        516. 最长回文子序列
+        :see https://leetcode-cn.com/problems/longest-palindromic-subsequence/
+        """
+        # dp[i][j]表示s[i...j]的最长回文子序列的长度
+        # dp[i][j] = dp[i + 1][j - 1] + 2 if s[i] == s[j] else max(dp[i + 1][j], dp[i][j - 1])
+        dp = [[0] * len(s) for _ in s]
+
+        for i in range(len(s)):
+            dp[i][i] = 1
+
+        for i in range(1, len(s)):
+            for j in range(len(s) - i):
+                # print(j, i + j)
+                x = j
+                y = i + j
+                dp[x][y] = (dp[x + 1][y - 1] + 2) if s[x] == s[y] else max(dp[x + 1][y], dp[x][y - 1])
+        return dp[0][-1]
+
 
 if __name__ == "__main__":
-    print(Solution().maxProfitVI([1, 3, 2, 8, 4, 9], 2))
+    print(Solution().longestPalindromeSubseq('bbbab'))
