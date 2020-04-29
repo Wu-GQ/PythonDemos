@@ -1,6 +1,18 @@
 import bisect
 
 
+class MountainArray:
+
+    def __init__(self, array: list):
+        self.array = array
+
+    def get(self, index: int) -> int:
+        return self.array[index] if 0 <= index < len(self.array) else -1
+
+    def length(self) -> int:
+        return len(self.array)
+
+
 class Solution:
 
     def largest_number(self, nums: list):
@@ -193,8 +205,66 @@ class Solution:
 
         return -1
 
+    def findInMountainArray(self, target: int, mountain_arr: MountainArray) -> int:
+        """
+        1095. 山脉数组中查找目标值
+        :see https://leetcode-cn.com/problems/find-in-mountain-array/
+        """
+        left_index, right_index = 0, mountain_arr.length() - 1
+
+        # 先找到山峰
+        while left_index < right_index:
+            mid = (left_index + right_index) >> 1
+
+            mid_value = mountain_arr.get(mid)
+            mid_right_value = mountain_arr.get(mid + 1)
+
+            if mid_value < mid_right_value:
+                left_index = mid + 1
+            else:
+                right_index = mid
+
+            # print(left_index, right_index, mid, mid_value, mid_right_value)
+
+        peak_index = left_index
+        # print(peak_index)
+
+        # 对山峰左侧进行二分查找
+        left_index, right_index = 0, peak_index
+        while left_index < right_index:
+            mid = (left_index + right_index) >> 1
+
+            mid_value = mountain_arr.get(mid)
+
+            if target == mid_value:
+                return mid
+            elif target < mid_value:
+                right_index = mid
+            else:
+                left_index = mid + 1
+
+            # print(left_index, right_index, mid, mid_value)
+
+        # 对山峰右侧进行二分查找
+        left_index, right_index = peak_index, mountain_arr.length()
+        while left_index < right_index:
+            mid = (left_index + right_index) >> 1
+
+            mid_value = mountain_arr.get(mid)
+
+            if target == mid_value:
+                return mid
+            elif target > mid_value:
+                right_index = mid
+            else:
+                left_index = mid + 1
+
+            # print(left_index, right_index, mid, mid_value)
+
+        return -1
+
 
 if __name__ == "__main__":
-    nums_list = [4, 5, 6, 7, 8, 9, 1, 2, 3]
+    nums_list = [0, 1, 2, 4, 2, 1]
 
-    print(Solution().search(nums_list, 8))
+    print(Solution().findInMountainArray(3, MountainArray(nums_list)))
