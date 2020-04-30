@@ -1,6 +1,6 @@
 import bisect
 import heapq
-
+from functools import reduce
 
 class Solution:
     def move_zeroes(self, nums: list) -> None:
@@ -1433,8 +1433,92 @@ class Solution:
 
         return sub_array_count
 
+    def firstMissingPositive(self, nums: list) -> int:
+        """
+        41. 缺失的第一个正数
+        :see https://leetcode-cn.com/problems/first-missing-positive/
+        """
+        if not nums:
+            return 1
+
+        result_list = [0] * (len(nums) + 1)
+        for i in nums:
+            if i <= 0 or i >= len(result_list):
+                result_list[0] = 1
+            else:
+                result_list[i] = 1
+        print(result_list)
+
+        for i in range(1, len(result_list)):
+            if result_list[i] != 1:
+                return i
+        return len(result_list)
+
+    def singleNumbers(self, nums: list) -> list:
+        """
+        面试题56 - I. 数组中数字出现的次数
+        :see https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/
+        """
+        # 通过第一遍历，获得所有数字的异或结果。根据异或结果中某一个‘1’的位置，将数组分成两组。对两组数据分别异或，即可获得两个只出现一次的数字
+        all_xor_result = reduce(lambda x, y: x ^ y, nums)
+
+        index = 0
+        while all_xor_result & 1 == 0:
+            index += 1
+            all_xor_result >>= 1
+
+        target = 1 << index
+
+        a_xor_result = 0
+        b_xor_result = 0
+        for i in nums:
+            if i & target == target:
+                a_xor_result ^= i
+            else:
+                b_xor_result ^= i
+
+        return [a_xor_result, b_xor_result]
+
+    def candy(self, ratings: list) -> int:
+        """
+        135. 分发糖果
+        :see https://leetcode-cn.com/problems/candy/
+        """
+        index_candy_stack = [[0, 1]]
+        # result = 0
+        candy_list = [0] * len(ratings)
+
+        for i in range(1, len(ratings)):
+            if ratings[i] > ratings[index_candy_stack[-1][0]]:
+                while index_candy_stack:
+                    item = index_candy_stack.pop()
+                    candy_list[item[0]] = item[1]
+                index_candy_stack = [[i, candy_list[i - 1] + 1]]
+            elif ratings[i] < ratings[index_candy_stack[-1][0]]:
+                for j in range(len(index_candy_stack) - 1, -1, -1):
+                    if index_candy_stack[j][1] > len(index_candy_stack) - j or (
+                            ratings[index_candy_stack[j][0]] == ratings[index_candy_stack[j + 1][0]]):
+                        break
+                    else:
+                        index_candy_stack[j][1] += 1
+                index_candy_stack.append([i, 1])
+            else:
+                index_candy_stack.append([i, 1])
+
+            print(candy_list)
+            print(index_candy_stack)
+            print(f'------- {i} -------')
+
+        for item in index_candy_stack:
+            candy_list[item[0]] = item[1]
+
+        print(candy_list)
+        print(index_candy_stack)
+
+        return sum(candy_list)
+
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.numberOfSubarrays([2, 4, 6], 2))
+    print(s.singleNumbers([6, 2, 2, 1, 4, 4, 1, 3]))
     # print(a)
