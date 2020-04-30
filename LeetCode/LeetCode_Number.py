@@ -251,8 +251,10 @@ class Solution:
             return (x_center - x) ** 2 + (y_center - y) ** 2
 
         return (x1 - radius <= x_center <= x2 + radius and y1 <= y_center <= y2) or (
-                x1 <= x_center <= x2 and y1 - radius <= y_center <= y2 + x_center) or (distance(x1, y2) <= radius ** 2) or (
-                       distance(x2, y2) <= radius ** 2) or (distance(x1, y1) <= radius ** 2) or (distance(x2, y1) <= radius ** 2)
+                x1 <= x_center <= x2 and y1 - radius <= y_center <= y2 + x_center) or (
+                       distance(x1, y2) <= radius ** 2) or (
+                       distance(x2, y2) <= radius ** 2) or (distance(x1, y1) <= radius ** 2) or (
+                       distance(x2, y1) <= radius ** 2)
 
     def numSteps(self, s: str) -> int:
         """
@@ -331,11 +333,13 @@ class Solution:
             else:
                 return []
         else:
-            x = (start2[1] - start2[0] * b_y_distance / b_x_distance - start1[1] + start1[0] * a_y_distance / a_x_distance) / (
-                    a_y_distance / a_x_distance - b_y_distance / b_x_distance)
+            x = (start2[1] - start2[0] * b_y_distance / b_x_distance - start1[1] + start1[
+                0] * a_y_distance / a_x_distance) / (
+                        a_y_distance / a_x_distance - b_y_distance / b_x_distance)
             if start1[0] <= x <= end1[0] or start2[0] <= x <= end2[0]:
                 y = (a_y_distance / a_x_distance) * x + (start1[1] - start1[0] * a_y_distance / a_x_distance)
-                if (start1[1] <= y <= end1[1] or end1[1] <= y <= start1[1]) and (start2[1] <= y <= end2[1] or end2[1] <= y <= start2[1]):
+                if (start1[1] <= y <= end1[1] or end1[1] <= y <= start1[1]) and (
+                        start2[1] <= y <= end2[1] or end2[1] <= y <= start2[1]):
                     return [x, y]
         return []
 
@@ -392,6 +396,29 @@ class Solution:
 
         return len(num_set)
 
+    def isHappy(self, n: int) -> bool:
+        """
+        202. 快乐数
+        :see https://leetcode-cn.com/problems/happy-number/
+        """
+        num_set = set()
+        while n not in num_set:
+            num_set.add(n)
+
+            num_sum = 0
+            while n > 0:
+                num_sum += (n % 10) ** 2
+                n //= 10
+
+            if num_sum == 1:
+                return True
+            else:
+                n = num_sum
+
+            # print(n)
+
+        return False
+
 
 if __name__ == '__main__':
-    print(Solution().movingCount(14, 14, 5))
+    print(Solution().isHappy(17))
