@@ -870,6 +870,7 @@ class Solution:
             count += index
             num_list.insert(index, i)
         return count
+        """
 
     def reversePairs2(self, nums: list) -> int:
         """
@@ -1451,27 +1452,6 @@ class Solution:
                 left_index += 1
 
         return sub_array_count
-
-    def firstMissingPositive(self, nums: list) -> int:
-        """
-        41. 缺失的第一个正数
-        :see https://leetcode-cn.com/problems/first-missing-positive/
-        """
-        if not nums:
-            return 1
-
-        result_list = [0] * (len(nums) + 1)
-        for i in nums:
-            if i <= 0 or i >= len(result_list):
-                result_list[0] = 1
-            else:
-                result_list[i] = 1
-        print(result_list)
-
-        for i in range(1, len(result_list)):
-            if result_list[i] != 1:
-                return i
-        return len(result_list)
 
     def singleNumbers(self, nums: list) -> list:
         """
