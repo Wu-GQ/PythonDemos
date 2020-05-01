@@ -363,7 +363,7 @@ class LinkedList(object):
 
     def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
         """
-        合并两个有序链表
+        21. 合并两个有序链表
         :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/6/linked-list/44/
         """
         p = l1
