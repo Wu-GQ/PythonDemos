@@ -8,9 +8,6 @@ class ListNode(object):
         self.val = x
         self.next = None
 
-    def __eq__(self, other):
-        return self.val == other.val
-
 
 class LinkedList(object):
     """ 链表类 """
@@ -680,17 +677,53 @@ class LinkedList(object):
 
         return head.next
 
+    def rotateRight(self, head: ListNode, k: int) -> ListNode:
+        """
+        61. 旋转链表
+        :see https://leetcode-cn.com/problems/rotate-list/
+        """
+        if not head or not head.next:
+            return head
+
+        # 确认链表长度，计算需要移动几步
+        p = head
+        length = 1
+        while p.next:
+            p = p.next
+            length += 1
+
+        k %= length
+        if k == 0:
+            return head
+
+        # 双指针法，找到需要移到链表顶部的开始节点的前一节点
+        p = head
+        q = head
+        while k > 0:
+            p = p.next
+            k -= 1
+        while p.next:
+            q = q.next
+            p = p.next
+
+        # 将开始节点及其之后的节点移到链表顶部
+        p.next = head
+        head = q.next
+        q.next = None
+
+        return head
+
 
 if __name__ == '__main__':
-    data = [-10, 1, 3, 5]
+    data = [9, 9]
     linked_list = LinkedList(data)
 
-    data1 = [-4, -2, 2, 4]
+    data1 = [9]
     linked_list1 = LinkedList(data1)
 
     # p: ListNode = linked_list.addTwoNumbers(LinkedList(data1).head, LinkedList(data2).head)
     # p: ListNode = linked_list.middleNode(linked_list.head)
-    result_list: ListNode = linked_list.mergeKLists([None])
+    result_list: ListNode = linked_list.addTwoNumbers(linked_list.head, linked_list1.head)
     # print(result_list)
     p = result_list
     while p is not None:
