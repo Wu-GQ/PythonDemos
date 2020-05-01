@@ -1178,6 +1178,27 @@ class Solution:
         print(dp)
         return dp[-1][0]
 
+    def calculateMinimumHP(self, dungeon: list) -> int:
+        """
+        174. 地下城游戏
+        :see https://leetcode-cn.com/problems/dungeon-game/
+        """
+        for i in range(len(dungeon) - 1, -1, -1):
+            for j in range(len(dungeon[i]) - 1, -1, -1):
+                if i == len(dungeon) - 1 and j == len(dungeon[i]) - 1:
+                    continue
+                elif i == len(dungeon) - 1:
+                    dungeon[i][j] += dungeon[i][j + 1] if dungeon[i][j + 1] < 0 else 0
+                elif j == len(dungeon[i]) - 1:
+                    dungeon[i][j] += dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0
+                else:
+                    dungeon[i][j] += max(dungeon[i][j + 1] if dungeon[i][j + 1] < 0 else 0, dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0)
+
+        # for i in dungeon:
+        #     print(i)
+
+        return 1 - dungeon[0][0] if dungeon[0][0] <= 0 else 1
+
 
 if __name__ == "__main__":
-    print(Solution().maxProfitVI([1, 3, 2, 8, 4, 9], 2))
+    print(Solution().calculateMinimumHP([[0]]))

@@ -2,6 +2,7 @@ import bisect
 import heapq
 from functools import reduce
 
+
 class Solution:
     def move_zeroes(self, nums: list) -> None:
         """
@@ -1484,41 +1485,25 @@ class Solution:
         135. 分发糖果
         :see https://leetcode-cn.com/problems/candy/
         """
-        index_candy_stack = [[0, 1]]
-        # result = 0
-        candy_list = [0] * len(ratings)
+        left_candy_list = [0] * len(ratings)
+        right_candy_list = [0] * len(ratings)
 
-        for i in range(1, len(ratings)):
-            if ratings[i] > ratings[index_candy_stack[-1][0]]:
-                while index_candy_stack:
-                    item = index_candy_stack.pop()
-                    candy_list[item[0]] = item[1]
-                index_candy_stack = [[i, candy_list[i - 1] + 1]]
-            elif ratings[i] < ratings[index_candy_stack[-1][0]]:
-                for j in range(len(index_candy_stack) - 1, -1, -1):
-                    if index_candy_stack[j][1] > len(index_candy_stack) - j or (
-                            ratings[index_candy_stack[j][0]] == ratings[index_candy_stack[j + 1][0]]):
-                        break
-                    else:
-                        index_candy_stack[j][1] += 1
-                index_candy_stack.append([i, 1])
+        for i in range(len(ratings)):
+            if i == 0 or ratings[i] <= ratings[i - 1]:
+                left_candy_list[i] = 1
             else:
-                index_candy_stack.append([i, 1])
+                left_candy_list[i] = left_candy_list[i - 1] + 1
 
-            print(candy_list)
-            print(index_candy_stack)
-            print(f'------- {i} -------')
+        for i in range(len(ratings) - 1, -1, -1):
+            if i == len(ratings) - 1 or ratings[i] <= ratings[i + 1]:
+                right_candy_list[i] = 1
+            else:
+                right_candy_list[i] = right_candy_list[i + 1] + 1
 
-        for item in index_candy_stack:
-            candy_list[item[0]] = item[1]
-
-        print(candy_list)
-        print(index_candy_stack)
-
-        return sum(candy_list)
+        return sum([max(left_candy_list[i], right_candy_list[i]) for i in range(len(ratings))])
 
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.singleNumbers([6, 2, 2, 1, 4, 4, 1, 3]))
+    print(s.candy([1, 0, 2]))
     # print(a)
