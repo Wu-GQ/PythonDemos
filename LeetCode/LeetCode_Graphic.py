@@ -566,10 +566,23 @@ class Solution:
         num_list.sort()
         return [i[2] for i in num_list]
 
+    def destCity(self, paths: list) -> str:
+        """
+        5400. 旅行终点站
+        :param paths:
+        :return:
+        """
+        to_city = set()
+        from_city = set()
+        for path in paths:
+            from_city.add(path[0])
+            to_city.add(path[1])
+        return to_city.difference(from_city).pop()
+
 
 if __name__ == '__main__':
     s = Solution()
-    a = [[1, 2, 3], [4], [5, 6, 7], [8], [9, 10, 11]]
-    print(s.findDiagonalOrder(a))
+    a = [["London", "New York"], ["New York", "Lima"], ["Lima", "Sao Paulo"]]
+    print(s.destCity(a))
     # for i in a:
     #     print(i)

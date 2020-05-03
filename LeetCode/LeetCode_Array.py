@@ -1574,8 +1574,106 @@ class Solution:
 
         return sum([max(left_candy_list[i], right_candy_list[i]) for i in range(len(ratings))])
 
+    def kidsWithCandies(self, candies: list, extraCandies: int) -> list:
+        """
+        5384. 拥有最多糖果的孩子
+        :param candies:
+        :param extraCandies:
+        :return:
+        """
+        max_candy = max(candies)
+        return [candy + extraCandies >= max_candy for candy in candies]
+
+    def numberWays(self, hats: list) -> int:
+        """
+        5387. 每个人戴不同帽子的方案数
+        :param hats:
+        :return:
+        """
+
+        # 回溯会超时
+        def backtrace(index: int, wearing_hats_set: set):
+            if index == len(hats):
+                self.result_way += 1
+                # print(wearing_hats_set)
+                return
+
+            for color in hats[index]:
+                if color not in wearing_hats_set:
+                    wearing_hats_set.add(color)
+                    backtrace(index + 1, wearing_hats_set)
+                    wearing_hats_set.remove(color)
+
+        self.result_way = 0
+        backtrace(0, set())
+        return self.result_way % 100000007
+
+    def kLengthApart(self, nums: list, k: int) -> bool:
+        """
+        5401. 是否所有 1 都至少相隔 k 个元素
+        :param nums:
+        :param k:
+        :return:
+        """
+        if k < 1:
+            return True
+
+        last_one_index = -float('inf')
+        for i in range(len(nums)):
+            if nums[i] == 0:
+                continue
+            if i - last_one_index <= k:
+                return False
+            last_one_index = i
+
+        return True
+
+    def longestSubarray(self, nums: list, limit: int) -> int:
+        """
+        5402. 绝对差不超过限制的最长连续子数组
+        :param nums:
+        :param limit:
+        :return:
+        """
+        left = 0
+        right = 1
+        max_distance = 0
+
+        # 最大数栈和最小数栈
+        max_nums_stack = [(left, nums[left])]
+        min_nums_stack = [(left, nums[left])]
+
+        while right < len(nums):
+            # 将右侧数加入最大数栈和最小数栈
+            while max_nums_stack and nums[right] > max_nums_stack[-1][1]:
+                max_nums_stack.pop()
+            max_nums_stack.append((right, nums[right]))
+
+            while min_nums_stack and nums[right] < min_nums_stack[-1][1]:
+                min_nums_stack.pop()
+            min_nums_stack.append((right, nums[right]))
+
+            # 检查最大绝对值是否大于 limit
+            while max_nums_stack[0][1] - min_nums_stack[0][1] > limit:
+                if max_nums_stack[0][0] < min_nums_stack[0][0]:
+                    left = max_nums_stack[0][0] + 1
+                    max_nums_stack.pop(0)
+                elif max_nums_stack[0][0] == min_nums_stack[0][0]:
+                    left = max_nums_stack[0][0] + 1
+                    max_nums_stack.pop(0)
+                    min_nums_stack.pop(0)
+                else:
+                    left = min_nums_stack[0][0] + 1
+                    min_nums_stack.pop(0)
+
+            # 更新右坐标和左坐标的最大距离
+            max_distance = max(max_distance, right - left)
+            right += 1
+
+        # + 1 的原因是，子数组内元素个数 = 左右下标的差值 + 1，例如 left = 0, right = 0 时，其实含有 1 个元素
+        return max_distance + 1
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.singleNumbers([6, 2, 2, 1, 4, 4, 1, 3]))
+    print(s.kthSmallest([[1, 3, 11], [2, 4, 6]], 5))
     # print(a)

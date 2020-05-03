@@ -392,6 +392,46 @@ class Solution:
 
         return len(num_set)
 
+    def maxDiff(self, num: int) -> int:
+        """
+        5385. 改变一个整数能得到的最大差值
+        :param num:
+        :return:
+        """
+        max_num_list = list(str(num))
+        min_num_list = list(str(num))
+
+        ch = 'a'
+        for i in range(len(max_num_list)):
+            if ch == 'a' and max_num_list[i] != '9':
+                ch = max_num_list[i]
+                max_num_list[i] = '9'
+            elif ch != 'a' and max_num_list[i] == ch:
+                max_num_list[i] = '9'
+
+        ch = 'a'
+        next_ch = 'a'
+        for i in range(len(min_num_list)):
+            if ch == 'a' and i == 0 and min_num_list[i] != '1':
+                ch = min_num_list[i]
+                next_ch = '1'
+                min_num_list[i] = '1'
+            elif ch == 'a' and i > 0 and min_num_list[0] == '1' and min_num_list[i] != '0' and min_num_list[i] != '1':
+                ch = min_num_list[i]
+                next_ch = '0'
+                min_num_list[i] = '0'
+            elif ch == 'a' and i > 0 and min_num_list[0] != '1' and min_num_list[i] != '0':
+                ch = min_num_list[i]
+                next_ch = '0'
+                min_num_list[i] = '0'
+            elif ch != 'a' and min_num_list[i] == ch:
+                min_num_list[i] = next_ch
+
+        max_num = int(''.join(max_num_list))
+        min_num = int(''.join(min_num_list))
+        # print(max_num, min_num)
+        return max_num - min_num
+
 
 if __name__ == '__main__':
-    print(Solution().movingCount(14, 14, 5))
+    print(Solution().maxDiff(9288))

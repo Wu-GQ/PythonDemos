@@ -858,6 +858,25 @@ class Solution:
 
         return max_length
 
+    def checkIfCanBreak(self, s1: str, s2: str) -> bool:
+        """
+        5386. 检查一个字符串是否可以打破另一个字符串
+        :param s1:
+        :param s2:
+        :return:
+        """
+        s1_list = sorted(list(s1))
+        s2_list = sorted(list(s2))
+
+        a = ord(s1_list[0]) - ord(s2_list[0])
+        for i in range(1, len(s1)):
+            if a == 0 and s1_list[i] != s2_list[i]:
+                a = ord(s1_list[i]) - ord(s2_list[i])
+            elif a != 0 and (ord(s1_list[i]) - ord(s2_list[i])) * a < 0:
+                return False
+
+        return True
+
 
 if __name__ == "__main__":
-    print(Solution().lengthOfLongestSubstring(''))
+    print(Solution().checkIfCanBreak('leetcodee', 'interview'))
