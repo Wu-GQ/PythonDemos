@@ -1198,6 +1198,31 @@ class Solution:
                 dp[x][y] = (dp[x + 1][y - 1] + 2) if s[x] == s[y] else max(dp[x + 1][y], dp[x][y - 1])
         return dp[0][-1]
 
+    def mincostTickets(self, days: list, costs: list) -> int:
+        """
+        983. 最低票价
+        :param days:
+        :param costs:
+        :return:
+        """
+        # f(n) = min(f(n - 1天) + costs[0], f(n - 7天) + cost[1], f(n - 30天) + cost[2])
+        dp = [0] * len(days)
+        for i, day in enumerate(days):
+            one_day_cost = dp[i - 1] + costs[0]
+
+            index = i - 1
+            while index >= 0 and day - days[index] < 7:
+                index -= 1
+            seven_days_cost = dp[index] + costs[1]
+
+            while index >= 0 and day - days[index] < 30:
+                index -= 1
+            thirty_days_cost = dp[index] + costs[2]
+
+            dp[i] = min(one_day_cost, seven_days_cost, thirty_days_cost)
+
+        return dp[-1]
+
 
 if __name__ == "__main__":
-    print(Solution().longestPalindromeSubseq('bbbab'))
+    print(Solution().mincostTickets([1, 2, 3, 4, 6, 8, 9, 10, 13, 14, 16, 17, 19, 21, 24, 26, 27, 28, 29], [3, 14, 50]))
