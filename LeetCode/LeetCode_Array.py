@@ -827,7 +827,7 @@ class Solution:
         面试题51. 数组中的逆序对
         :see https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/
         """
-        """
+
         # 利用归并排序的思想
         def part_list(sub_nums: list) -> list:
             if len(sub_nums) < 2:
@@ -870,6 +870,7 @@ class Solution:
             count += index
             num_list.insert(index, i)
         return count
+        """
 
     def reversePairs2(self, nums: list) -> int:
         """
@@ -1452,6 +1453,59 @@ class Solution:
 
         return sub_array_count
 
+    def singleNumbers(self, nums: list) -> list:
+        """
+        面试题56 - I. 数组中数字出现的次数
+        :see https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/
+        """
+        # 通过第一遍历，获得所有数字的异或结果。根据异或结果中某一个‘1’的位置，将数组分成两组。对两组数据分别异或，即可获得两个只出现一次的数字
+        all_xor_result = reduce(lambda x, y: x ^ y, nums)
+
+        index = 0
+        while all_xor_result & 1 == 0:
+            index += 1
+            all_xor_result >>= 1
+
+        target = 1 << index
+
+        a_xor_result = 0
+        b_xor_result = 0
+        for i in nums:
+            if i & target == target:
+                a_xor_result ^= i
+            else:
+                b_xor_result ^= i
+
+        return [a_xor_result, b_xor_result]
+
+    def maxScore(self, cardPoints: list, k: int) -> int:
+        """
+        5393. 可获得的最大点数
+        :param cardPoints:
+        :param k:
+        :return:
+        """
+        # 找到和为最小的连续子数组
+        if k >= len(cardPoints) or k < 1:
+            return sum(cardPoints)
+
+        left_card = len(cardPoints) - k
+        total_sum = 0
+
+        # cardPoints[i...i+left_card] 的点数和
+        card_sum = sum(cardPoints[:left_card])
+        # 最小点数和
+        min_card_sum = card_sum
+
+        for i in range(len(cardPoints)):
+            total_sum += cardPoints[i]
+            if 0 < i < len(cardPoints) - left_card + 1:
+                card_sum = card_sum - cardPoints[i - 1] + cardPoints[i + left_card - 1]
+                min_card_sum = min(min_card_sum, card_sum)
+            print(i, card_sum, min_card_sum)
+
+        return total_sum - min_card_sum
+
     def firstMissingPositive(self, nums: list) -> int:
         """
         41. 缺失的第一个正数
@@ -1498,8 +1552,128 @@ class Solution:
 
         return [a_xor_result, b_xor_result]
 
+    def candy(self, ratings: list) -> int:
+        """
+        135. 分发糖果
+        :see https://leetcode-cn.com/problems/candy/
+        """
+        left_candy_list = [0] * len(ratings)
+        right_candy_list = [0] * len(ratings)
+
+        for i in range(len(ratings)):
+            if i == 0 or ratings[i] <= ratings[i - 1]:
+                left_candy_list[i] = 1
+            else:
+                left_candy_list[i] = left_candy_list[i - 1] + 1
+
+        for i in range(len(ratings) - 1, -1, -1):
+            if i == len(ratings) - 1 or ratings[i] <= ratings[i + 1]:
+                right_candy_list[i] = 1
+            else:
+                right_candy_list[i] = right_candy_list[i + 1] + 1
+
+        return sum([max(left_candy_list[i], right_candy_list[i]) for i in range(len(ratings))])
+
+    def kidsWithCandies(self, candies: list, extraCandies: int) -> list:
+        """
+        5384. 拥有最多糖果的孩子
+        :param candies:
+        :param extraCandies:
+        :return:
+        """
+        max_candy = max(candies)
+        return [candy + extraCandies >= max_candy for candy in candies]
+
+    def numberWays(self, hats: list) -> int:
+        """
+        5387. 每个人戴不同帽子的方案数
+        :param hats:
+        :return:
+        """
+
+        # 回溯会超时
+        def backtrace(index: int, wearing_hats_set: set):
+            if index == len(hats):
+                self.result_way += 1
+                # print(wearing_hats_set)
+                return
+
+            for color in hats[index]:
+                if color not in wearing_hats_set:
+                    wearing_hats_set.add(color)
+                    backtrace(index + 1, wearing_hats_set)
+                    wearing_hats_set.remove(color)
+
+        self.result_way = 0
+        backtrace(0, set())
+        return self.result_way % 100000007
+
+    def kLengthApart(self, nums: list, k: int) -> bool:
+        """
+        5401. 是否所有 1 都至少相隔 k 个元素
+        :param nums:
+        :param k:
+        :return:
+        """
+        if k < 1:
+            return True
+
+        last_one_index = -float('inf')
+        for i in range(len(nums)):
+            if nums[i] == 0:
+                continue
+            if i - last_one_index <= k:
+                return False
+            last_one_index = i
+
+        return True
+
+    def longestSubarray(self, nums: list, limit: int) -> int:
+        """
+        5402. 绝对差不超过限制的最长连续子数组
+        :param nums:
+        :param limit:
+        :return:
+        """
+        left = 0
+        right = 1
+        max_distance = 0
+
+        # 最大数栈和最小数栈
+        max_nums_stack = [(left, nums[left])]
+        min_nums_stack = [(left, nums[left])]
+
+        while right < len(nums):
+            # 将右侧数加入最大数栈和最小数栈
+            while max_nums_stack and nums[right] > max_nums_stack[-1][1]:
+                max_nums_stack.pop()
+            max_nums_stack.append((right, nums[right]))
+
+            while min_nums_stack and nums[right] < min_nums_stack[-1][1]:
+                min_nums_stack.pop()
+            min_nums_stack.append((right, nums[right]))
+
+            # 检查最大绝对值是否大于 limit
+            while max_nums_stack[0][1] - min_nums_stack[0][1] > limit:
+                if max_nums_stack[0][0] < min_nums_stack[0][0]:
+                    left = max_nums_stack[0][0] + 1
+                    max_nums_stack.pop(0)
+                elif max_nums_stack[0][0] == min_nums_stack[0][0]:
+                    left = max_nums_stack[0][0] + 1
+                    max_nums_stack.pop(0)
+                    min_nums_stack.pop(0)
+                else:
+                    left = min_nums_stack[0][0] + 1
+                    min_nums_stack.pop(0)
+
+            # 更新右坐标和左坐标的最大距离
+            max_distance = max(max_distance, right - left)
+            right += 1
+
+        # + 1 的原因是，子数组内元素个数 = 左右下标的差值 + 1，例如 left = 0, right = 0 时，其实含有 1 个元素
+        return max_distance + 1
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.singleNumbers([6, 2, 2, 1, 4, 4, 1, 3]))
+    print(s.kthSmallest([[1, 3, 11], [2, 4, 6]], 5))
     # print(a)

@@ -552,10 +552,37 @@ class Solution:
         # print(grid)
         return islands_count - 2
 
+    def findDiagonalOrder(self, nums: list) -> list:
+        """
+        5394. 对角线遍历 II
+        :param nums:
+        :return:
+        """
+        num_list = []
+        for i in range(len(nums)):
+            for j in range(len(nums[i])):
+                num_list.append((i + j, j, nums[i][j]))
+
+        num_list.sort()
+        return [i[2] for i in num_list]
+
+    def destCity(self, paths: list) -> str:
+        """
+        5400. 旅行终点站
+        :param paths:
+        :return:
+        """
+        to_city = set()
+        from_city = set()
+        for path in paths:
+            from_city.add(path[0])
+            to_city.add(path[1])
+        return to_city.difference(from_city).pop()
+
 
 if __name__ == '__main__':
     s = Solution()
-    a = [["1", "1", "1", "1", "0"], ["1", "1", "0", "1", "0"], ["1", "1", "0", "0", "0"], ["0", "0", "0", "0", "0"]]
-    print(s.numIslands(a))
+    a = [["London", "New York"], ["New York", "Lima"], ["Lima", "Sao Paulo"]]
+    print(s.destCity(a))
     # for i in a:
     #     print(i)

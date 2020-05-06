@@ -363,7 +363,7 @@ class LinkedList(object):
 
     def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
         """
-        合并两个有序链表
+        21. 合并两个有序链表
         :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/6/linked-list/44/
         """
         p = l1
@@ -648,6 +648,35 @@ class LinkedList(object):
 
         return l1
 
+    def mergeKLists(self, lists: list) -> ListNode:
+        """
+        23. 合并K个排序链表
+        :see https://leetcode-cn.com/problems/merge-k-sorted-lists/
+        """
+        if not lists:
+            return None
+
+        head_node_list = [(node.val, node) for node in lists if node]
+        head_node_list.sort(key=lambda x: x[0])
+
+        head = ListNode(0)
+        p = head
+        while head_node_list:
+            value, node = head_node_list.pop(0)
+            if node.next:
+                index = 0
+                while index < len(head_node_list):
+                    if head_node_list[index][0] < node.next.val:
+                        index += 1
+                    else:
+                        break
+                head_node_list.insert(index, (node.next.val, node.next))
+
+            p.next = node
+            p = node
+
+        return head.next
+
     def rotateRight(self, head: ListNode, k: int) -> ListNode:
         """
         61. 旋转链表
@@ -686,12 +715,15 @@ class LinkedList(object):
 
 
 if __name__ == '__main__':
-    data = [1, 2, 3, 4, 5]
+    data = [9, 9]
     linked_list = LinkedList(data)
+
+    data1 = [9]
+    linked_list1 = LinkedList(data1)
 
     # p: ListNode = linked_list.addTwoNumbers(LinkedList(data1).head, LinkedList(data2).head)
     # p: ListNode = linked_list.middleNode(linked_list.head)
-    result_list: ListNode = linked_list.rotateRight(linked_list.head, 12)
+    result_list: ListNode = linked_list.addTwoNumbers(linked_list.head, linked_list1.head)
     # print(result_list)
     p = result_list
     while p is not None:

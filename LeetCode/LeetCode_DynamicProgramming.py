@@ -1178,6 +1178,32 @@ class Solution:
         print(dp)
         return dp[-1][0]
 
+    def constrainedSubsetSum(self, nums: list, k: int) -> int:
+        """
+        5180. 带限制的子序列和
+        :param nums:
+        :param k:
+        :return:
+        """
+        # 单调栈
+        # max_dp: (i, sum, list)
+        max_sum_dp = []
+        for i in range(len(nums)):
+            max_sum = 0
+            for j in range(len(max_sum_dp) - 1, -1, -1):
+                if max_sum_dp[j][0] < i - k:
+                    break
+                if max_sum_dp[j][1] > max_sum:
+                    index, max_sum = max_sum_dp[j]
+
+            while len(max_sum_dp) > 0 and max_sum_dp[-1][1] < max_sum + nums[i]:
+                max_sum_dp.pop()
+
+            max_sum_dp.append((i, max_sum + nums[i]))
+            # print(max_sum_dp)
+
+        return max(i[1] for i in max_sum_dp)
+
     def longestPalindromeSubseq(self, s: str) -> int:
         """
         516. 最长回文子序列
@@ -1197,6 +1223,27 @@ class Solution:
                 y = i + j
                 dp[x][y] = (dp[x + 1][y - 1] + 2) if s[x] == s[y] else max(dp[x + 1][y], dp[x][y - 1])
         return dp[0][-1]
+
+    def calculateMinimumHP(self, dungeon: list) -> int:
+        """
+        174. 地下城游戏
+        :see https://leetcode-cn.com/problems/dungeon-game/
+        """
+        for i in range(len(dungeon) - 1, -1, -1):
+            for j in range(len(dungeon[i]) - 1, -1, -1):
+                if i == len(dungeon) - 1 and j == len(dungeon[i]) - 1:
+                    continue
+                elif i == len(dungeon) - 1:
+                    dungeon[i][j] += dungeon[i][j + 1] if dungeon[i][j + 1] < 0 else 0
+                elif j == len(dungeon[i]) - 1:
+                    dungeon[i][j] += dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0
+                else:
+                    dungeon[i][j] += max(dungeon[i][j + 1] if dungeon[i][j + 1] < 0 else 0, dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0)
+
+        # for i in dungeon:
+        #     print(i)
+
+        return 1 - dungeon[0][0] if dungeon[0][0] <= 0 else 1
 
     def mincostTickets(self, days: list, costs: list) -> int:
         """

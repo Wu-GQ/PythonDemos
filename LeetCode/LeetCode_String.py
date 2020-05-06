@@ -802,6 +802,81 @@ class Solution:
 
         return ''.join(string_list)
 
+    def maxScore(self, s: str) -> int:
+        """
+        5392. 分割字符串的最大得分
+        :param s:
+        :return:
+        """
+        one_total_count = 0
+        for i in s:
+            if i == '1':
+                one_total_count += 1
+
+        max_result = one_total_count
+        result = one_total_count
+
+        if s[0] == '1':
+            max_result -= 1
+            result -= 1
+        else:
+            max_result += 1
+            result += 1
+
+        for i in range(1, len(s) - 1):
+            if s[i] == '0':
+                result += 1
+            else:
+                result -= 1
+            max_result = max(max_result, result)
+            # print(s[i], result, max_result)
+
+        return max_result
+
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        """
+        3. 无重复字符的最长子串
+        :see https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/
+        """
+        # 滑动窗口
+        left = 0
+        right = 0
+
+        char_set = set()
+
+        max_length = 0
+
+        while right < len(s):
+            while s[right] in char_set:
+                char_set.remove(s[left])
+                left += 1
+
+            char_set.add(s[right])
+            right += 1
+
+            max_length = max(max_length, len(char_set))
+
+        return max_length
+
+    def checkIfCanBreak(self, s1: str, s2: str) -> bool:
+        """
+        5386. 检查一个字符串是否可以打破另一个字符串
+        :param s1:
+        :param s2:
+        :return:
+        """
+        s1_list = sorted(list(s1))
+        s2_list = sorted(list(s2))
+
+        a = ord(s1_list[0]) - ord(s2_list[0])
+        for i in range(1, len(s1)):
+            if a == 0 and s1_list[i] != s2_list[i]:
+                a = ord(s1_list[i]) - ord(s2_list[i])
+            elif a != 0 and (ord(s1_list[i]) - ord(s2_list[i])) * a < 0:
+                return False
+
+        return True
+
 
 if __name__ == "__main__":
-    print(Solution().reformat('ab123'))
+    print(Solution().checkIfCanBreak('leetcodee', 'interview'))
