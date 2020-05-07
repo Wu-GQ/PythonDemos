@@ -532,25 +532,52 @@ class Solution(object):
 
         return result
 
+    def isSubtree(self, s: TreeNode, t: TreeNode) -> bool:
+        """
+        572. 另一个树的子树
+        :see https://leetcode-cn.com/problems/subtree-of-another-tree/
+        """
+
+        def is_same_tree(a: TreeNode, b: TreeNode) -> bool:
+            """ 判断是否是完全相同的树 """
+            if not a and not b:
+                return True
+            elif not a or not b:
+                return False
+            else:
+                return a.val == b.val and is_same_tree(a.left, b.left) and is_same_tree(a.right, b.right)
+
+        # 递归每一个节点，当节点值相同时，判断该节点为根节点的子树是否与目标树相同
+        if not s and not t:
+            return True
+        elif not s or not t:
+            return False
+
+        return s.val == t.val and is_same_tree(s, t) or self.isSubtree(s.left, t) or self.isSubtree(s.right, t)
+
 
 if __name__ == '__main__':
-    root = TreeNode(1)
-    root.left = TreeNode(2)
-    root.right = TreeNode(3)
+    root = TreeNode(3)
+    root.left = TreeNode(4)
+    root.right = TreeNode(5)
     #
-    root.left.left = TreeNode(4)
-    root.left.right = TreeNode(5)
+    root.left.left = TreeNode(1)
+    # root.left.right = TreeNode(5)
     # #
     # # root.left.right.left = TreeNode(7)
     # # root.left.right.right = TreeNode(4)
     #
     # # root.right.left = TreeNode(4)
-    # root.right.left = TreeNode(6)
+    root.right.left = TreeNode(2)
 
     # print(Solution().lowestCommonAncestor(root, TreeNode(5), TreeNode(4)).val)
     # string = Solution().serialize(root)
     # print(string)
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
 
+    root2 = TreeNode(3)
+    root2.left = TreeNode(1)
+    root2.right = TreeNode(2)
+
     s = Solution()
-    print(s.rightSideView(root))
+    print(s.isSubtree(root, root2))
