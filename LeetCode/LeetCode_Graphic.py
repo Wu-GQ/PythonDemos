@@ -579,10 +579,53 @@ class Solution:
             to_city.add(path[1])
         return to_city.difference(from_city).pop()
 
+    def maximalSquare(self, matrix: list) -> int:
+        """
+        221. 最大正方形
+        :see https://leetcode-cn.com/problems/maximal-square/
+        """
+
+        # 暴力法，也可以用动态规划解决
+
+        def find_max_square_from_point(x: int, y: int) -> int:
+            """ 返回从左上角开始查找，可以找到的最大的正方形 """
+            index = 1
+            while x + index < len(matrix) and y + index < len(matrix[x + index]):
+                is_all_one = True
+                # 检查 (x + index, y) 到 (x + index, y + index) 是否全不为零
+                for i in range(y, y + index):
+                    if matrix[x + index][i] == '0':
+                        is_all_one = False
+                        break
+
+                # 检查 (x, y + index) 到 (x + index, y + index) 是否全不为零
+                for i in range(x, x + index + 1):
+                    if matrix[i][y + index] == '0':
+                        is_all_one = False
+                        break
+
+                if is_all_one:
+                    index += 1
+                else:
+                    break
+
+            return index
+
+        max_length = 0
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                if matrix[i][j] != '0':
+                    max_length = max(max_length, find_max_square_from_point(i, j))
+
+        for i in matrix:
+            print(i)
+
+        return max_length ** 2
+
 
 if __name__ == '__main__':
     s = Solution()
-    a = [["London", "New York"], ["New York", "Lima"], ["Lima", "Sao Paulo"]]
-    print(s.destCity(a))
+    a = [["0", "0", "0", "1"], ["1", "1", "0", "1"], ["1", "1", "1", "1"], ["0", "1", "1", "1"], ["0", "1", "1", "1"]]
+    print(s.maximalSquare(a))
     # for i in a:
     #     print(i)

@@ -1238,7 +1238,8 @@ class Solution:
                 elif j == len(dungeon[i]) - 1:
                     dungeon[i][j] += dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0
                 else:
-                    dungeon[i][j] += max(dungeon[i][j + 1] if dungeon[i][j + 1] < 0 else 0, dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0)
+                    dungeon[i][j] += max(dungeon[i][j + 1] if dungeon[i][j + 1] < 0 else 0,
+                                         dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0)
 
         # for i in dungeon:
         #     print(i)
@@ -1270,6 +1271,29 @@ class Solution:
 
         return dp[-1]
 
+    def maximalSquare(self, matrix: list) -> int:
+        """
+        221. 最大正方形
+        :see https://leetcode-cn.com/problems/maximal-square/
+        """
+        # dp[i][j] = min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]) + 1
+        dp = [[0] * len(matrix[0]) for _ in matrix]
+        max_length = 0
+
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                if matrix[i][j] == '0':
+                    continue
+                elif i == 0 or j == 0:
+                    dp[i][j] = 1
+                else:
+                    dp[i][j] = min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]) + 1
+
+                max_length = max(max_length, dp[i][j])
+        # print(dp)
+        return max_length ** 2
+
 
 if __name__ == "__main__":
-    print(Solution().mincostTickets([1, 2, 3, 4, 6, 8, 9, 10, 13, 14, 16, 17, 19, 21, 24, 26, 27, 28, 29], [3, 14, 50]))
+    print(Solution().maximalSquare(
+        [["1", "0", "1", "0", "0"], ["1", "0", "1", "1", "1"], ["1", "1", "1", "1", "1"], ["1", "0", "0", "1", "0"]]))
