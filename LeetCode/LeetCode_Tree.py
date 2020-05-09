@@ -532,13 +532,36 @@ class Solution(object):
 
         return result
 
+    def isValidBST(self, root: TreeNode) -> bool:
+        """
+        98. 验证二叉搜索树
+        :see https://leetcode-cn.com/problems/validate-binary-search-tree/
+        """
+
+        # 验证中序遍历的顺序是否为从小到大的顺序
+
+        def inorder_traversal(root_node: TreeNode):
+            if root_node is None:
+                return
+            inorder_traversal(root_node.left)
+            node_list.append(root_node.val)
+            inorder_traversal(root_node.right)
+
+        node_list = []
+        inorder_traversal(root)
+
+        for i in range(1, len(node_list)):
+            if node_list[i] <= node_list[i - 1]:
+                return False
+        return True
+
 
 if __name__ == '__main__':
-    root = TreeNode(1)
-    root.left = TreeNode(2)
+    root = TreeNode(2)
+    root.left = TreeNode(1)
     root.right = TreeNode(3)
     #
-    root.left.left = TreeNode(4)
+    root.left.left = TreeNode(0)
     root.left.right = TreeNode(5)
     # #
     # # root.left.right.left = TreeNode(7)
@@ -553,4 +576,4 @@ if __name__ == '__main__':
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
 
     s = Solution()
-    print(s.rightSideView(root))
+    print(s.isValidBST(root))
