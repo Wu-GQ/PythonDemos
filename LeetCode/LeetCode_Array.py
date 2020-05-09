@@ -573,36 +573,21 @@ class Solution:
         跳跃游戏 II
         :see https://leetcode-cn.com/problems/jump-game-ii/
         """
-        # 参考广度优先遍历（超时）
-        length = len(nums)
-        if length < 2:
-            return 0
+        # 贪心算法，与跳跃游戏类似
+        # 当前步数
+        step = 0
+        # 这一步的最远距离
+        distance = 0
+        # 下一步可以跳到的最远距离
+        max_length = 0
 
-        min_step_list = [-1] * length
+        for i in range(len(nums) - 1):
+            max_length = max(max_length, i + nums[i])
+            if i == distance:
+                distance = max_length
+                step += 1
 
-        def bfs_jump(start_index: int) -> int:
-            if start_index >= length - 1:
-                return 0
-
-            # 避免重复计算
-            if min_step_list[start_index] >= 0:
-                return min_step_list[start_index]
-
-            # 递归
-            min_jump_step = float('inf')
-            for i in range(start_index + nums[start_index], start_index, -1):
-                if i >= length - 1:
-                    min_jump_step = 1
-                    break
-                else:
-                    min_jump_step = min(min_jump_step, bfs_jump(i) + 1)
-
-            # 保存最小步数
-            min_step_list[start_index] = min_jump_step
-
-            return min_jump_step
-
-        return bfs_jump(0)
+        return step
 
     def canReach(self, arr: list, start: int) -> bool:
         """

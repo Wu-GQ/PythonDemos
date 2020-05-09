@@ -1238,13 +1238,62 @@ class Solution:
                 elif j == len(dungeon[i]) - 1:
                     dungeon[i][j] += dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0
                 else:
-                    dungeon[i][j] += max(dungeon[i][j + 1] if dungeon[i][j + 1] < 0 else 0, dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0)
+                    dungeon[i][j] += max(dungeon[i][j + 1] if dungeon[i][j + 1] < 0 else 0,
+                                         dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0)
 
         # for i in dungeon:
         #     print(i)
 
         return 1 - dungeon[0][0] if dungeon[0][0] <= 0 else 1
 
+    def mincostTickets(self, days: list, costs: list) -> int:
+        """
+        983. 最低票价
+        :param days:
+        :param costs:
+        :return:
+        """
+        # f(n) = min(f(n - 1天) + costs[0], f(n - 7天) + cost[1], f(n - 30天) + cost[2])
+        dp = [0] * len(days)
+        for i, day in enumerate(days):
+            one_day_cost = dp[i - 1] + costs[0]
+
+            index = i - 1
+            while index >= 0 and day - days[index] < 7:
+                index -= 1
+            seven_days_cost = dp[index] + costs[1]
+
+            while index >= 0 and day - days[index] < 30:
+                index -= 1
+            thirty_days_cost = dp[index] + costs[2]
+
+            dp[i] = min(one_day_cost, seven_days_cost, thirty_days_cost)
+
+        return dp[-1]
+
+    def maximalSquare(self, matrix: list) -> int:
+        """
+        221. 最大正方形
+        :see https://leetcode-cn.com/problems/maximal-square/
+        """
+        # dp[i][j] = min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]) + 1
+        dp = [[0] * len(matrix[0]) for _ in matrix]
+        max_length = 0
+
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                if matrix[i][j] == '0':
+                    continue
+                elif i == 0 or j == 0:
+                    dp[i][j] = 1
+                else:
+                    dp[i][j] = min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]) + 1
+
+                max_length = max(max_length, dp[i][j])
+        # print(dp)
+        return max_length ** 2
+
 
 if __name__ == "__main__":
-    print(Solution().calculateMinimumHP([[0]]))
+    print(Solution().maximalSquare(
+        [["1", "0", "1", "0", "0"], ["1", "0", "1", "1", "1"], ["1", "1", "1", "1", "1"], ["1", "0", "0", "1", "0"]]))

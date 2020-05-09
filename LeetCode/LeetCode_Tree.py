@@ -532,6 +532,29 @@ class Solution(object):
 
         return result
 
+    def isSubtree(self, s: TreeNode, t: TreeNode) -> bool:
+        """
+        572. 另一个树的子树
+        :see https://leetcode-cn.com/problems/subtree-of-another-tree/
+        """
+
+        def is_same_tree(a: TreeNode, b: TreeNode) -> bool:
+            """ 判断是否是完全相同的树 """
+            if not a and not b:
+                return True
+            elif not a or not b:
+                return False
+            else:
+                return a.val == b.val and is_same_tree(a.left, b.left) and is_same_tree(a.right, b.right)
+
+        # 递归每一个节点，当节点值相同时，判断该节点为根节点的子树是否与目标树相同
+        if not s and not t:
+            return True
+        elif not s or not t:
+            return False
+
+        return s.val == t.val and is_same_tree(s, t) or self.isSubtree(s.left, t) or self.isSubtree(s.right, t)
+
     def isValidBST(self, root: TreeNode) -> bool:
         """
         98. 验证二叉搜索树
