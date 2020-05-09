@@ -1238,8 +1238,7 @@ class Solution:
                 elif j == len(dungeon[i]) - 1:
                     dungeon[i][j] += dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0
                 else:
-                    dungeon[i][j] += max(dungeon[i][j + 1] if dungeon[i][j + 1] < 0 else 0,
-                                         dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0)
+                    dungeon[i][j] += max(dungeon[i][j + 1] if dungeon[i][j + 1] < 0 else 0, dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0)
 
         # for i in dungeon:
         #     print(i)
@@ -1249,9 +1248,7 @@ class Solution:
     def mincostTickets(self, days: list, costs: list) -> int:
         """
         983. 最低票价
-        :param days:
-        :param costs:
-        :return:
+        :see https://leetcode-cn.com/problems/minimum-cost-for-tickets/
         """
         # f(n) = min(f(n - 1天) + costs[0], f(n - 7天) + cost[1], f(n - 30天) + cost[2])
         dp = [0] * len(days)
@@ -1293,7 +1290,35 @@ class Solution:
         # print(dp)
         return max_length ** 2
 
+    def maxCoins(self, nums: list) -> int:
+        """
+        312. 戳气球
+        :see https://leetcode-cn.com/problems/burst-balloons/
+        """
+        # dp[i][j] = max(nums[k] * nums[i - 1] * nums[j + 1] + dp[i][k - 1] + dp[k + 1][j]), i <= k <= j
+        if not nums:
+            return 0
+
+        dp = [[0] * len(nums) for _ in nums]
+        nums.append(1)
+
+        for i in range(len(nums) - 1):
+            dp[i][i] = nums[i - 1] * nums[i] * nums[i + 1]
+
+        for i in range(1, len(nums)):
+            for j in range(len(nums) - i - 1):
+                # print(j, i + j)
+                x = j
+                y = i + j
+
+                for k in range(x, y + 1):
+                    dp[x][y] = max(dp[x][y], nums[k] * nums[x - 1] * nums[y + 1] + dp[x][k - 1] + (dp[k + 1][y] if k + 1 < len(dp) else 0))
+
+        # for i in dp:
+        #     print(i)
+
+        return dp[0][-1]
+
 
 if __name__ == "__main__":
-    print(Solution().maximalSquare(
-        [["1", "0", "1", "0", "0"], ["1", "0", "1", "1", "1"], ["1", "1", "1", "1", "1"], ["1", "0", "0", "1", "0"]]))
+    print(Solution().maxCoins([10]))
