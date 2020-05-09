@@ -1249,9 +1249,7 @@ class Solution:
     def mincostTickets(self, days: list, costs: list) -> int:
         """
         983. 最低票价
-        :param days:
-        :param costs:
-        :return:
+        :see https://leetcode-cn.com/problems/minimum-cost-for-tickets/
         """
         # f(n) = min(f(n - 1天) + costs[0], f(n - 7天) + cost[1], f(n - 30天) + cost[2])
         dp = [0] * len(days)
@@ -1299,31 +1297,29 @@ class Solution:
         :see https://leetcode-cn.com/problems/burst-balloons/
         """
         # dp[i][j] = max(nums[k] * nums[i - 1] * nums[j + 1] + dp[i][k - 1] + dp[k + 1][j]), i <= k <= j
+        if not nums:
+            return 0
+
         dp = [[0] * len(nums) for _ in nums]
         nums.append(1)
 
         for i in range(len(nums) - 1):
             dp[i][i] = nums[i - 1] * nums[i] * nums[i + 1]
 
-        for i in range(1, len(nums) - 1):
+        for i in range(1, len(nums)):
             for j in range(len(nums) - i - 1):
                 # print(j, i + j)
                 x = j
                 y = i + j
 
-                max_coin = 0
                 for k in range(x, y + 1):
-                    max_coin = max(max_coin,
-                                   nums[k] * nums[x - 1] * nums[y + 1] + dp[x][k - 1] + dp[k + 1][y] if k + 1 < len(
-                                       dp) else 0)
+                    dp[x][y] = max(dp[x][y], nums[k] * nums[x - 1] * nums[y + 1] + dp[x][k - 1] + (dp[k + 1][y] if k + 1 < len(dp) else 0))
 
-                dp[x][y] = max_coin
+        # for i in dp:
+        #     print(i)
 
-        for i in dp:
-            print(i)
-
-        return dp[0][-2]
+        return dp[0][-1]
 
 
 if __name__ == "__main__":
-    print(Solution().maxCoins([3, 1, 5, 8]))
+    print(Solution().maxCoins([10]))
