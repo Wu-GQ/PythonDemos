@@ -459,6 +459,17 @@ class Solution:
 
         return False
 
+    def mySqrt(self, x: int) -> int:
+        """
+        69. x 的平方根
+        :see https://leetcode-cn.com/problems/sqrtx/
+        """
+        current, next = x, x / 2
+        while abs(current - next) >= 0.1:
+            current, next = next, (next + x / next) / 2
+            # print(current, next)
+        return int(next)
+
 
 if __name__ == '__main__':
-    print(Solution().isHappy(17))
+    print(Solution().mySqrt(1))
