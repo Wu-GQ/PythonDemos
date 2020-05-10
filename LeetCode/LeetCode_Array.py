@@ -1658,7 +1658,44 @@ class Solution:
         # + 1 的原因是，子数组内元素个数 = 左右下标的差值 + 1，例如 left = 0, right = 0 时，其实含有 1 个元素
         return max_distance + 1
 
+    def buildArray(self, target: list, n: int) -> list:
+        """
+        5404. 用栈操作构建数组
+        :param target:
+        :param n:
+        :return:
+        """
+        target_set = set(target)
+        result = []
+        for i in range(1, target[-1] + 1):
+            result.append('Push')
+            if i not in target_set:
+                result.append('Pop')
+        return result
+
+    def countTriplets(self, arr: list) -> int:
+        """
+        5405. 形成两个异或相等数组的三元组数目
+        :param arr:
+        :return:
+        """
+        result = 0
+        for i in range(len(arr) - 1):
+            a = arr[i]
+            for j in range(i + 1, len(arr)):
+                a ^= arr[j]
+                b = arr[j]
+                for k in range(j, len(arr)):
+                    b ^= arr[k]
+                    if a == b:
+                        result += 1
+
+                    # print(i, j, k, a, b)
+
+        return result
+
+
 if __name__ == "__main__":
     s = Solution()
-    print(s.kthSmallest([[1, 3, 11], [2, 4, 6]], 5))
+    print(s.countTriplets([1, 3, 5, 7, 9]))
     # print(a)

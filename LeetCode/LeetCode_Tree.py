@@ -578,6 +578,21 @@ class Solution(object):
                 return False
         return True
 
+    def lowestCommonAncestor(self, root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
+        """
+        236. 二叉树的最近公共祖先
+        :see https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree/
+        """
+        if not root or p == root or q == root:
+            return root
+
+        left = self.lowestCommonAncestor(root.left, p, q)
+        right = self.lowestCommonAncestor(root.right, p, q)
+
+        if left and right:
+            return root
+        return left if left else right
+
 
 if __name__ == '__main__':
     root = TreeNode(2)
@@ -599,4 +614,4 @@ if __name__ == '__main__':
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
 
     s = Solution()
-    print(s.isValidBST(root))
+    print(s.lowestCommonAncestor(root, root.left.left, root.left.right))

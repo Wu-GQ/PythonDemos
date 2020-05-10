@@ -622,10 +622,48 @@ class Solution:
 
         return max_length ** 2
 
+    def minTime(self, n: int, edges: list, hasApple: list) -> int:
+        """
+        5406. 收集树上所有苹果的最少时间
+        :param n:
+        :param edges:
+        :param hasApple:
+        :return:
+        """
+
+        def sub_tree(root: int) -> int:
+            """ 从节点 root 出发，到子节点上所有未检查过的苹果的最短距离 """
+            # 从 root 出发的所有未检查节点
+            next_node = set()
+            if root in edge_dict:
+                next_node = edge_dict[root].difference(checked_node_set)
+            checked_node_set.update(next_node)
+
+            # 递归判断子树里有没有苹果
+            sub_distance = 0
+            for i in next_node:
+                x = sub_tree(i)
+                if x > 0:
+                    sub_distance += 2 + x
+                elif hasApple[i]:
+                    sub_distance += 2
+
+            return sub_distance
+
+        # 检查过的节点
+        checked_node_set = set()
+
+        # 邻接矩阵
+        edge_dict = {}
+        for i in edges:
+            if i[0] not in edge_dict:
+                edge_dict[i[0]] = set()
+            edge_dict[i[0]].add(i[1])
+
+        return sub_tree(0)
+
 
 if __name__ == '__main__':
     s = Solution()
-    a = [["0", "0", "0", "1"], ["1", "1", "0", "1"], ["1", "1", "1", "1"], ["0", "1", "1", "1"], ["0", "1", "1", "1"]]
-    print(s.maximalSquare(a))
-    # for i in a:
-    #     print(i)
+    # print(s.minTime(4, [[0,1],[0,2],[1,4],[1,5],[2,3],[2,6]], [False, False, True, False, True, True, False]))
+    print(s.minTime(4, [[0, 1], [1, 2], [0, 3]], [True, True, True, True, True, True, False]))
