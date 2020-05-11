@@ -470,6 +470,25 @@ class Solution:
             # print(current, next)
         return int(next)
 
+    def myPow(self, x: float, n: int) -> float:
+        """
+        50. Pow(x, n)
+        :see https://leetcode-cn.com/problems/powx-n/
+        """
+        # 快速幂方法
+        # f(x, n) = f(x, n // 2) ** 2
+        if n == 0:
+            return 1
+
+        if n < 0:
+            x = 1 / x
+            n = -n
+
+        if n % 2 == 1:
+            return self.myPow(x, n - 1) * x
+        else:
+            return self.myPow(x, n // 2) ** 2
+
 
 if __name__ == '__main__':
-    print(Solution().mySqrt(1))
+    print(Solution().myPow(2, 10))
