@@ -96,6 +96,7 @@ class Solution(object):
         二叉树的层次遍历
         :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/7/trees/50/
         """
+        """
         if root is None:
             return []
 
@@ -116,6 +117,58 @@ class Solution(object):
             next_list = []
 
         return result_list
+        """
+        if not root:
+            return []
+
+        stack = [root]
+        length = 1
+        result = []
+        while stack:
+            value_list = []
+            while length > 0:
+                length -= 1
+
+                node = stack.pop(0)
+                value_list.append(node.val)
+
+                if node.left:
+                    stack.append(node.left)
+                if node.right:
+                    stack.append(node.right)
+
+            result.append(value_list)
+            length = len(stack)
+
+        return result
+
+    def averageOfLevels(self, root: TreeNode) -> list:
+        """
+        637. 二叉树的层平均值
+        :see https://leetcode-cn.com/problems/average-of-levels-in-binary-tree/
+        """
+        if not root:
+            return []
+
+        stack = [root]
+        length = 1
+        result = []
+        while stack:
+            value_sum = 0
+
+            for i in range(length):
+                node = stack.pop(0)
+                value_sum += node.val
+
+                if node.left:
+                    stack.append(node.left)
+                if node.right:
+                    stack.append(node.right)
+
+            result.append(value_sum / length)
+            length = len(stack)
+
+        return result
 
     def kthSmallest(self, root: TreeNode, k: int) -> int:
         """
@@ -605,8 +658,8 @@ if __name__ == '__main__':
     # # root.left.right.left = TreeNode(7)
     # # root.left.right.right = TreeNode(4)
     #
-    # # root.right.left = TreeNode(4)
-    # root.right.left = TreeNode(6)
+    root.right.left = TreeNode(4)
+    root.right.right = TreeNode(6)
 
     # print(Solution().lowestCommonAncestor(root, TreeNode(5), TreeNode(4)).val)
     # string = Solution().serialize(root)
@@ -614,4 +667,4 @@ if __name__ == '__main__':
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
 
     s = Solution()
-    print(s.lowestCommonAncestor(root, root.left.left, root.left.right))
+    print(s.averageOfLevels(root))
