@@ -1319,6 +1319,55 @@ class Solution:
 
         return dp[0][-1]
 
+    def largestNumber(self, cost: list, target: int) -> str:
+        """
+        5399. 数位成本和为目标值的最大数字
+        :param cost:
+        :param target:
+        :return:
+        """
+
+        def compare_list(a: list, b: list) -> list:
+            if len(a) > len(b):
+                return a
+            elif len(a) < len(b):
+                return b
+
+            a.sort(reverse=True)
+            b.sort(reverse=True)
+            if a >= b:
+                return a
+            else:
+                return b
+
+        cost_num_dict = {}
+        for i in range(len(cost)):
+            cost_num_dict[cost[i]] = i + 1
+
+        cost_num_list = [(i, cost_num_dict[i]) for i in cost_num_dict]
+
+        cost_num_list.sort(key=lambda x: (x[0], -x[1]))
+
+        dp = [[[] for _ in range(9)] for _ in range(target + 1)]
+
+        for i in range(1, target + 1):
+            for j in range(len(cost_num_list)):
+                if i == cost_num_list[j][0]:
+                    dp[i][j] = [cost_num_list[j][1]]
+                elif i > cost_num_list[j][0]:
+                    max_length_list = []
+                    for k in range(len(cost_num_list)):
+                        if dp[i - cost_num_list[j][0]][k]:
+                            max_length_list = compare_list(max_length_list, dp[i - cost_num_list[j][0]][k] + [cost_num_list[j][1]])
+                    dp[i][j] = max_length_list
+
+        max_length_list = []
+        for i in dp[-1]:
+            max_length_list = compare_list(max_length_list, i)
+
+        s = ''.join([str(i) for i in max_length_list])
+        return s if s else '0'
+
 
 if __name__ == "__main__":
-    print(Solution().maxCoins([10]))
+    print(Solution().largestNumber([7, 6, 5, 5, 5, 6, 8, 7, 8], 12))

@@ -489,6 +489,19 @@ class Solution:
         else:
             return self.myPow(x, n // 2) ** 2
 
+    def simplifiedFractions(self, n: int) -> list:
+        """
+        5397. 最简分数
+        :param n:
+        :return:
+        """
+        result = []
+        for i in range(1, n + 1):
+            for j in range(1, i):
+                if math.gcd(i, j) == 1:
+                    result.append(f'{j}/{i}')
+        return result
+
 
 if __name__ == '__main__':
-    print(Solution().myPow(2, 10))
+    print(Solution().simplifiedFractions(1))

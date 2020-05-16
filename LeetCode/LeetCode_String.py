@@ -877,6 +877,25 @@ class Solution:
 
         return True
 
+    def maxPower(self, s: str) -> int:
+        """
+        5396. 连续字符
+        :param s:
+        :return:
+        """
+        result = 0
+        length = 0
+        ch = ''
+        for i in s:
+            if i != ch:
+                result = max(result, length)
+                ch = i
+                length = 1
+            else:
+                length += 1
+
+        return max(result, length)
+
 
 if __name__ == "__main__":
-    print(Solution().checkIfCanBreak('leetcodee', 'interview'))
+    print(Solution().maxPower('a'))

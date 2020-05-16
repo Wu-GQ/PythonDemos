@@ -646,20 +646,65 @@ class Solution(object):
             return root
         return left if left else right
 
+    def goodNodes(self, root: TreeNode) -> int:
+        """
+        5398. 统计二叉树中好节点的数目
+        :param root:
+        :return:
+        """
+        if not root:
+            return 0
+
+        # 最大栈
+        val_stack = [root.val]
+        node_stack = [root]
+
+        result = 0
+        check_node_set = set()
+
+        while node_stack:
+            # print(node_stack[-1].val)
+            if node_stack[-1].left and node_stack[-1].left not in check_node_set:
+                node = node_stack[-1].left
+                node_stack.append(node)
+                check_node_set.add(node)
+
+                if val_stack[-1] <= node.val:
+                    # print(node.val)
+                    result += 1
+                val_stack.append(max(node.val, val_stack[-1]))
+                continue
+
+            if node_stack[-1].right and node_stack[-1].right not in check_node_set:
+                node = node_stack[-1].right
+                node_stack.append(node)
+                check_node_set.add(node)
+
+                if val_stack[-1] <= node.val:
+                    # print(node.val)
+                    result += 1
+                val_stack.append(max(node.val, val_stack[-1]))
+                continue
+
+            node_stack.pop()
+            val_stack.pop()
+
+        return result + 1
+
 
 if __name__ == '__main__':
-    root = TreeNode(2)
-    root.left = TreeNode(1)
+    root = TreeNode(9)
+    # root.left = TreeNode(3)
     root.right = TreeNode(3)
     #
-    root.left.left = TreeNode(0)
-    root.left.right = TreeNode(5)
+    # root.left.left = TreeNode(4)
+    # root.left.right = TreeNode(2)
     # #
     # # root.left.right.left = TreeNode(7)
     # # root.left.right.right = TreeNode(4)
     #
-    root.right.left = TreeNode(4)
-    root.right.right = TreeNode(6)
+    root.right.left = TreeNode(6)
+    # root.right.right = TreeNode(5)
 
     # print(Solution().lowestCommonAncestor(root, TreeNode(5), TreeNode(4)).val)
     # string = Solution().serialize(root)
@@ -667,4 +712,4 @@ if __name__ == '__main__':
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
 
     s = Solution()
-    print(s.averageOfLevels(root))
+    print(s.goodNodes(root))
