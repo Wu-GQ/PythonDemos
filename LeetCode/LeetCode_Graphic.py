@@ -662,8 +662,48 @@ class Solution:
 
         return sub_tree(0)
 
+    def findOrder(self, numCourses: int, prerequisites: list) -> list:
+        """
+        210. 课程表 II
+        :see https://leetcode-cn.com/problems/course-schedule-ii/
+        """
+        # 节点的出边字典
+        out_dict = {key: [] for key in range(numCourses)}
+        # 节点的入边字典
+        in_dict = {key: [] for key in range(numCourses)}
+
+        result = []
+
+        # 转换邻接矩阵
+        for i in prerequisites:
+            # 要学习i[0], 要先学习i[1], 即i[1] -> i[0]
+            in_dict[i[0]].append(i[1])
+            out_dict[i[1]].append(i[0])
+
+        # 拓扑排序
+        while in_dict:
+            # 找到一个入边数量为0的节点
+            node = -1
+            for i in in_dict:
+                if len(in_dict[i]) == 0:
+                    node = i
+                    break
+
+            if node == -1:
+                result = []
+                break
+
+            # 从字典中去掉该节点
+            for out_node in out_dict[node]:
+                in_dict[out_node].remove(node)
+
+            result.append(node)
+            del in_dict[node]
+
+        return result if len(result) == numCourses else []
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.minTime(4, [[0,1],[0,2],[1,4],[1,5],[2,3],[2,6]], [False, False, True, False, True, True, False]))
-    print(s.minTime(4, [[0, 1], [1, 2], [0, 3]], [True, True, True, True, True, True, False]))
+    print(s.findOrder(4, [[1, 0], [2, 0], [3, 1], [3, 2]]))

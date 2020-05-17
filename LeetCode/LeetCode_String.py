@@ -896,6 +896,21 @@ class Solution:
 
         return max(result, length)
 
+    def arrangeWords(self, text: str) -> str:
+        """
+        5413. 重新排列句子中的单词
+        :param text:
+        :return:
+        """
+        word_list = text.split(' ')
+        word_list.sort(key=lambda x: len(x))
+        for i in range(len(word_list)):
+            if i == 0:
+                word_list[0] = word_list[0][0].upper() + word_list[0][1:]
+            else:
+                word_list[i] = word_list[i].lower()
+        return ' '.join(word_list)
+
 
 if __name__ == "__main__":
-    print(Solution().maxPower('a'))
+    print(Solution().arrangeWords("Keep calm and code on"))
