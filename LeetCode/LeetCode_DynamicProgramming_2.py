@@ -41,7 +41,24 @@ class Solution:
 
         return sum(nums) / 2 in sum_set
 
+    def findTargetSumWays(self, nums: list, S: int) -> int:
+        """
+        494. 目标和
+        :see https://leetcode-cn.com/problems/target-sum/
+        """
+        dp = {0: 1}
+
+        for i in nums:
+            new_dp = {}
+            for j in dp:
+                new_dp[j + i] = new_dp.get(j + i, 0) + dp[j]
+                new_dp[j - i] = new_dp.get(j - i, 0) + dp[j]
+            dp = new_dp
+            # print(dp)
+
+        return dp.get(S, 0)
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.canPartition([1, 2, 5]))
+    print(s.findTargetSumWays([1], 2))
