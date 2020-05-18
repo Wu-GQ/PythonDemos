@@ -235,7 +235,7 @@ class Solution:
 
     def maxProduct(self, nums: list) -> int:
         """
-        乘积最大子序列
+        152. 乘积最大子序列
         :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/264/array/1126/
         """
         # 状态转移方程 S[n] = max(Smax[n-1] * a[n], Smin[n-1] * a[n], S[n-1])
