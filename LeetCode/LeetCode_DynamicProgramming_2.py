@@ -23,9 +23,25 @@ class Solution:
                 for k in range(i + 1, j):
                     dp[i][j] = min(dp[i][j], dp[i][k] + dp[k][j] + A[i] * A[k] * A[j])
 
-        return dp[0][-1]
+        return int(dp[0][-1])
+
+    def canPartition(self, nums: list) -> bool:
+        """
+        416. 分割等和子集
+        :see https://leetcode-cn.com/problems/partition-equal-subset-sum/
+        """
+        sum_set = set()
+        for i in nums:
+            new_sum = set()
+            for j in sum_set:
+                new_sum.add(i + j)
+            sum_set.update(new_sum)
+
+            sum_set.add(i)
+
+        return sum(nums) / 2 in sum_set
 
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minScoreTriangulation([3, 7, 4, 5]))
+    print(s.canPartition([1, 2, 5]))
