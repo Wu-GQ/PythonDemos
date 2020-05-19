@@ -805,7 +805,7 @@ class Solution:
 
         return max_count_num
 
-    count = 0
+    pair_count = 0
 
     def reversePairs(self, nums: list) -> int:
         """
@@ -833,7 +833,7 @@ class Solution:
                 elif nums1[i] > nums2[j]:
                     result_list.append(nums1[i])
                     i += 1
-                    self.count += len(nums2) - j
+                    self.pair_count += len(nums2) - j
                 else:
                     result_list.append(nums2[j])
                     j += 1
@@ -845,7 +845,7 @@ class Solution:
         # print(part_list(nums))
         part_list(nums)
 
-        return self.count
+        return self.pair_count
         """
         # 利用二分插入的原理
         num_list = []

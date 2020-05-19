@@ -73,7 +73,34 @@ class Solution:
 
         return dp[amount]
 
+    def findMaxForm(self, strs: list, m: int, n: int) -> int:
+        """
+        474. 一和零
+        :see https://leetcode-cn.com/problems/ones-and-zeroes/
+        """
+        # 动态规划结果存储，key 表示剩余的 0 和 1 的数量，value 表示 key 对应的数量下最大的字符串数量
+        dp = {(m, n): 0}
+        # 最大字符串的数量
+        max_count = 0
+
+        for string in strs:
+            # 计算字符串中 0 和 1 的数量
+            zero = string.count('0')
+            one = len(string) - zero
+
+            new_dp = {}
+            for i, j in dp:
+                if zero <= i and one <= j:
+                    # 动态规划方程: f(i - zero, j - one) = max(f(i - zero, j - one), f(i, j) + 1)
+                    new_dp[i - zero, j - one] = max(dp.get((i - zero, j - one), 0), dp[i, j] + 1)
+                    # 更新最大值
+                    max_count = max(max_count, new_dp[i - zero, j - one])
+            # 合并
+            dp.update(new_dp)
+
+        return max_count
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.changeII(10, [10]))
+    print(s.findMaxForm(["10", "1", "0"], 1, 1))

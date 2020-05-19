@@ -13,4 +13,8 @@ def sort(a: list, x):
 
 
 if __name__ == '__main__':
-    print(sort([0, 1, 2, 3, 5, 6], 4))
+    # print(sort([0, 1, 2, 3, 5, 6], 4))
+    a = {1: 2}
+    b = {1: 1}
+    a.update(b)
+    print(a, b)

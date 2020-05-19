@@ -15,7 +15,7 @@ class TwoWayLinkedList:
     def __init__(self):
         self.head: TwoWayLinkedListNode = None
         self.tail: TwoWayLinkedListNode = None
-        self.count: int = 0
+        self.node_count: int = 0
 
     def description(self) -> str:
         """ 将链表转换为字符串输出 """
@@ -47,7 +47,7 @@ class TwoWayLinkedList:
             self.head.prev = node
             self.tail = node
 
-        self.count += 1
+        self.node_count += 1
 
         return node
 
@@ -62,12 +62,12 @@ class TwoWayLinkedList:
             node.next = self.head
             node.prev = self.tail
             self.head = node
-            self.count += 1
+            self.node_count += 1
             return node
 
     def add_node_at_first_with_node(self, node: TwoWayLinkedListNode):
         """ 在链表首部添加节点 """
-        if self.count == 0:
+        if self.node_count == 0:
             self.head = node
             self.tail = node
             node.prev = node
@@ -79,7 +79,7 @@ class TwoWayLinkedList:
             node.prev = self.tail
             self.head = node
 
-        self.count += 1
+        self.node_count += 1
 
     def delete_end_node(self):
         """ 删除末尾节点 """
@@ -94,14 +94,14 @@ class TwoWayLinkedList:
             self.head = None
             self.tail = None
 
-        self.count -= 1
+        self.node_count -= 1
 
     def delete_node(self, node: TwoWayLinkedListNode):
-        if self.count <= 1:
+        if self.node_count <= 1:
             self.head = None
             self.tail = None
 
-            self.count = 0
+            self.node_count = 0
 
             return
 
@@ -113,7 +113,7 @@ class TwoWayLinkedList:
         if node == self.tail:
             self.tail = node.prev
 
-        self.count -= 1
+        self.node_count -= 1
 
 
 class LRUCache:
@@ -130,7 +130,7 @@ class LRUCache:
 
     def get(self, key: int) -> int:
         if key in self.num_node_dict:
-            if self.two_way_linked_list.count == 1:
+            if self.two_way_linked_list.node_count == 1:
                 return self.num_node_dict[key].val
 
             node: TwoWayLinkedListNode = self.num_node_dict[key]
