@@ -58,7 +58,22 @@ class Solution:
 
         return dp.get(S, 0)
 
+    def changeII(self, amount: int, coins: list) -> int:
+        """
+        518. 零钱兑换 II
+        :see https://leetcode-cn.com/problems/coin-change-2/
+        """
+        dp = [0] * (amount + 1)
+        dp[0] = 1
+
+        for coin in coins:
+            for i in range(amount + 1):
+                dp[i] += dp[i - coin] if i - coin >= 0 else 0
+            # print(dp)
+
+        return dp[amount]
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.findTargetSumWays([1], 2))
+    print(s.changeII(10, [10]))
