@@ -346,33 +346,21 @@ class Solution(object):
 
     def maxPathSum(self, root: TreeNode) -> int:
         """
-        二叉树中的最大路径和
+        124.二叉树中的最大路径和
         :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/272/dynamic-programming/1175/
         """
-        if root is None:
-            return 0
-        self.max_path_sum = root.val
 
-        return max(self.recursive_child_tree_max_path_sum(root), self.max_path_sum)
+        def max_path_of_subtree(root: TreeNode) -> (int, int):
+            if not root:
+                return 0, -float('inf')
 
-    def recursive_child_tree_max_path_sum(self, root: TreeNode) -> int:
-        # 使用递归，判断每个节点的子树的最大路径和
-        if root is None:
-            return 0
+            left = max_path_of_subtree(root.left)
+            right = max_path_of_subtree(root.right)
 
-        # 计算左子树和右子树的最大路径和
-        left_max_path_sum = self.recursive_child_tree_max_path_sum(root.left)
-        right_max_path_sum = self.recursive_child_tree_max_path_sum(root.right)
+            return max(max(left[0], right[0]), 0) + root.val, max(left[1], right[1], left[0] + right[0] + root.val, left[0] + root.val,
+                                                                  right[0] + root.val, root.val)
 
-        # 路径只包含一半子树和该子树的父节点
-        part_child_tree_max_path_sum = root.val + max(0, max(left_max_path_sum, right_max_path_sum))
-        # 路径只在这个子树中
-        child_tree_max_path_sum = root.val + max(0, left_max_path_sum) + max(0, right_max_path_sum)
-
-        # 更新最大路径和
-        self.max_path_sum = max(self.max_path_sum, child_tree_max_path_sum, part_child_tree_max_path_sum)
-
-        return part_child_tree_max_path_sum
+        return max_path_of_subtree(root)[1] if root else 0
 
     def buildTree(self, preorder: list, inorder: list) -> TreeNode:
         """
@@ -723,21 +711,61 @@ class Solution(object):
 
         return next_child_node(root, set())
 
+    def diameterOfBinaryTree(self, root: TreeNode) -> int:
+        """
+        543. 二叉树的直径
+        :param root:
+        :return:
+        """
+
+        def depth_of_tree(root: TreeNode) -> (int, int):
+            # 求树的深度
+            if not root:
+                return 0, 0
+
+            left_depth = depth_of_tree(root.left)
+            right_depth = depth_of_tree(root.right)
+
+            return max(left_depth[0], right_depth[0]) + 1, max(left_depth[1], right_depth[1], left_depth[0] + right_depth[0])
+
+        return depth_of_tree(root)[1] if root else 0
+
+    def robIII(self, root: TreeNode) -> int:
+        """
+        337. 打家劫舍 III
+        :see https://leetcode-cn.com/problems/house-robber-iii/
+        """
+
+        def rob_of_subtree(root: TreeNode) -> (int, int):
+            if not root:
+                return -float('inf'), -float('inf')
+
+            left = rob_of_subtree(root.left)
+            right = rob_of_subtree(root.right)
+
+            # print(root.val, left, right)
+
+            # 第一个返回值代表不取根节点时的最大值，第二个返回值代表取根节点时的最大值
+            return max(left[0], left[1], 0) + max(right[0], right[1], 0), max(left[0], 0) + max(right[0], 0) + root.val
+
+        return max(rob_of_subtree(root)) if root else 0
+
 
 if __name__ == '__main__':
-    root = TreeNode(9)
-    # root.left = TreeNode(1)
-    # root.right = TreeNode(1)
-    # #
-    # root.left.left = TreeNode(1)
-    # root.left.right = TreeNode(3)
-    #
+    root = TreeNode(3)
+    root.left = TreeNode(-1)
+    root.right = TreeNode(4)
+    # # #
+    root.left.left = TreeNode(-1)
+    root.left.right = TreeNode(4)
+
+    root.left.left.left = TreeNode(100)
     # root.left.right.right = TreeNode(1)
     # #
     # # root.left.right.left = TreeNode(7)
     # # root.left.right.right = TreeNode(4)
     #
-    # root.right.left = TreeNode(6)
+    # root.right.left = TreeNode(15)
     # root.right.right = TreeNode(1)
 
     # print(Solution().lowestCommonAncestor(root, TreeNode(5), TreeNode(4)).val)
@@ -746,4 +774,4 @@ if __name__ == '__main__':
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
 
     s = Solution()
-    print(s.pseudoPalindromicPaths(root))
+    print(s.robIII(root))
