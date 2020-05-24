@@ -896,6 +896,43 @@ class Solution:
                 return validPalindrome(s[left:right]) or validPalindrome(s[left + 1:right + 1])
         return True
 
+    def isPrefixOfWord(self, sentence: str, searchWord: str) -> int:
+        """
+        5416. 检查单词是否为句中其他单词的前缀
+        :param sentence:
+        :param searchWord:
+        :return:
+        """
+        word_list = sentence.split(' ')
+        for i, v in enumerate(word_list):
+            if v.startswith(searchWord):
+                return i + 1
+        return -1
+
+    def maxVowels(self, s: str, k: int) -> int:
+        """
+        5417. 定长子串中元音的最大数目
+        :param s:
+        :param k:
+        :return:
+        """
+        ch_set = {'a', 'e', 'i', 'o', 'u'}
+
+        count = 0
+        for ch in s[:k]:
+            if ch in ch_set:
+                count += 1
+
+        max_count = count
+        for i in range(1, len(s) - k + 1):
+            if s[i - 1] in ch_set:
+                count -= 1
+            if s[i + k - 1] in ch_set:
+                count += 1
+            max_count = max(max_count, count)
+
+        return max_count
+
 
 if __name__ == "__main__":
-    print(Solution().validPalindromeII('abcdba'))
+    print(Solution().maxVowels('tryhard', 4))

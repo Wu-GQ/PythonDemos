@@ -691,20 +691,54 @@ class Solution(object):
 
         return result + 1
 
+    def pseudoPalindromicPaths(self, root: TreeNode) -> int:
+        """
+        5418. 二叉树中的伪回文路径
+        :param root:
+        :return:
+        """
+
+        def next_child_node(node: TreeNode, value_set: set) -> int:
+            if not node:
+                return 0
+            a_set = value_set.copy()
+            if node.val in a_set:
+                a_set.remove(node.val)
+            else:
+                a_set.add(node.val)
+
+            if not node.left and not node.right:
+                return 1 if len(a_set) < 2 else 0
+
+            c = 0
+            if node.left:
+                c += next_child_node(node.left, a_set)
+            if node.right:
+                c += next_child_node(node.right, a_set)
+
+            return c
+
+        if not root:
+            return 0
+
+        return next_child_node(root, set())
+
 
 if __name__ == '__main__':
     root = TreeNode(9)
-    # root.left = TreeNode(3)
-    root.right = TreeNode(3)
+    # root.left = TreeNode(1)
+    # root.right = TreeNode(1)
+    # #
+    # root.left.left = TreeNode(1)
+    # root.left.right = TreeNode(3)
     #
-    # root.left.left = TreeNode(4)
-    # root.left.right = TreeNode(2)
+    # root.left.right.right = TreeNode(1)
     # #
     # # root.left.right.left = TreeNode(7)
     # # root.left.right.right = TreeNode(4)
     #
-    root.right.left = TreeNode(6)
-    # root.right.right = TreeNode(5)
+    # root.right.left = TreeNode(6)
+    # root.right.right = TreeNode(1)
 
     # print(Solution().lowestCommonAncestor(root, TreeNode(5), TreeNode(4)).val)
     # string = Solution().serialize(root)
@@ -712,4 +746,4 @@ if __name__ == '__main__':
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
 
     s = Solution()
-    print(s.goodNodes(root))
+    print(s.pseudoPalindromicPaths(root))
