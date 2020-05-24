@@ -325,15 +325,16 @@ class Solution:
 
     def longestPalindrome(self, s: str) -> str:
         """
-        最长回文子串
+        5. 最长回文子串
         :see https://leetcode-cn.com/problems/longest-palindromic-substring/
+        """
         """
         length = len(s)
         if length == 0:
             return ""
 
         def palindrome_string(start: int, end: int) -> (int, int):
-            """ 返回将回文串两边扩展后最长的回文串的左下标和右下标 """
+            ''' 返回将回文串两边扩展后最长的回文串的左下标和右下标 '''
             if start < 0 or end >= length or s[start] != s[end]:
                 return start, start
 
@@ -361,6 +362,31 @@ class Solution:
                 end_index = double[1]
 
         return s[start_index:end_index + 1]
+        """
+        # f(i, j) = f(i + 1, j - 1) + 2 if s[i] == s[j] and f(i + 1, j - 1) != 0 else 0
+        if not s:
+            return ''
+
+        dp = [['' for _ in s] for _ in s]
+        max_string = ''
+
+        for d in range(len(s)):
+            for i in range(len(s) - d):
+                j = d + i
+                if d == 0:
+                    dp[i][j] = s[i]
+                elif d == 1 and j < len(s):
+                    dp[i][j] = s[i:j + 1] if s[i] == s[j] else ''
+                elif s[i] == s[j] and dp[i + 1][j - 1] != '':
+                    dp[i][j] = f'{s[i]}{dp[i + 1][j - 1]}{s[j]}'
+
+                if len(dp[i][j]) > len(max_string):
+                    max_string = dp[i][j]
+
+        for i in dp:
+            print(i)
+
+        return max_string
 
     def longestValidParentheses(self, s: str) -> int:
         """
@@ -1238,7 +1264,8 @@ class Solution:
                 elif j == len(dungeon[i]) - 1:
                     dungeon[i][j] += dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0
                 else:
-                    dungeon[i][j] += max(dungeon[i][j + 1] if dungeon[i][j + 1] < 0 else 0, dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0)
+                    dungeon[i][j] += max(dungeon[i][j + 1] if dungeon[i][j + 1] < 0 else 0,
+                                         dungeon[i + 1][j] if dungeon[i + 1][j] < 0 else 0)
 
         # for i in dungeon:
         #     print(i)
@@ -1312,7 +1339,8 @@ class Solution:
                 y = i + j
 
                 for k in range(x, y + 1):
-                    dp[x][y] = max(dp[x][y], nums[k] * nums[x - 1] * nums[y + 1] + dp[x][k - 1] + (dp[k + 1][y] if k + 1 < len(dp) else 0))
+                    dp[x][y] = max(dp[x][y], nums[k] * nums[x - 1] * nums[y + 1] + dp[x][k - 1] + (
+                        dp[k + 1][y] if k + 1 < len(dp) else 0))
 
         # for i in dp:
         #     print(i)
@@ -1358,7 +1386,8 @@ class Solution:
                     max_length_list = []
                     for k in range(len(cost_num_list)):
                         if dp[i - cost_num_list[j][0]][k]:
-                            max_length_list = compare_list(max_length_list, dp[i - cost_num_list[j][0]][k] + [cost_num_list[j][1]])
+                            max_length_list = compare_list(max_length_list,
+                                                           dp[i - cost_num_list[j][0]][k] + [cost_num_list[j][1]])
                     dp[i][j] = max_length_list
 
         max_length_list = []
@@ -1370,4 +1399,4 @@ class Solution:
 
 
 if __name__ == "__main__":
-    print(Solution().largestNumber([7, 6, 5, 5, 5, 6, 8, 7, 8], 12))
+    print(Solution().longestPalindrome('abcda'))

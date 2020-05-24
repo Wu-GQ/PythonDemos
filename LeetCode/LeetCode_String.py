@@ -933,6 +933,30 @@ class Solution:
 
         return max_count
 
+    def findTheLongestSubstring(self, s: str) -> int:
+        """
+        1371. 每个元音包含偶数次的最长子字符串
+        :see https://leetcode-cn.com/problems/find-the-longest-substring-containing-vowels-in-even-counts/
+        """
+        # 使用字典优化 if...else
+        char_dict = {'a': 1 << 4, 'e': 1 << 3, 'i': 1 << 2, 'o': 1 << 1, 'u': 1 << 0}
+        # 前缀和
+        char_count = 0
+        # 最早出现过前缀和的下标
+        index_list = [-1] * 32  # 32 = 1 << 5
+        # 最长长度
+        max_length = 0
+
+        for i, v in enumerate(s):
+            char_count ^= char_dict.get(v, 0)
+
+            if char_count > 0 > index_list[char_count]:
+                index_list[char_count] = i
+            else:
+                max_length = max(max_length, i - index_list[char_count])
+
+        return max_length
+
 
 if __name__ == "__main__":
-    print(Solution().maxVowels('tryhard', 4))
+    print(Solution().findTheLongestSubstring('bcbcbc'))
