@@ -1,3 +1,6 @@
+import heapq
+
+
 class Solution:
 
     def subarraySum(self, nums: list, k: int) -> int:
@@ -51,6 +54,57 @@ class Solution:
                 result.append(i)
 
         return result
+
+    def findMedianSortedArrays(self, nums1: list, nums2: list) -> float:
+        """
+        4. 寻找两个正序数组的中位数
+        :see https://leetcode-cn.com/problems/median-of-two-sorted-arrays/
+        """
+
+        def add_num(num: int):
+            # 向两个最大堆和最小堆中加入新的数据
+            if not small_heapq or num < -small_heapq[0]:
+                heapq.heappush(small_heapq, -num)
+            else:
+                heapq.heappush(big_heapq, num)
+
+            # 平衡两个堆，最小堆的最大数量可以比最大堆多1个
+            while len(small_heapq) > len(big_heapq) + 1:
+                heapq.heappush(big_heapq, -heapq.heappop(small_heapq))
+
+            while len(big_heapq) > len(small_heapq):
+                heapq.heappush(small_heapq, -heapq.heappop(big_heapq))
+
+        if not nums1 and not nums2:
+            return 0
+
+        small_heapq = []
+        big_heapq = []
+
+        i, j = 0, 0
+        while i < len(nums1) or j < len(nums2):
+            if i == len(nums1):
+                add_num(nums2[j])
+                j += 1
+                continue
+            if j == len(nums2):
+                add_num(nums1[i])
+                i += 1
+                continue
+
+            if nums1[i] <= nums2[j]:
+                add_num(nums1[i])
+                i += 1
+            else:
+                add_num(nums2[j])
+                j += 1
+
+        print(small_heapq, big_heapq)
+
+        if len(small_heapq) == len(big_heapq):
+            return (-small_heapq[0] + big_heapq[0]) / 2
+        else:
+            return -small_heapq[0]
 
     def subarraysDivByK(self, A: list, K: int) -> int:
         """
