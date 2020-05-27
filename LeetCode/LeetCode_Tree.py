@@ -376,7 +376,7 @@ class Solution(object):
 
     def buildTree(self, preorder: list, inorder: list) -> TreeNode:
         """
-        从前序与中序遍历序列构造二叉树
+        105. 从前序与中序遍历序列构造二叉树
         :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-medium/32/trees-and-graphs/87/
         """
         if len(preorder) == 0 or len(inorder) == 0:

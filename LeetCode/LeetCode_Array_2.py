@@ -52,7 +52,27 @@ class Solution:
 
         return result
 
+    def subarraysDivByK(self, A: list, K: int) -> int:
+        """
+        974. 和可被 K 整除的子数组
+        :see https://leetcode-cn.com/problems/subarray-sums-divisible-by-k/
+        """
+        # 类似“560. 和为K的子数组”
+        sum_dict = {0: 1}
+        result = 0
+
+        num_sum = 0
+        for i in A:
+            num_sum += i
+            # 此处只需要存余数即可，因为当余数相同的两个数字相减，即可被K整除
+            key = num_sum % K
+            count = sum_dict.get(key, 0)
+            result += count
+            sum_dict[key] = count + 1
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.peopleIndexes([["leetcode", "google", "facebook"], ["leetcode", "amazon"], ["facebook", "google"]]))
+    print(s.subarraysDivByK([4, 5, 0, -2, -3, 1], 5))
