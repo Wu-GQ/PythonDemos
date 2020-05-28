@@ -126,7 +126,33 @@ class Solution:
 
         return result
 
+    def countArrangement(self, N: int) -> int:
+        """
+        526. 优美的排列
+        :see https://leetcode-cn.com/problems/beautiful-arrangement/
+        """
+
+        def check(index: int, value: int) -> bool:
+            # 判断是否满足条件
+            return index % value == 0 if index >= value else value % index == 0
+
+        def backtrace(index: int, nums: list):
+            nonlocal result
+            if index == N + 1:
+                result += 1
+                return
+
+            for i in range(N):
+                if nums[i] == 0 and check(index, i + 1):
+                    nums[i] = index
+                    backtrace(index + 1, nums)
+                    nums[i] = 0
+
+        result = 0
+        backtrace(1, [0] * N)
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.subarraysDivByK([4, 5, 0, -2, -3, 1], 5))
+    print(s.countArrangement(15))
