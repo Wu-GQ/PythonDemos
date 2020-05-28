@@ -957,6 +957,44 @@ class Solution:
 
         return max_length
 
+    def decodeString(self, s: str) -> str:
+        """
+        394. 字符串解码
+        :see https://leetcode-cn.com/problems/decode-string/
+        """
+        num_stack = []
+        str_stack = []
+
+        result = ''
+
+        for i, v in enumerate(s):
+            if v.isdigit():
+                if i > 0 and s[i - 1].isdigit():
+                    num_stack[-1] = num_stack[-1] * 10 + int(v)
+                else:
+                    num_stack.append(int(v))
+            elif v == '[':
+                str_stack.append('')
+            elif v == ']':
+                times = num_stack.pop()
+                string = str_stack.pop()
+                if num_stack:
+                    if str_stack:
+                        str_stack[-1] += times * string
+                    else:
+                        str_stack.append(times * string)
+                else:
+                    result += times * string
+            elif num_stack:
+                if str_stack:
+                    str_stack[-1] += v
+                else:
+                    str_stack.append(v)
+            else:
+                result += v
+
+        return result
+
 
 if __name__ == "__main__":
-    print(Solution().findTheLongestSubstring('bcbcbc'))
+    print(Solution().decodeString("3[a10[bc]]"))
