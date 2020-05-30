@@ -995,6 +995,55 @@ class Solution:
 
         return result
 
+    def addStrings(self, num1: str, num2: str) -> str:
+        """
+        415. 字符串相加
+        :see https://leetcode-cn.com/problems/add-strings/
+        """
+        num1_list = list(num1)[::-1]
+        num2_list = list(num2)[::-1]
+        result_list = []
+        carry = 0
+
+        for i in range(max(len(num1_list), len(num2_list))):
+            a = num1_list[i] if i < len(num1_list) else 0
+            b = num2_list[i] if i < len(num2_list) else 0
+            result = int(a) + int(b) + carry
+            carry = result // 10
+            result_list.append(result % 10)
+
+        if carry > 0:
+            result_list.append(carry)
+
+        return ''.join([str(i) for i in result_list[::-1]])
+
+    def convert(self, s: str, numRows: int) -> str:
+        """
+        6. Z 字形变换
+        :see https://leetcode-cn.com/problems/zigzag-conversion/
+        """
+        if numRows < 2:
+            return s
+
+        result = ['' for _ in range(numRows)]
+        i = 0
+        is_add = True
+
+        for ch in s:
+            result[i] += ch
+
+            if i == 0:
+                is_add = True
+            elif i == numRows - 1:
+                is_add = False
+
+            if is_add:
+                i += 1
+            else:
+                i -= 1
+
+        return ''.join(result)
+
 
 if __name__ == "__main__":
-    print(Solution().decodeString("3[a10[bc]]"))
+    print(Solution().convert('AB', 2))

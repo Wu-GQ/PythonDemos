@@ -421,17 +421,16 @@ class Solution:
 
     def largestRectangleArea(self, heights: list) -> int:
         """
-        柱状图中最大的矩形
+        84. 柱状图中最大的矩形
         :see https://leetcode-cn.com/problems/largest-rectangle-in-histogram/
         """
-        length = len(heights)
-        if length < 1:
+        if not heights:
             return 0
 
         max_area = 0
         height_stack = [(-1, -1)]
 
-        for i in range(0, length):
+        for i in range(len(heights)):
             while heights[i] < height_stack[-1][1]:
                 index_height = height_stack.pop()
                 max_area = max(max_area, index_height[1] * (i - height_stack[-1][0] - 1))
@@ -440,7 +439,7 @@ class Solution:
 
         while len(height_stack) > 1:
             index_height = height_stack.pop()
-            max_area = max(max_area, index_height[1] * (length - height_stack[-1][0] - 1))
+            max_area = max(max_area, index_height[1] * (len(heights) - height_stack[-1][0] - 1))
 
         return max_area
 
@@ -1399,4 +1398,4 @@ class Solution:
 
 
 if __name__ == "__main__":
-    print(Solution().longestPalindrome('abcda'))
+    print(Solution().largestRectangleArea([2, 1, 5, 6, 2, 3]))
