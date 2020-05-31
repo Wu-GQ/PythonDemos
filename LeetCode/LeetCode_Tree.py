@@ -62,20 +62,21 @@ class Solution(object):
         对称二叉树
         :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/7/trees/49/
         """
-        return True if root is None else self.compare_tree_node(root.left, root.right)
 
-    def compare_tree_node(self, left_tree_node: TreeNode, right_tree_node: TreeNode) -> bool:
-        """使用递归判断是否为对称二叉树"""
-        if left_tree_node is None and right_tree_node is None:
+        def compare_tree_node(left: TreeNode, right: TreeNode) -> bool:
+            """使用递归判断是否为对称二叉树"""
+            if left is None and right is None:
+                return True
+            elif left is None or right is None:
+                return False
+            elif left.val == right.val:
+                return compare_tree_node(left.left, right.right) and compare_tree_node(left.right, right.left)
+            else:
+                return False
+
+        if not root:
             return True
-        elif left_tree_node is None or right_tree_node is None:
-            return False
-        elif left_tree_node.val == right_tree_node.val:
-            return self.compare_tree_node(left_tree_node.left, right_tree_node.right) and self.compare_tree_node(
-                left_tree_node.right,
-                right_tree_node.left)
-        else:
-            return False
+        return compare_tree_node(root.left, root.right)
 
     def intermediate_traversal(self, root: TreeNode) -> list:
         """

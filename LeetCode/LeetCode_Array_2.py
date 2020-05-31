@@ -152,7 +152,56 @@ class Solution:
         backtrace(1, [0] * N)
         return result
 
+    def canBeEqual(self, target: list, arr: list) -> bool:
+        """
+        5408. 通过翻转子数组使两个数组相等
+        :param target:
+        :param arr:
+        :return:
+        """
+        return sorted(target) == sorted(arr)
+
+    def maxProduct(self, nums: list) -> int:
+        """
+        5424. 数组中两元素的最大乘积
+        :param nums:
+        :return:
+        """
+        result = 0
+        for i in range(len(nums)):
+            for j in range(i + 1, len(nums)):
+                result = max(result, (nums[i] - 1) * (nums[j] - 1))
+        return result
+
+    def maxArea(self, h: int, w: int, horizontalCuts: list, verticalCuts: list) -> int:
+        """
+        5425. 切割后面积最大的蛋糕
+        :param h:
+        :param w:
+        :param horizontalCuts:
+        :param verticalCuts:
+        :return:
+        """
+        horizontalCuts.sort()
+        verticalCuts.sort()
+
+        horizontal = horizontalCuts[0]
+        for i in range(len(horizontalCuts)):
+            if horizontalCuts[i] - horizontalCuts[i - 1] > horizontal:
+                horizontal = horizontalCuts[i] - horizontalCuts[i - 1]
+        if h - horizontalCuts[-1] > horizontal:
+            horizontal = h - horizontalCuts[-1]
+
+        vertical = verticalCuts[0]
+        for i in range(len(verticalCuts)):
+            if verticalCuts[i] - verticalCuts[i - 1] > vertical:
+                vertical = verticalCuts[i] - verticalCuts[i - 1]
+        if w - verticalCuts[-1] > vertical:
+            vertical = w - verticalCuts[-1]
+
+        return horizontal * vertical % (10 ** 9 + 7)
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.countArrangement(15))
+    print(s.maxArea(5, 4, [3], [3]))

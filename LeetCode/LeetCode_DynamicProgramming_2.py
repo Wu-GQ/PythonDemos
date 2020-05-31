@@ -103,4 +103,4 @@ class Solution:
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.findMaxForm(["10", "1", "0"], 1, 1))
+    print(s.cherryPickup([[3, 1, 1], [2, 5, 1], [1, 5, 5], [2, 1, 1]]))

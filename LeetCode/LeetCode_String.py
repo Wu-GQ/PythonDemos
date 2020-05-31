@@ -1044,6 +1044,18 @@ class Solution:
 
         return ''.join(result)
 
+    def hasAllCodes(self, s: str, k: int) -> bool:
+        """
+        5409. 检查一个字符串是否包含所有长度为 K 的二进制子串
+        :param s:
+        :param k:
+        :return:
+        """
+        num_set = set()
+        for i in range(len(s) - k + 1):
+            num_set.add(s[i:i + k])
+        return len(num_set) == 1 << k
+
 
 if __name__ == "__main__":
-    print(Solution().convert('AB', 2))
+    print(Solution().hasAllCodes('00110', 2))

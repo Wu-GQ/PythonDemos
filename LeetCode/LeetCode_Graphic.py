@@ -702,8 +702,75 @@ class Solution:
 
         return result if len(result) == numCourses else []
 
+    def checkIfPrerequisite(self, n: int, prerequisites: list, queries: list) -> list:
+        """
+        5410. 课程安排 IV
+        :param n:
+        :param prerequisites:
+        :param queries:
+        :return:
+        """
+        distance = [[False] * n for _ in range(n)]
+
+        for p in prerequisites:
+            distance[p[0]][p[1]] = True
+
+        for k in range(n):
+            for i in range(n):
+                for j in range(n):
+                    if distance[i][j]:
+                        continue
+                    else:
+                        distance[i][j] = distance[i][k] and distance[k][j]
+
+        result = []
+        for i in queries:
+            result.append(distance[i[0]][i[1]])
+
+        return result
+
+    def minReorder(self, n: int, connections: list) -> int:
+        """
+        5426. 重新规划路线
+        :param n:
+        :param connections:
+        :return:
+        """
+        in_dict = {}
+        out_dict = {}
+        for i in connections:
+            if i[0] in out_dict:
+                out_dict[i[0]].append(i[1])
+            else:
+                out_dict[i[0]] = [i[1]]
+
+            if i[1] in in_dict:
+                in_dict[i[1]].append(i[0])
+            else:
+                in_dict[i[1]] = [i[0]]
+
+        node_stack = [0]
+        result = 0
+        checked_node = {0}
+        while node_stack:
+            node = node_stack.pop(0)
+            out_list = out_dict.get(node, [])
+            in_list = in_dict.get(node, [])
+
+            for i in out_list:
+                if i not in checked_node:
+                    node_stack.append(i)
+                    checked_node.add(i)
+                    result += 1
+
+            for i in in_list:
+                if i not in checked_node:
+                    node_stack.append(i)
+                    checked_node.add(i)
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    # print(s.minTime(4, [[0,1],[0,2],[1,4],[1,5],[2,3],[2,6]], [False, False, True, False, True, True, False]))
-    print(s.findOrder(4, [[1, 0], [2, 0], [3, 1], [3, 2]]))
+    print(s.minReorder(10, [[0, 1], [2, 1], [3, 2], [0, 4], [5, 1], [2, 6], [5, 7], [3, 8], [8, 9]]))
