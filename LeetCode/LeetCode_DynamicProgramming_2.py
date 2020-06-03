@@ -100,7 +100,28 @@ class Solution:
 
         return max_count
 
+    def new21Game(self, N: int, K: int, W: int) -> float:
+        """
+        837. 新21点
+        :see https://leetcode-cn.com/problems/new-21-game/
+        """
+        # 自顶向下的动态规划，参考题解https://leetcode-cn.com/problems/new-21-game/solution/huan-you-bi-zhe-geng-jian-dan-de-ti-jie-ma-tian-ge/
+        # dp[i] 表示爱丽丝在i分时的胜率，即不少于N分获胜，若大于N分则失败
+        # 当 K <= i < K + W 时，胜率为1
+        # 当 0 <= i < K 时，胜率为(1 / W) * sum(dp[i + 1:i + w])
+        if N > K + W:
+            return 0
+
+        dp = [1] * (N + 1) + [0] * (K + W - N)
+        dp_part_sum = sum(dp[K:K + W])
+
+        for i in range(K - 1, -1, -1):
+            dp[i] = dp_part_sum / W
+            dp_part_sum += dp[i] - dp[i + W]
+        # print(dp)
+        return dp[0]
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.cherryPickup([[3, 1, 1], [2, 5, 1], [1, 5, 5], [2, 1, 1]]))
+    print(s.new21Game(21, 17, 10))
