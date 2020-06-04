@@ -98,17 +98,18 @@ class Solution:
 
     def product_except_self(self, nums: list) -> list:
         """
-        除自身以外数组的乘积
+        238. 除自身以外数组的乘积
         :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/264/array/1135/
         """
-        left_mul_list = []
-        right_mul_list = [0 for i in range(len(nums))]
+        """
+        left_mul_list = [0] * len(nums)
+        right_mul_list = [0] * len(nums)
 
         for i in range(len(nums)):
-            left_mul_list.append(nums[i] if i == 0 else nums[i] * left_mul_list[i - 1])
+            left_mul_list[i] = nums[i] if i == 0 else nums[i] * left_mul_list[i - 1]
 
-        for i in range(len(nums) - 1, -1, -1):
-            right_mul_list[i] = nums[i] if i == len(nums) - 1 else nums[i] * right_mul_list[i + 1]
+            j = len(nums) - 1 - i
+            right_mul_list[j] = nums[j] if j == len(nums) - 1 else nums[j] * right_mul_list[j + 1]
 
         result_list = []
         for i in range(len(nums)):
@@ -120,6 +121,25 @@ class Solution:
                 result_list.append(left_mul_list[i - 1] * right_mul_list[i + 1])
 
         return result_list
+        """
+        if len(nums) < 1:
+            return []
+
+        # 使用result来临时存储右侧的乘积
+        result = [0] * len(nums)
+        result[-1] = nums[-1]
+
+        for i in range(len(nums) - 2, 0, -1):
+            result[i] = nums[i] * result[i + 1]
+
+        # left_product表示左侧的乘积
+        left_product = 1
+        for i in range(len(nums) - 1):
+            result[i] = left_product * result[i + 1]
+            left_product *= nums[i]
+        result[-1] = left_product
+
+        return result
 
     def removeDuplicates(self, nums: list) -> int:
         """
@@ -1561,10 +1581,8 @@ class Solution:
 
     def kidsWithCandies(self, candies: list, extraCandies: int) -> list:
         """
-        5384. 拥有最多糖果的孩子
-        :param candies:
-        :param extraCandies:
-        :return:
+        1431. 拥有最多糖果的孩子
+        :see https://leetcode-cn.com/problems/kids-with-the-greatest-number-of-candies/
         """
         max_candy = max(candies)
         return [candy + extraCandies >= max_candy for candy in candies]
@@ -1578,8 +1596,9 @@ class Solution:
 
         # 回溯会超时
         def backtrace(index: int, wearing_hats_set: set):
+            nonlocal result_way
             if index == len(hats):
-                self.result_way += 1
+                result_way += 1
                 # print(wearing_hats_set)
                 return
 
@@ -1589,9 +1608,9 @@ class Solution:
                     backtrace(index + 1, wearing_hats_set)
                     wearing_hats_set.remove(color)
 
-        self.result_way = 0
+        result_way = 0
         backtrace(0, set())
-        return self.result_way % 100000007
+        return result_way % 100000007
 
     def kLengthApart(self, nums: list, k: int) -> bool:
         """
@@ -1697,5 +1716,5 @@ class Solution:
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.countTriplets([1, 3, 5, 7, 9]))
+    print(s.product_except_self([1, 2, 3, 4]))
     # print(a)
