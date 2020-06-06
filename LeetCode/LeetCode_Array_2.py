@@ -201,6 +201,45 @@ class Solution:
 
         return horizontal * vertical % (10 ** 9 + 7)
 
+    def spiralOrder(self, matrix: list) -> list:
+        """
+        面试题29. 顺时针打印矩阵/54. 螺旋矩阵
+        :param matrix:
+        :see https://leetcode-cn.com/problems/shun-shi-zhen-da-yin-ju-zhen-lcof/
+        :see https://leetcode-cn.com/problems/spiral-matrix/
+        """
+        if not matrix:
+            return []
+
+        result = []
+        length = len(matrix)
+        width = len(matrix[0])
+        for i in range((length + 1) // 2):
+            # 1. 从左到右打印上方的一行，起点(i, i)，终点(i, width - i - 1)
+            for j in range(i, len(matrix[i]) - i):
+                # print(1, i, j)
+                result.append(matrix[i][j])
+
+            if i < width - i:
+                # 2. 从上到下打印右侧的一列，起点(i + 1, width - i - 1)，终点(length - i - 2, width - i - 1)
+                for j in range(i + 1, length - i - 1):
+                    # print(2, j, width - i - 1)
+                    result.append(matrix[j][width - i - 1])
+
+            if i < length - i - 1:
+                # 3. 从右到左打印下方的一行，起点(length - i - 1, width - i - 1)，终点(length - i - 1, i)
+                for j in range(width - i - 1, i - 1, -1):
+                    # print(3, length - i - 1, j)
+                    result.append(matrix[length - i - 1][j])
+
+            if i < width - i - 1:
+                # 4. 从下到上打印左侧的一列，起点(length - i - 2, i)，终点(i + 1, i)
+                for j in range(length - i - 2, i, -1):
+                    # print(4, j, i)
+                    result.append(matrix[j][i])
+
+        return result
+
     def longestConsecutive(self, nums: list) -> int:
         """
         128. 最长连续序列
