@@ -201,7 +201,26 @@ class Solution:
 
         return horizontal * vertical % (10 ** 9 + 7)
 
+    def longestConsecutive(self, nums: list) -> int:
+        """
+        128. 最长连续序列
+        :see https://leetcode-cn.com/problems/longest-consecutive-sequence/
+        """
+        nums_dict = {}
+        for i in nums:
+            nums_dict[i] = nums_dict.get(i, 1)
+
+        max_length = 0
+        for i in nums_dict:
+            x = i + 1
+            while x in nums_dict:
+                x += nums_dict[x]
+            nums_dict[i] = x - i
+            max_length = max(max_length, nums_dict[i])
+
+        return max_length
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.maxArea(5, 4, [3], [3]))
+    print(s.longestConsecutive([3, 1, 4, 2]))
