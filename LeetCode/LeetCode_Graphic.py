@@ -1,4 +1,5 @@
 import heapq
+import string
 
 
 class Solution:
@@ -770,7 +771,79 @@ class Solution:
 
         return result
 
+    def findLadders(self, beginWord: str, endWord: str, wordList: list) -> list:
+        """
+        126. 单词接龙 II
+        :see https://leetcode-cn.com/problems/word-ladder-ii/
+        """
+        # 1. 建立邻接表
+        words_set = set(wordList)
+        words_set.add(beginWord)
+
+        word_length = len(beginWord)
+
+        words_dict = {}
+        for word in wordList:
+            for i in range(word_length):
+                for ch in string.ascii_lowercase:
+                    new_word = f'{word[:i]}{ch}{word[i + 1:]}'
+                    if new_word != word and new_word in words_set:
+                        if word not in words_dict:
+                            words_dict[word] = {new_word}
+                        else:
+                            words_dict[word].add(new_word)
+
+                        if new_word not in words_dict:
+                            words_dict[new_word] = {word}
+                        else:
+                            words_dict[new_word].add(word)
+
+        if endWord not in words_dict:
+            return []
+
+        # 2. 广度优先遍历查找最短路径
+        word_stack = [beginWord]
+        word_time_dict = {}
+        length = 1
+        time = 0
+
+        while word_stack:
+            word = word_stack.pop(0)
+
+            if word not in word_time_dict:
+                word_time_dict[word] = time
+
+                if word == endWord:
+                    break
+
+                for i in words_dict.get(word, {}):
+                    word_stack.append(i)
+
+            length -= 1
+            if length == 0:
+                length = len(word_stack)
+                time += 1
+
+        # 3. 回溯输出路径
+        def backtrace(words: list):
+            if words[0] == beginWord:
+                result.append(words.copy())
+                return
+
+            if words[0] in words_dict:
+                time = word_time_dict[words[0]]
+                for i in words_dict[words[0]]:
+                    if i in word_time_dict and word_time_dict[i] == time - 1:
+                        words.insert(0, i)
+                        backtrace(words)
+                        words.pop(0)
+
+        result = []
+        backtrace([endWord])
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minReorder(10, [[0, 1], [2, 1], [3, 2], [0, 4], [5, 1], [2, 6], [5, 7], [3, 8], [8, 9]]))
+    print(s.findLadders('hot', 'dog', ["hot", "dog"]))
