@@ -259,7 +259,26 @@ class Solution:
 
         return max_length
 
+    def shuffle(self, nums: list, n: int) -> list:
+        """
+        5428. 重新排列数组
+        :param nums:
+        :param n:
+        :return:
+        """
+        return [nums[i // 2] if i % 2 == 0 else nums[i // 2 + n] for i in range(2 * n)]
+
+    def getStrongest(self, arr: list, k: int) -> list:
+        """
+        5429. 数组中的 k 个最强值
+        :param arr:
+        :param k:
+        :return:
+        """
+        arr.sort()
+        return sorted(arr, key=lambda x: (-abs(x - arr[(len(arr) - 1) // 2]), -x))[:k]
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.longestConsecutive([3, 1, 4, 2]))
+    print(s.getStrongest([-7, 22, 17, 3, 1, 2], 3))
