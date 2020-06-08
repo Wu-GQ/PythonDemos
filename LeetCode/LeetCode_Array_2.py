@@ -278,7 +278,40 @@ class Solution:
         arr.sort()
         return sorted(arr, key=lambda x: (-abs(x - arr[(len(arr) - 1) // 2]), -x))[:k]
 
+    def equationsPossible(self, equations: list) -> bool:
+        """
+        990. 等式方程的可满足性
+        :see https://leetcode-cn.com/problems/satisfiability-of-equality-equations/
+        """
+        # 考察并查集
+        equal_dict = {}
+        non_equal_list = []
+
+        for s in equations:
+            if s[1] == '!':
+                non_equal_list.append((s[0], s[-1]))
+                continue
+
+            if s[0] in equal_dict and s[-1] in equal_dict and equal_dict[s[0]] != equal_dict[s[-1]]:
+                # 将s[-1]所在集合，合并到s[0]
+                value = equal_dict[s[-1]]
+                for i in equal_dict:
+                    if equal_dict[i] == value:
+                        equal_dict[i] = equal_dict[s[0]]
+            elif s[0] in equal_dict and s[-1] not in equal_dict:
+                equal_dict[s[-1]] = equal_dict[s[0]]
+            elif s[0] not in equal_dict and s[-1] in equal_dict:
+                equal_dict[s[0]] = equal_dict[s[-1]]
+            elif s[0] not in equal_dict and s[-1] not in equal_dict:
+                equal_dict[s[0]] = s[0]
+                equal_dict[s[-1]] = s[0]
+
+        for start, end in non_equal_list:
+            if start == end or (start in equal_dict and end in equal_dict and equal_dict[start] == equal_dict[end]):
+                return False
+        return True
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.getStrongest([-7, 22, 17, 3, 1, 2], 3))
+    print(s.equationsPossible(['a!=a']))
