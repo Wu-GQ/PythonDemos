@@ -311,7 +311,24 @@ class Solution:
                 return False
         return True
 
+    def removeElement(self, nums: list, val: int) -> int:
+        """
+        27. 移除元素
+        :see https://leetcode-cn.com/problems/remove-element/
+        """
+        i, j = 0, len(nums) - 1
+        while i <= j:
+            if nums[i] == val:
+                while j >= 0 and nums[j] == val:
+                    j -= 1
+                if i > j:
+                    break
+                nums[i] = nums[j]
+                j -= 1
+            i += 1
+        return i
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.equationsPossible(['a!=a']))
+    print(s.removeElement([2, 3, 2], 2))
