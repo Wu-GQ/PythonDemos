@@ -121,7 +121,24 @@ class Solution:
         # print(dp)
         return dp[0]
 
+    def translateNum(self, num: int) -> int:
+        """
+        面试题46. 把数字翻译成字符串
+        :see https://leetcode-cn.com/problems/ba-shu-zi-fan-yi-cheng-zi-fu-chuan-lcof/
+        """
+        string = str(num)
+        dp = [0] * len(string)
+
+        for i in range(len(string)):
+            if i == 0:
+                dp[i] = 1
+            elif i == 1:
+                dp[i] = 1 + (1 if int(string[:2]) < 26 else 0)
+            else:
+                dp[i] = dp[i - 1] + (dp[i - 2] if 9 < int(string[i - 1:i + 1]) < 26 else 0)
+        return dp[-1]
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.new21Game(21, 17, 10))
+    print(s.translateNum(100))
