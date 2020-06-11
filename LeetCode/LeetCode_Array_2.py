@@ -328,7 +328,27 @@ class Solution:
             i += 1
         return i
 
+    def dailyTemperatures(self, T: list) -> list:
+        """
+        739. 每日温度
+        :see https://leetcode-cn.com/problems/daily-temperatures/
+        """
+        result = [0] * len(T)
+
+        stack = []
+        for i, v in enumerate(T):
+            while stack and stack[-1][1] < v:
+                index, value = stack.pop()
+                result[index] = i - index
+            stack.append((i, v))
+
+        while stack:
+            index, value = stack.pop()
+            result[index] = 0
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.removeElement([2, 3, 2], 2))
+    print(s.dailyTemperatures([73, 74, 75, 71, 69, 72, 76, 73]))
