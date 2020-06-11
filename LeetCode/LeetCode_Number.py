@@ -502,6 +502,36 @@ class Solution:
                     result.append(f'{j}/{i}')
         return result
 
+    def countDigitOne(self, n: int) -> int:
+        """
+        233. 数字 1 的个数
+        :see https://leetcode-cn.com/problems/number-of-digit-one/
+        """
+
+        def string2num(s: str) -> int:
+            # 字符串转数字
+            return int(s) if s else 0
+
+        # 以计算数字n的千位上的1个数为例，n = int('abcdef')
+        # 若 c = 0 时，千位出现1的个数为，int('ab') * 1000
+        # 若 c = 1 时，千位出现1的个数为，int('ab') * 1000 + int('def') + 1，1是代表'000'
+        # 若 c > 1 时，千位出现1的个数为，int('ab') * 1000 + 1000
+        if n < 0:
+            return 0
+        result = 0
+        string = str(n)
+        length = len(string)
+        for i in range(length):
+            index = length - 1 - i
+            if string[index] == '0':
+                result += string2num(string[:index]) * pow(10, i)
+            elif string[index] == '1':
+                result += string2num(string[:index]) * pow(10, i) + string2num(string[index + 1:]) + 1
+            else:
+                result += (string2num(string[:index]) + 1) * pow(10, i)
+
+        return result
+
 
 if __name__ == '__main__':
-    print(Solution().simplifiedFractions(1))
+    print(Solution().countDigitOne(-21))
