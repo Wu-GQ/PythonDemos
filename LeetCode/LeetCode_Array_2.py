@@ -373,7 +373,44 @@ class Solution:
 
         return result
 
+    def fourSum(self, nums: list, target: int) -> list:
+        """
+        18. 四数之和
+        :see https://leetcode-cn.com/problems/4sum/
+        """
+        nums.sort()
+        result = []
+        length = len(nums)
+
+        for i in range(length - 3):
+            if i > 0 and nums[i] == nums[i - 1]:
+                continue
+
+            for j in range(i + 1, length - 2):
+                if j > i + 1 and nums[j] == nums[j - 1]:
+                    continue
+                left = j + 1
+                right = length - 1
+                while left < right:
+                    arr_sum = nums[i] + nums[j] + nums[left] + nums[right]
+                    if arr_sum < target:
+                        left += 1
+                    elif arr_sum > target:
+                        right -= 1
+                    else:
+                        result.append([nums[i], nums[j], nums[left], nums[right]])
+
+                        left += 1
+                        while left < right and nums[left] == nums[left - 1]:
+                            left += 1
+
+                        right -= 1
+                        while left < right and nums[right] == nums[right + 1]:
+                            right -= 1
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.threeSumClosest([1, 1, 1, 0], -10))
+    print(s.fourSum([-3, -2, -1, 0, 0, 1, 2, 3], 0))
