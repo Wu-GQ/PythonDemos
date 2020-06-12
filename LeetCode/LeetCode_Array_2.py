@@ -348,7 +348,32 @@ class Solution:
 
         return result
 
+    def threeSumClosest(self, nums: list, target: int) -> int:
+        """
+        16. 最接近的三数之和
+        :see https://leetcode-cn.com/problems/3sum-closest/
+        """
+        result = float('inf')
+        nums.sort()
+        length = len(nums)
+
+        for i in range(length - 2):
+            left, right = i + 1, length - 1
+            while left < right:
+                arr_sum = sum([nums[i], nums[left], nums[right]])
+                if abs(arr_sum - target) < abs(result - target):
+                    result = arr_sum
+
+                if arr_sum < target:
+                    left += 1
+                elif arr_sum > target:
+                    right -= 1
+                else:
+                    return arr_sum
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.dailyTemperatures([73, 74, 75, 71, 69, 72, 76, 73]))
+    print(s.threeSumClosest([1, 1, 1, 0], -10))
