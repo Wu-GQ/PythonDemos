@@ -410,7 +410,26 @@ class Solution:
 
         return result
 
+    def fourSumCount(self, A: list, B: list, C: list, D: list) -> int:
+        """
+        454. 四数相加 II
+        :see https://leetcode-cn.com/problems/4sum-ii/
+        """
+        AB_dict = {}
+        for i in A:
+            for j in B:
+                s = i + j
+                AB_dict[s] = AB_dict.get(s, 0) + 1
+
+        result = 0
+        for i in C:
+            for j in D:
+                if -i - j in AB_dict:
+                    result += AB_dict[-i - j]
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.fourSum([-3, -2, -1, 0, 0, 1, 2, 3], 0))
+    print(s.fourSumCount([1, 2], [-2, -1], [-1, 2], [0, 2]))
