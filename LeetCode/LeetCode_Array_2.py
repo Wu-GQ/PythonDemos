@@ -429,7 +429,31 @@ class Solution:
 
         return result
 
+    def letterCombinations(self, digits: str) -> list:
+        """
+        17. 电话号码的字母组合
+        :see https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/
+        """
+
+        def backtrace(index: int, str_list: list):
+            if index == len(digits):
+                result.append(''.join(str_list))
+                return
+
+            for ch in num_str_dict[digits[index]]:
+                str_list.append(ch)
+                backtrace(index + 1, str_list)
+                str_list.pop()
+
+        if not digits:
+            return []
+        num_str_dict = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv',
+                        '9': 'wxyz'}
+        result = []
+        backtrace(0, [])
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.fourSumCount([1, 2], [-2, -1], [-1, 2], [0, 2]))
+    print(s.letterCombinations(''))
