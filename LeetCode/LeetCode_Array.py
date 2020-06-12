@@ -219,8 +219,9 @@ class Solution:
 
     def threeSum(self, nums: list) -> list:
         """
-        三数之和
+        15. 三数之和
         :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-medium/29/array-and-strings/75/
+        """
         """
         result_list = []
 
@@ -263,6 +264,102 @@ class Solution:
                     num_dict[b] += 1
 
         return result_list
+        """
+        """
+        # 统计每个数字出现的次数
+        nums_dict = {}
+        for i in nums:
+            nums_dict[i] = nums_dict.get(i, 0) + 1
+        nums = sorted(nums_dict)
+        # 结果去重
+        checked_set = set()
+        result = []
+
+        for i in nums_dict:
+            # 数字使用一次，次数就减一，使用完之后再加一
+            nums_dict[i] -= 1
+            for j in nums_dict:
+                if j < i or nums_dict[j] < 1:
+                    continue
+                nums_dict[j] -= 1
+
+                # 因 i + j + diff = 0, 只需要确认 diff 的出现次数是否大于 0
+                diff = -i - j
+                if diff in nums_dict and nums_dict[diff] > 0:
+                    arr = sorted([i, j, diff])
+                    arr_tuple = tuple(arr)
+                    if arr_tuple not in checked_set:
+                        checked_set.add(arr_tuple)
+                        result.append(arr)
+
+                nums_dict[j] += 1
+            nums_dict[i] += 1
+
+        return result
+        """
+        res = []
+
+        lookup = dict()
+        # 字典中记录的是重复个数
+        for num in nums:
+            lookup[num] = lookup.get(num, 0) + 1
+        # 数组去重后的排序
+        nums = sorted(lookup)
+
+        for first in range(len(nums)):
+
+            if nums[first] == 0:
+                if lookup[nums[first]] > 2:
+                    res.append([0, 0, 0])
+            elif lookup[nums[first]] > 1 and -2 * nums[first] in lookup:
+                res.append([nums[first], nums[first], -2 * nums[first]])
+
+            # if lookup[nums[first]] > 1 :
+            #     ## 情况1：三数一样(只可能是三个0)
+            #     # nums[first]为0，并且nums[first]有2个以上
+            #     if nums[first] == 0 :
+            #         if lookup[nums[first]] > 2 :
+            #             res.append([0, 0, 0])
+            #     ## nums[first]不为0（隐含了第三个数一定不等于前两个数），且第三个数存在
+            #     else :
+            #         ## 情况2：有两数一样
+            #         if -nums[first]*2 in lookup :
+            #             res.append([nums[first], nums[first], -2*nums[first]])
+
+            # 情况3：三数均不同
+            if nums[first] < 0:
+                two_sum = -nums[first]
+                # 第二个数的搜索范围 [second_left, second_right)
+                # nums[-1]是最大的值，second_left是最小的候选值 地址
+                second_left = bisect.bisect_left(nums, two_sum - nums[-1], first + 1)
+                second_right = bisect.bisect(nums, two_sum // 2, second_left)
+                # 假设a + b = sum；a、b中一定有一个是小于sum/2的数；sum//2就是最大的 a的候选值 地址
+                '''
+                second_right = bisect_left(nums, two_sum//2, second_left)
+                的写法是错的，左插入，插入的位置 原来的数，一定是 大于等于要插入的数
+
+                比如 [1, 2, 4] 中左插入3，插在原来4的位置(>)， 左插入2， 插在原来2的位置(=,也是关键不同处)
+                而 右插入，插入的位置 原来的数 一定是 大于要插入的数，还是上面的例子，无论插入2、3，都是放在原来4的位置
+
+                回到本题，若second_right为左插入，若two_sum//2存在于列表中，则会被忽略，因为右边是开区间
+                还是拿上面举例，比如2是满足要求的，但索引为1的元素不会被检索到，会漏解
+
+                若下面的一句写成：
+                for secondNum in nums[second_left: second_right+1] :
+                这样不会被忽略了，但有了另一个问题产生，当two_sum//2不存在列表中时，会取到更大的数，会取重复的解
+                还是拿[1, 2, 4]举例，比如3是满足检索要求的，但列表中没有3，所以应该不考虑，结果索引考虑到了数字4
+                需要明白，本题的关键在于，第二个数second一定不会大于第三个数，如果取值过大，第三个数可能就小于第二个数，从而有重复解
+
+                总之，左插入相比右插入，特例就是在 插入位置的数，可能会等于要插入的数；
+                而区间需要<=值，如果用左插入，无论如何都无法保证满足此条件
+                '''
+
+                for secondNum in nums[second_left: second_right]:
+                    thirdNum = two_sum - secondNum
+                    # 在字典中找b，b一定大于等于a；b一定是正数，num<0,b不可能等于num（第一个数）
+                    if thirdNum in lookup and thirdNum != secondNum:
+                        res.append([nums[first], secondNum, thirdNum])
+        return res
 
     def trap(self, height: list) -> int:
         """
@@ -1716,5 +1813,5 @@ class Solution:
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.product_except_self([1, 2, 3, 4]))
+    print(s.threeSum([0, 0, 0]))
     # print(a)
