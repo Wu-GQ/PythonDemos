@@ -587,7 +587,22 @@ class Solution:
                 nums[i], nums[right] = nums[right], nums[i]
             print(left, i, right, nums)
 
+    def subsets(self, nums: list) -> list:
+        """
+        78. 子集
+        :see https://leetcode-cn.com/problems/subsets/
+        """
+
+        def backtrace(index: int, arr: list):
+            result.append(arr)
+            for i in range(index, len(nums)):
+                backtrace(i + 1, arr + [nums[i]])
+
+        result = []
+        backtrace(0, [])
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.sortColors([2, 0, 2, 1, 1, 0]))
+    print(s.subsets([1, 2, 3, 4]))
