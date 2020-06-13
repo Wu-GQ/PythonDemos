@@ -1087,6 +1087,19 @@ class Solution:
             result.append(str(carry))
         return ''.join(result[::-1])
 
+    def simplifyPath(self, path: str) -> str:
+        """
+        71. 简化路径
+        :see https://leetcode-cn.com/problems/simplify-path/
+        """
+        path_stack = []
+        for i in path.split('/'):
+            if i not in {'', '.', '..'}:
+                path_stack.append(i)
+            elif i == '..' and path_stack:
+                path_stack.pop()
+        return f"/{'/'.join(path_stack)}"
+
 
 if __name__ == "__main__":
-    print(Solution().addBinary("10", '110'))
+    print(Solution().simplifyPath('//'))
