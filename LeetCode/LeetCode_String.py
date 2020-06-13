@@ -1056,6 +1056,37 @@ class Solution:
             num_set.add(s[i:i + k])
         return len(num_set) == 1 << k
 
+    def lengthOfLastWord(self, s: str) -> int:
+        """
+        58. 最后一个单词的长度
+        :see https://leetcode-cn.com/problems/length-of-last-word/
+        """
+        s = s.rstrip()
+        i = 0
+        length = len(s)
+        while i < length:
+            if s[length - i - 1] == ' ':
+                break
+            i += 1
+        return i
+
+    def addBinary(self, a: str, b: str) -> str:
+        """
+        67. 二进制求和
+        :see https://leetcode-cn.com/problems/add-binary/
+        """
+        carry = 0
+        a = a[::-1]
+        b = b[::-1]
+        result = []
+        for i in range(max(len(a), len(b))):
+            s = carry + (int(a[i]) if i < len(a) else 0) + (int(b[i]) if i < len(b) else 0)
+            carry = s // 2
+            result.append(str(s % 2))
+        if carry > 0:
+            result.append(str(carry))
+        return ''.join(result[::-1])
+
 
 if __name__ == "__main__":
-    print(Solution().hasAllCodes('00110', 2))
+    print(Solution().addBinary("10", '110'))

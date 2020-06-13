@@ -1,5 +1,6 @@
 import bisect
 import re
+from builtins import range
 
 
 class Solution:
@@ -136,13 +137,17 @@ class Solution:
 
     def climbStairs(self, n):
         """
-        爬楼梯
+        70. 爬楼梯
         :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/23/dynamic-programming/54/
         """
-        _stairs_array = [0, 1, 2]
-        for i in range(3, n + 1):
-            _stairs_array.append(_stairs_array[i - 2] + _stairs_array[i - 1])
-        return _stairs_array[n]
+        # _stairs_array = [0, 1, 2]
+        # for i in range(3, n + 1):
+        #     _stairs_array.append(_stairs_array[i - 2] + _stairs_array[i - 1])
+        # return _stairs_array[n]
+        a, b = 1, 2
+        for i in range(2, n):
+            a, b = b, a + b
+        return b if n > 1 else 1
 
     def maxProfit2(self, prices: list) -> int:
         """
@@ -1398,4 +1403,4 @@ class Solution:
 
 
 if __name__ == "__main__":
-    print(Solution().largestRectangleArea([2, 1, 5, 6, 2, 3]))
+    print(Solution().climbStairs(4))

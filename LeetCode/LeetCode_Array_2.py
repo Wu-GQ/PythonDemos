@@ -453,7 +453,43 @@ class Solution:
         backtrace(0, [])
         return result
 
+    def generateMatrix(self, n: int) -> list:
+        """
+        59. 螺旋矩阵 II
+        :see https://leetcode-cn.com/problems/spiral-matrix-ii/
+        """
+        grip = [[0] * n for _ in range(n)]
+
+        num = 1
+        for i in range(n):
+            step = n - 2 * i - 1
+            # 上方一行，从(i, i)到(i, n - i - 2)
+            for j in range(step):
+                grip[i][i + j] = num
+                num += 1
+
+            # 右方一列，从(i, n - i - 1)到(n - i - 2, n - i - 1)
+            for j in range(step):
+                grip[i + j][-i - 1] = num
+                num += 1
+
+            # 下方一行，从(n - i - 1, n - i - 1)到(n - i - 1, i + 1)
+            for j in range(step):
+                grip[- i - 1][-i - 1 - j] = num
+                num += 1
+
+            # 左方一列，从(n - i - 1, i)到(i + 1, i)
+            for j in range(step):
+                grip[-i - 1 - j][i] = num
+                num += 1
+
+        if n & 1:
+            index = n // 2
+            grip[index][index] = num
+
+        return grip
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.letterCombinations(''))
+    print(s.generateMatrix(4))
