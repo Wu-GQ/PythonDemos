@@ -489,7 +489,105 @@ class Solution:
 
         return grip
 
+    def searchMatrix(self, matrix: list, target: int) -> bool:
+        """
+        74. 搜索二维矩阵
+        :see https://leetcode-cn.com/problems/search-a-2d-matrix/
+        """
+        if not matrix or not matrix[0]:
+            return False
+
+        row = 0
+        while row < len(matrix) - 1:
+            if matrix[row][0] == target:
+                return True
+            elif matrix[row + 1][0] <= target:
+                row += 1
+            else:
+                break
+
+        arr = matrix[row]
+        left, right = 0, len(arr) - 1
+        while left <= right:
+            mid = (left + right) // 2
+            if arr[mid] == target:
+                return True
+            elif arr[mid] < target:
+                left = mid + 1
+            else:
+                right = mid - 1
+
+        return False
+
+    def searchMatrixII(self, matrix, target) -> bool:
+        """
+        240. 搜索二维矩阵 II
+        :see https://leetcode-cn.com/problems/search-a-2d-matrix-ii/
+        """
+        if not matrix or not matrix[0]:
+            return False
+
+        i, j = 0, len(matrix[0]) - 1
+        while 0 <= i < len(matrix) and 0 <= j < len(matrix[0]):
+            if target > matrix[i][j]:
+                i += 1
+            elif target < matrix[i][j]:
+                j -= 1
+            else:
+                return True
+
+        return False
+
+    def sortColors(self, nums: list) -> None:
+        """
+        75. 颜色分类
+        :see https://leetcode-cn.com/problems/sort-colors/
+        """
+        """
+        zero, one, two = 0, 0, 0
+        for i in nums:
+            if i == 0:
+                zero += 1
+            elif i == 1:
+                one += 1
+            elif i == 2:
+                two += 1
+
+        for i in range(len(nums)):
+            if zero > 0:
+                nums[i] = 0
+                zero -= 1
+            elif one > 0:
+                nums[i] = 1
+                one -= 1
+            elif two > 0:
+                nums[i] = 2
+                two -= 1
+
+        print(nums)
+        """
+        # 参考 partition 过程
+        # [0, left): < 1
+        # [left, i): = 1
+        # [i, right): 待检测
+        # [right, len): > 1
+
+        left, right = 0, len(nums)
+        i = 0
+
+        while i < right:
+            if nums[i] < 1:
+                nums[left], nums[i] = nums[i], nums[left]
+                left += 1
+                i += 1
+            elif nums[i] == 1:
+                i += 1
+            else:
+                right -= 1
+                nums[i], nums[right] = nums[right], nums[i]
+            print(left, i, right, nums)
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.generateMatrix(4))
+    print(s.sortColors([2, 0, 2, 1, 1, 0]))
