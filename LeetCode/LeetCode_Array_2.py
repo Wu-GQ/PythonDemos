@@ -602,7 +602,61 @@ class Solution:
         backtrace(0, [])
         return result
 
+    def finalPrices(self, prices: list) -> list:
+        """
+        5420. 商品折扣后的最终价格
+        :see https://leetcode-cn.com/problems/final-prices-with-a-special-discount-in-a-shop/
+        """
+        if len(prices) == 1:
+            return prices
+
+        result = []
+        for i in range(len(prices)):
+            cost = 0
+            for j in range(i + 1, len(prices)):
+                if prices[j] <= prices[i]:
+                    cost = prices[j]
+                    break
+            result.append(prices[i] - cost)
+
+        return result
+
+    def minSumOfLengths(self, arr: list, target: int) -> int:
+        """
+        找两个和为目标值且不重叠的子数组
+        :see https://leetcode-cn.com/problems/find-two-non-overlapping-sub-arrays-each-with-target-sum/
+        """
+        sum_dict = {0: -1}
+        s = 0
+        for i, v in enumerate(arr):
+            s += v
+            sum_dict[s] = i
+
+        dis_arr = []
+
+        for i in sum_dict:
+            if i + target in sum_dict:
+                dis_arr.append((sum_dict[i + target] - sum_dict[i], sum_dict[i], sum_dict[i + target]))
+
+        if len(dis_arr) < 2:
+            return -1
+
+        dis_arr.sort()
+        length = 0
+        flag = False
+        a, b = 0, 0
+        for i in range(len(dis_arr)):
+            if i == 0:
+                length += dis_arr[i][0]
+                a, b = dis_arr[i][1], dis_arr[i][2]
+            elif dis_arr[i][1] >= b or dis_arr[i][2] <= a:
+                length += dis_arr[i][0]
+                flag = True
+                break
+
+        return length if flag else -1
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.subsets([1, 2, 3, 4]))
+    print(s.minSumOfLengths([6, 15, 19, 20, 1, 13, 46, 2, 18, 36, 3], 61))
