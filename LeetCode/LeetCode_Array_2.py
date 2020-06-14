@@ -656,7 +656,57 @@ class Solution:
 
         return length if flag else -1
 
+    def findBestValue(self, arr: list, target: int) -> int:
+        """
+        1300. 转变数组后最接近目标值的数组和
+        :see https://leetcode-cn.com/problems/sum-of-mutated-array-closest-to-target/
+        """
+        arr.sort()
+
+        index = 0
+        s = target
+        while index < len(arr):
+            value = round(s / (len(arr) - index))
+            if value <= arr[index]:
+                return value
+            s -= arr[index]
+            index += 1
+
+        return arr[-1]
+
+    def runningSum(self, nums: list) -> list:
+        """
+        5436. 一维数组的动态和
+        :see https://leetcode-cn.com/problems/running-sum-of-1d-array/
+        """
+        result = [0]
+        for i in nums:
+            result.append(result[-1] + i)
+        return result[1:]
+
+    def findLeastNumOfUniqueInts(self, arr: list, k: int) -> int:
+        """
+        5437. 不同整数的最少数目
+        :see https://leetcode-cn.com/problems/least-number-of-unique-integers-after-k-removals/
+        """
+        nums_dict = {}
+        for i in arr:
+            nums_dict[i] = nums_dict.get(i, 0) + 1
+
+        nums_count_list = [nums_dict[i] for i in nums_dict]
+        nums_count_list.sort()
+
+        index = -1
+        while k >= 0:
+            index += 1
+            if index >= len(nums_count_list):
+                return 0
+
+            k -= nums_count_list[index]
+
+        return len(nums_count_list) - index
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minSumOfLengths([6, 15, 19, 20, 1, 13, 46, 2, 18, 36, 3], 61))
+    print(s.findBestValue([2, 3, 5], 11))
