@@ -138,7 +138,42 @@ class Solution:
                 dp[i] = dp[i - 1] + (dp[i - 2] if 9 < int(string[i - 1:i + 1]) < 26 else 0)
         return dp[-1]
 
+    def splitArray(self, nums: list, m: int) -> int:
+        """
+        410. 分割数组的最大值
+        :see https://leetcode-cn.com/problems/split-array-largest-sum/
+        """
+        # 二分查找解法参考 LeetCode_Search.py 的 splitArray
+        length = len(nums)
+        if length <= m:
+            return max(nums)
+
+        # dp[i][j] 表示 nums[:i + 1] 分成 j + 1 份时的最小和
+        # dp[i][j] = min(dp[i][j], max(dp[k][j - 1], sum(nums[k + 1:i + 1]))), 0 <= k < i
+        # 状态转移方程中，dp[k][j - 1] 表示前 k 个数字(包括第 k 个数字)已分成 j 份时的最小和，
+        # 由于新加了一个数字 nums[i]，数组就分成了 "已经被分成 j 份的 num[:k + 1]" 和 "第 j + 1 份的 num[k + 1:i + 1]"
+        # 这时候的最小和就是前半部分和后半部分数字和的最大值，即为 max(dp[k][j - 1], sum(nums[k + 1:i + 1])), 0<= k < i
+        dp = [[float('inf')] * m for _ in range(length)]
+
+        for i in range(length):
+            # 不用考虑1个数字分成2份，2个数字分成3份的情况
+            for j in range(min(i + 1, m)):
+                if i == 0:
+                    # 只有1个数字时，无论分几份，最小和都是这个数
+                    dp[0][j] = nums[0]
+                elif j == 0:
+                    # 只分成1份时，无论有几个数，最小和都是这些数的和
+                    dp[i][0] = nums[i] + dp[i - 1][0]
+                else:
+                    # 因为不用考虑1个数字分成2份，2个数字分成3份的情况，所以 k 从 j - 1 开始遍历即可
+                    for k in range(j - 1, i + 1):
+                        # 因为 dp[i][0] 就是 sum(num[:i + 1])，
+                        # 所以状态转移方程中的 sum(nums[k + 1:i + 1])) 可以改为 dp[i][0] - dp[k][0]
+                        dp[i][j] = min(dp[i][j], max(dp[k][j - 1], dp[i][0] - dp[k][0]))
+
+        return dp[-1][-1]
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.translateNum(100))
+    print(s.splitArray([10, 5, 3, 4, 5, 7, 8], 5))
