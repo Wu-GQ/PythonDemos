@@ -263,8 +263,45 @@ class Solution:
 
         return -1
 
+    def splitArray(self, nums: list, m: int) -> int:
+        """
+        410. 分割数组的最大值
+        :see https://leetcode-cn.com/problems/split-array-largest-sum/
+        """
+        # 分割后数组的最大值的取值区间为[max(nums), sum(nums)]
+        # 通过二分法获取一个数字 mid 作为分割后数组的最大值
+        # 使用 mid 计算可以将整个数组分割成几个数组
+        # 若分割数组数量过多，则说明 mid 过小，则 left = mid + 1
+        # 若分割的数组数量不够，则说明 mid 过大，则 right = mid
+        if len(nums) <= m:
+            return max(nums)
+
+        nums_max = 0
+        nums_sum = 0
+        for i in nums:
+            nums_max = max(nums_max, i)
+            nums_sum += i
+
+        left = nums_max
+        right = nums_sum
+        while left < right:
+            mid = (left + right) // 2
+            count = 1
+            temp_sum = 0
+
+            for i in nums:
+                temp_sum += i
+                if temp_sum > mid:
+                    count += 1
+                    temp_sum = i
+
+            if count > m:
+                left = mid + 1
+            else:
+                right = mid
+
+        return left
+
 
 if __name__ == "__main__":
-    nums_list = [0, 1, 2, 4, 2, 1]
-
-    print(Solution().findInMountainArray(3, MountainArray(nums_list)))
+    print(Solution().splitArray([7, 2, 5, 10], 2))
