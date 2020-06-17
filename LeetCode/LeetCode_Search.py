@@ -302,6 +302,43 @@ class Solution:
 
         return left
 
+    def minDays(self, bloomDay: list, m: int, k: int) -> int:
+        """
+        1482. 制作 m 束花所需的最少天数
+        :see https://leetcode-cn.com/problems/minimum-number-of-days-to-make-m-bouquets/
+        """
+        if len(bloomDay) < m * k:
+            return -1
+
+        # 等待天数的取值区间为[min(bloomDay), max(bloomDay)]
+        left, right = min(bloomDay), max(bloomDay)
+        while left < right:
+            # 预测等待天数为 mid，判断 mid 是否符合使用相邻的 k 朵花制作 m 束花
+            mid = (left + right) // 2
+
+            # 可制作的花束数量
+            bouquet_count = 0
+            # 连续采摘的花的数量
+            flower = 0
+            for day in bloomDay:
+                if day <= mid:
+                    flower += 1
+                else:
+                    flower = 0
+
+                if flower == k:
+                    bouquet_count += 1
+                    flower = 0
+
+            # 可制作的花束数量比 m 少时，说明 mid 过小，则 left = mid + 1
+            # 可制作的花束数量比 m 多时，说明 mid 过大，则 right = mid
+            if bouquet_count < m:
+                left = mid + 1
+            else:
+                right = mid
+
+        return left
+
 
 if __name__ == "__main__":
-    print(Solution().splitArray([7, 2, 5, 10], 2))
+    print(Solution().minDays([1, 10, 3, 10, 2], 3, 2))
