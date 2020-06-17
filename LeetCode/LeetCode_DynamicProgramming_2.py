@@ -173,7 +173,50 @@ class Solution:
 
         return dp[-1][-1]
 
+    def minDifficulty(self, jobDifficulty: list, d: int) -> int:
+        """
+        1335. 工作计划的最低难度
+        :see https://leetcode-cn.com/problems/minimum-difficulty-of-a-job-schedule/
+        """
+        # dp[i][j] 代表前 i 项任务(包括第 i 项)在 j + 1 天完成时的最小难度和
+        # dp[i][j] = min(dp[i][j], dp[k][j - 1] + max(jD[k + 1:i + 1])), 0 <= k < i
+        # 状态转移方程中，dp[k][j - 1] 表示前 k 个任务(包括第 k 个任务)已分成 j 天时的最小难度之和，
+        # 由于新加了一个任务 jD[i]，数组就分成了 "已经 j 天内完成的 jD[:k + 1]" 和 "第 j + 1 天完成的 jD[k + 1:i + 1]"
+        # 这时候的最小难度就是前半部分和后半部分的难度之和，即为 dp[k][j - 1] + max(jD[k + 1:i + 1]), 0 <= k < i
+        # 时间复杂度为 O(len * d * len * len)
+        length = len(jobDifficulty)
+        if length == d:
+            return sum(jobDifficulty)
+        elif length < d:
+            return -1
+
+        # 预处理区间最大值，算法整体时间复杂度为 O(len * d * len + len * len * len)
+        max_value_dict = {}
+        for i in range(length):
+            for j in range(i + 1, length + 1):
+                max_value_dict[(i, j)] = max(jobDifficulty[i:j])
+
+        # 0 <= jobDifficulty[i] <= 1000, 1 <= d <= 10, 所以最大值为 10000
+        dp = [[10000] * d for _ in range(length)]
+
+        for i in range(length):
+            # 当 j < i + 1 时，即 j + 1 天分配最多 i 项任务，这是不可行的。因此从 i + 1 开始递推
+            for j in range(min(i + 1, d)):
+                if i == 0:
+                    # 只有一项任务，无论几天，最小难度都是这个任务
+                    dp[0][j] = jobDifficulty[0]
+                elif j == 0:
+                    # 只有一天，无论多少任务，最小难度都是最大难度的任务
+                    dp[i][0] = max(dp[i - 1][0], jobDifficulty[i])
+                else:
+                    # k 表示第 k 个任务，每天至少有一项任务，所以从 j - 1 开始递推
+                    for k in range(j - 1, i):
+                        # dp[i][j] = min(dp[i][j], dp[k][j - 1] + max(jobDifficulty[k + 1:i + 1]))
+                        dp[i][j] = min(dp[i][j], dp[k][j - 1] + max_value_dict[(k + 1, i + 1)])
+
+        return dp[-1][-1]
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.splitArray([10, 5, 3, 4, 5, 7, 8], 5))
+    print(s.minDifficulty([11, 111, 22, 222, 33, 333, 44, 444], 6))
