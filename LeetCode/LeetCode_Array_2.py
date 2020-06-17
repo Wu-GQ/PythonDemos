@@ -706,7 +706,20 @@ class Solution:
 
         return len(nums_count_list) - index
 
+    def maxScoreSightseeingPair(self, A: list) -> int:
+        """
+        1014. 最佳观光组合
+        :see https://leetcode-cn.com/problems/best-sightseeing-pair/
+        """
+        # A[i] + A[j] + i - j = (A[i] + i) + (A[j] - j)
+        result = 0
+        max_add = A[0] + 0
+        for i in range(1, len(A)):
+            result = max(result, max_add + (A[i] - i))
+            max_add = max(max_add, A[i] + i)
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.findBestValue([2, 3, 5], 11))
+    print(s.maxScoreSightseeingPair([8, 1, 5, 2, 6]))
