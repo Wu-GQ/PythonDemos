@@ -358,7 +358,8 @@ class Solution(object):
             left = max_path_of_subtree(root.left)
             right = max_path_of_subtree(root.right)
 
-            return max(max(left[0], right[0]), 0) + root.val, max(left[1], right[1], left[0] + right[0] + root.val, left[0] + root.val,
+            return max(max(left[0], right[0]), 0) + root.val, max(left[1], right[1], left[0] + right[0] + root.val,
+                                                                  left[0] + root.val,
                                                                   right[0] + root.val, root.val)
 
         return max_path_of_subtree(root)[1] if root else 0
@@ -727,7 +728,8 @@ class Solution(object):
             left_depth = depth_of_tree(root.left)
             right_depth = depth_of_tree(root.right)
 
-            return max(left_depth[0], right_depth[0]) + 1, max(left_depth[1], right_depth[1], left_depth[0] + right_depth[0])
+            return max(left_depth[0], right_depth[0]) + 1, max(left_depth[1], right_depth[1],
+                                                               left_depth[0] + right_depth[0])
 
         return depth_of_tree(root)[1] if root else 0
 
@@ -750,6 +752,57 @@ class Solution(object):
             return max(left[0], left[1], 0) + max(right[0], right[1], 0), max(left[0], 0) + max(right[0], 0) + root.val
 
         return max(rob_of_subtree(root)) if root else 0
+
+    def recoverFromPreorder(self, S: str) -> TreeNode:
+        """
+        1028. 从先序遍历还原二叉树
+        :see https://leetcode-cn.com/problems/recover-a-tree-from-preorder-traversal/
+        """
+        if not S:
+            return None
+
+        # 以 (所处层级, 节点) 的形式存储在栈中，以便确定父节点
+        node_stack = []
+
+        # 连续短横线的数量
+        dash_line_count = 0
+        # 连续的数字
+        current_number = 0
+
+        for i in range(len(S)):
+            # 过滤字符为短横线的情况
+            if S[i] == '-':
+                dash_line_count += 1
+                continue
+
+            # 拼接连续数字
+            current_number = current_number * 10 + int(S[i])
+
+            # 当字符串结束，或者下个字符为短横线时，需要把当前数字作为一个新的节点
+            if i == len(S) - 1 or S[i + 1] == '-':
+                current_node = TreeNode(current_number)
+
+                # 找到父节点，建立与父节点的关系
+                if dash_line_count > 0:
+                    # 移除层级比自己大的节点
+                    while node_stack[-1][0] > dash_line_count:
+                        node_stack.pop()
+
+                    # 若最后一个节点的层级与自己相同，则说明自己是父节点的右子节点
+                    if node_stack[-1][0] == dash_line_count:
+                        node_stack.pop()
+                        node_stack[-1][1].right = current_node
+                    else:
+                        node_stack[-1][1].left = current_node
+
+                # 将该节点入栈
+                node_stack.append((dash_line_count, current_node))
+
+                # 重置变量
+                dash_line_count = 0
+                current_number = 0
+
+        return node_stack[0][1]
 
 
 if __name__ == '__main__':
@@ -775,4 +828,6 @@ if __name__ == '__main__':
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
 
     s = Solution()
-    print(s.robIII(root))
+    # print(s.robIII(root))
+    root = s.recoverFromPreorder("")
+    print(s.intermediate_traversal(root))
