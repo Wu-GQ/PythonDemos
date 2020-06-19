@@ -532,6 +532,54 @@ class Solution:
 
         return result
 
+    def rangeBitwiseAnd(self, m: int, n: int) -> int:
+        """
+        201. 数字范围按位与
+        :see https://leetcode-cn.com/problems/bitwise-and-of-numbers-range/
+        """
+        # 按位与，与运算中若只要有一个为零，则该位为0
+        # 比如说 9 和 12 的最长公共前缀
+        # 9 : 00001 001
+        # 10: 00001 010
+        # 11: 00001 011
+        # 12: 00001 100
+        # r : 00001 000
+        # 则这题变成了"查找 m 和 n 的最长公共前缀"
+        result = 0
+
+        while m != n:
+            m >>= 1
+            n >>= 1
+            result += 1
+
+        # 将 m 还原，不相同的位已经被右移去掉，只需要左移相同的位数即可
+        return m << result
+
+    def hammingDistance(self, x: int, y: int) -> int:
+        """
+        461. 汉明距离
+        :see https://leetcode-cn.com/problems/hamming-distance/
+        """
+        num = x ^ y
+        result = 0
+        '''# 逐步位移法
+        while num > 0:
+            if num & 1 == 1:
+                result += 1
+            num >>= 1
+        '''
+        # 布赖恩·克尼根算法，通过 n & (n - 1) 可以快速舍去末尾开始的最后一个 1
+        # 例如 n = 8
+        # 8: 0000 1000
+        # 7: 0000 0111
+        # 8 & 7 = 0，快速舍去 8 的最后一位1，而不需要只要 1 在哪个位置
+        # 这题需要知道 num 中有几个 1，即计算 num 可被该算法舍去多少次
+        while num != 0:
+            num &= num - 1
+            result += 1
+
+        return result
+
 
 if __name__ == '__main__':
-    print(Solution().countDigitOne(-21))
+    print(Solution().hammingDistance(1, 4))

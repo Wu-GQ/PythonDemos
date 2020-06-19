@@ -91,26 +91,20 @@ class Solution:
 
     def is_palindrome(self, s: str) -> bool:
         """
-        验证回文串
+        125. 验证回文串
         :see https://leetcode-cn.com/explore/featured/card/top-interview-quesitons-in-2018/275/string/1136/
         """
-        i = 0
-        j = len(s) - 1
-
+        i, j = 0, len(s) - 1
         while i <= j:
             if not s[i].isalnum():
                 i += 1
-                continue
-            if not s[j].isalnum():
+            elif not s[j].isalnum():
                 j -= 1
-                continue
-
-            if s[i].upper() != s[j].upper():
+            elif s[i].upper() != s[j].upper():
                 return False
-
-            i += 1
-            j -= 1
-
+            else:
+                i += 1
+                j -= 1
         return True
 
     def partition(self, s: str):

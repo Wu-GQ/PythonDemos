@@ -4,7 +4,7 @@ from queue import Queue
 
 def single_number(nums: list) -> int:
     """
-    只出现一次的数字
+    136. 只出现一次的数字
     # see: https://leetcode-cn.com/explore/featured/card/top-interview-quesitons-in-2018/261/before-you-start/1106/
     """
     # a = 0
