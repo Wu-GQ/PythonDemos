@@ -273,61 +273,47 @@ class Solution:
 
     def isMatch(self, s: str, p: str) -> bool:
         """
-        正则表达式匹配（回溯算法， 可优化)
+        10. 正则表达式匹配（回溯算法， 可优化)
         :see https://leetcode-cn.com/problems/regular-expression-matching/
         """
-        if len(s) == 0 and len(p) == 0:
-            return True
-        elif len(s) > 0 and len(p) == 0:
-            return False
 
-        if len(p) > 1 and p[1] == '*':
-            # 当第二个字符为'*'时，可匹配多个字符
-            if len(s) > 0 and (s[0] == p[0] or p[0] == '.'):
-                # 若s和p的第一字符相同， *分别匹配多次和0次
-                return self.isMatch(s[1:], p) or self.isMatch(s, p[2:])
+        def backtrace(i, j) -> bool:
+            if i >= len(s) and j >= len(p):
+                return True
+            elif i < len(s) and j >= len(p):
+                return False
+            elif j + 1 < len(p) and p[j + 1] == '*':
+                if i < len(s) and (s[i] == p[j] or p[j] == '.'):
+                    return backtrace(i + 1, j) or backtrace(i, j + 2)
+                else:
+                    return backtrace(i, j + 2)
             else:
-                # 若s和p的第一个字符不相同，*匹配0次
-                return self.isMatch(s, p[2:])
-        elif len(s) > 0 and (s[0] == p[0] or p[0] == '.'):
-            return self.isMatch(s[1:], p[1:])
-        else:
-            return False
+                if i < len(s) and (s[i] == p[j] or p[j] == '.'):
+                    return backtrace(i + 1, j + 1)
+                else:
+                    return False
+
+        return backtrace(0, 0)
 
     def isMatch_2(self, s: str, p: str) -> bool:
         """
-        正则表达式匹配（动态规划）
+        10. 正则表达式匹配（动态规划）
         :see https://leetcode-cn.com/problems/regular-expression-matching/
         """
-        if len(s) == 0 and len(p) == 0:
-            return True
-        elif len(s) > 0 and len(p) == 0:
-            return False
-
-        # 此处在两个字符串前加空格，是为了减少边界条件的处理
-        s = f' {s}'
-        p = f' {p}'
-
-        s_length = len(s)
-        p_length = len(p)
-
-        # 存储比较结果
-        compare_list = [[False] * p_length for j in range(s_length)]
-
-        for i in range(s_length):
-            for j in range(p_length):
+        s, p = ' ' + s, ' ' + p
+        dp = [[False] * len(p) for _ in s]
+        for i in range(0, len(s)):
+            for j in range(0, len(p)):
                 if i == 0 and j == 0:
-                    compare_list[i][j] = True
-                elif i > 0 and j == 0:
-                    compare_list[i][j] = False
-                elif p[j] != '*' and (s[i] == p[j] or (p[j] == '.' and i > 0)):
-                    compare_list[i][j] = compare_list[i - 1][j - 1]
-                elif p[j] == '*' and (s[i] == p[j - 1] or (p[j - 1] == '.' and i > 0)):
-                    compare_list[i][j] = compare_list[i - 1][j] or compare_list[i][j - 2]
-                elif p[j] == '*' and s[i] != p[j - 1]:
-                    compare_list[i][j] = compare_list[i][j - 2]
-
-        return compare_list[s_length - 1][p_length - 1]
+                    dp[0][0] = True
+                elif p[j] == '*':
+                    if p[j - 1] == s[i] or (p[j - 1] == '.' and i > 0):
+                        dp[i][j] = dp[i - 1][j] or dp[i][j - 2]
+                    else:
+                        dp[i][j] = dp[i][j - 2]
+                elif p[j] == s[i] or (p[j] == '.' and i > 0):
+                    dp[i][j] = dp[i - 1][j - 1]
+        return dp[-1][-1]
 
     def isMatch2(self, s: str, p: str) -> bool:
         """
@@ -1096,4 +1082,4 @@ class Solution:
 
 
 if __name__ == "__main__":
-    print(Solution().simplifyPath('//'))
+    print(Solution().isMatch_2('aa', 'b*aa'))
