@@ -719,7 +719,33 @@ class Solution:
             max_add = max(max_add, A[i] + i)
         return result
 
+    def xorOperation(self, n: int, start: int) -> int:
+        result = start
+        for i in range(start + 2, start + 2 * n, 2):
+            result ^= i
+        return result
+
+    def getFolderNames(self, names: list) -> list:
+        checked_set = set()
+        result = []
+        for i in names:
+            if i in checked_set:
+                index = 1
+                file = f'{i}({index})'
+                while file in checked_set:
+                    index += 1
+                    file = f'{i}({index})'
+                result.append(file)
+                checked_set.add(file)
+            else:
+                result.append(i)
+                checked_set.add(i)
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.maxScoreSightseeingPair([8, 1, 5, 2, 6]))
+    # print(s.avoidFlood([3, 0, 2, 0, 2, 3]))
+    print(s.getFolderNames([1, 2, 0, 2, 3, 0, 1]))
+    # print(s.avoidFlood([2, 1, 0, 1, 0, 2]))
+    # print(s.avoidFlood([1, 0, 1, 0, 2, 0, 2]))
