@@ -720,12 +720,20 @@ class Solution:
         return result
 
     def xorOperation(self, n: int, start: int) -> int:
+        """
+        1486. 数组异或操作
+        :see https://leetcode-cn.com/problems/xor-operation-in-an-array/
+        """
         result = start
         for i in range(start + 2, start + 2 * n, 2):
             result ^= i
         return result
 
     def getFolderNames(self, names: list) -> list:
+        """
+        1487. 保证文件名唯一
+        :see https://leetcode-cn.com/problems/making-file-names-unique/
+        """
         checked_set = set()
         result = []
         for i in names:
