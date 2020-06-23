@@ -216,7 +216,74 @@ class Solution:
 
         return dp[-1][-1]
 
+    def getKthMagicNumber(self, k: int) -> int:
+        """
+        面试题 17.09. 第 k 个数
+        :see https://leetcode-cn.com/problems/get-kth-magic-number-lcci/
+        """
+        # 考虑3个数列
+        # i:  0, 1, 2, 3, ...
+        # 3i: 1, 3, 9, 15, ...
+        # 5i: 1, 5, 10, 15, ...
+        # 7i: 1, 7, 14, 21, ...
+        # 如何合并这三个数列，并得到第 k 个小的数
+
+        three, five, seven = 0, 0, 0
+        dp = [1]
+        for i in range(k - 1):
+            num = min((dp[three] * 3, dp[five] * 5, dp[seven] * 7))
+            if num % 3 == 0:
+                three += 1
+            if num % 5 == 0:
+                five += 1
+            if num % 7 == 0:
+                seven += 1
+            dp.append(num)
+        # print(dp)
+        return dp[-1]
+
+    def nthUglyNumber(self, n: int) -> int:
+        """
+        264. 丑数 II
+        :see https://leetcode-cn.com/problems/ugly-number-ii/
+        """
+        # 与上面那题的解法相同
+        two, three, five = 0, 0, 0
+        dp = [1]
+        for _ in range(n - 1):
+            num = min((dp[two] * 2, dp[three] * 3, dp[five] * 5))
+            if num % 2 == 0:
+                two += 1
+            if num % 3 == 0:
+                three += 1
+            if num % 5 == 0:
+                five += 1
+            dp.append(num)
+        # print(dp)
+        return dp[-1]
+
+    def nthSuperUglyNumber(self, n: int, primes: list) -> int:
+        """
+        313. 超级丑数
+        :see https://leetcode-cn.com/problems/super-ugly-number/
+        """
+        # 与上面那题的解法相同
+        primes_length = len(primes)
+        primes_times = [0] * primes_length
+        dp = [1]
+
+        for _ in range(n - 1):
+            num = min([dp[primes_times[i]] * primes[i] for i in range(primes_length)])
+
+            for i in range(primes_length):
+                if num % primes[i] == 0:
+                    primes_times[i] += 1
+
+            dp.append(num)
+
+        return dp[-1]
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minDifficulty([11, 111, 22, 222, 33, 333, 44, 444], 6))
+    print(s.nthUglyNumber(20))

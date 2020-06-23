@@ -580,6 +580,22 @@ class Solution:
 
         return result
 
+    def isUgly(self, num: int) -> bool:
+        """
+        263. 丑数
+        :see https://leetcode-cn.com/problems/ugly-number/
+        """
+        if num < 1:
+            return False
+
+        while num % 2 == 0:
+            num //= 2
+        while num % 3 == 0:
+            num //= 3
+        while num % 5 == 0:
+            num //= 5
+
+        return num == 1
 
 if __name__ == '__main__':
-    print(Solution().hammingDistance(1, 4))
+    print(Solution().isUgly(0))
