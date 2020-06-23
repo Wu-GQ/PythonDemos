@@ -1,4 +1,5 @@
 import heapq
+from queue import PriorityQueue
 
 
 class Solution:
@@ -750,10 +751,68 @@ class Solution:
                 checked_set.add(i)
         return result
 
+    def avoidFlood(self, rains: list) -> list:
+        """
+        1488. 避免洪水泛滥
+        :see https://leetcode-cn.com/problems/avoid-flood-in-the-city/
+        """
+        # 存储池子上一次被填满时的天数
+        lakes_dict = {}
+        # (开始时间，截止时间，湖泊编号)
+        lakes_queue = []
+        for i, v in enumerate(rains):
+            if v > 0 and v in lakes_dict:
+                lakes_queue.append((lakes_dict[v], i, v))
+            lakes_dict[v] = i
+
+        # 按照可被抽干的开始时间排序，以免还没填满时就被抽水
+        lakes_queue.sort(key=lambda x: x[0])
+
+        result = []
+        # 用来存储连续晴天的天数
+        zero_count = 0
+
+        for i in range(len(rains)):
+            if rains[i] == 0:
+                zero_count += 1
+            else:
+                # 晴天后的第一个雨天结算前，先计算前几个晴天需要抽哪几个池子的水
+                if zero_count > 0:
+                    # 取出所有满足开始时间的池子
+                    queue = PriorityQueue()
+                    while lakes_queue:
+                        if i <= lakes_queue[0][0]:
+                            break
+                        elif i > lakes_queue[0][1]:
+                            # 如果发现任意一个池子的过期时间已过，则返回空数组
+                            return []
+
+                        lake = lakes_queue.pop(0)
+                        # 用截止时间作为优先级
+                        queue.put((lake[1], lake))
+
+                    # 抽干优先级最高的池子
+                    while zero_count > 0:
+                        if queue.empty():
+                            # 没池子可抽水时则填入1
+                            result.append(1)
+                        else:
+                            result.append(queue.get()[1][2])
+                        zero_count -= 1
+
+                    # 将剩下的池子放回队列中，待下次抽干
+                    while not queue.empty():
+                        lakes_queue.insert(0, queue.get()[1])
+
+                # 晴天不能抽水
+                result.append(-1)
+
+        # 如果还有池子没被抽干，则说明不满足条件；如果 zero_count > 0，则说明最后还有几天晴天且没池子可以抽水
+        return result + [1] * zero_count if not lakes_queue else []
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.avoidFlood([3, 0, 2, 0, 2, 3]))
-    print(s.getFolderNames([1, 2, 0, 2, 3, 0, 1]))
-    # print(s.avoidFlood([2, 1, 0, 1, 0, 2]))
-    # print(s.avoidFlood([1, 0, 1, 0, 2, 0, 2]))
+    # print(s.avoidFlood([2, 3, 0, 3, 0, 2]))
+    print(s.avoidFlood([3, 0, 2, ]))
