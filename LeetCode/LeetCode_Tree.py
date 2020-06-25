@@ -870,62 +870,28 @@ class Solution(object):
         106. 从中序与后序遍历序列构造二叉树
         :see https://leetcode-cn.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/
         """
+        if len(inorder) != len(postorder) or not inorder:
+            return None
 
-        def build_tree(in_order_left, in_order_right, post_order_left, post_order_right) -> TreeNode:
-            if in_order_right - in_order_left != post_order_right - post_order_left or in_order_left == in_order_right:
-                return None
+        # 先找到根节点，根节点是后序遍历的最后一位
+        root = TreeNode(postorder[-1])
 
-            # 先找到根节点
-            root = TreeNode(postorder[post_order_right - 1])
+        # 在中序遍历中找到根节点的位置
+        root_index = inorder.index(root.val)
 
-            # 在中序遍历中找到根节点的位置
-            root_index = inorder.index(root.val, in_order_left, in_order_right)
+        # 将中序遍历按照根节点所在位置分成左子树和右子树
+        left_in_order = inorder[:root_index]
+        right_in_order = inorder[root_index + 1:]
 
-            # 将中序遍历按照根节点所在位置分成左子树和右子树
-            left_in_order_left = in_order_left
-            left_in_order_right = root_index
+        # 将后序遍历按照左子树节点数量分为左子树和右子树
+        left_post_order = postorder[:root_index]
+        right_post_order = postorder[root_index:-1]
 
-            right_in_order_left = root_index + 1
-            right_in_order_right = post_order_right - 1
+        # 递归左子树和右子树
+        root.left = self.buildTreeII(left_in_order, left_post_order)
+        root.right = self.buildTreeII(right_in_order, right_post_order)
 
-            # 将后序遍历按照左子树节点数量分为左子树和右子树
-            left_post_order_left = post_order_left
-            left_post_order_right = root_index
-
-            right_post_order_left = root_index
-            right_post_order_right = post_order_right - 1
-
-            print(root.val, inorder[left_in_order_left:left_in_order_right], inorder[right_in_order_left:right_in_order_right],
-                  postorder[left_post_order_left:left_post_order_right], postorder[right_post_order_left:right_post_order_right])
-
-            # 递归左子树和右子树
-            root.left = build_tree(left_in_order_left, left_in_order_right, left_post_order_left, left_post_order_right)
-            root.right = build_tree(right_in_order_left, right_in_order_right, right_post_order_left, right_post_order_right)
-
-            return root
-
-        # if len(inorder) != len(postorder) or not inorder:
-        #     return None
-        #
-        # # 先找到根节点，根节点是后序遍历的最后一位
-        # root = TreeNode(postorder[-1])
-        #
-        # # 在中序遍历中找到根节点的位置
-        # root_index = inorder.index(root.val)
-        #
-        # # 将中序遍历按照根节点所在位置分成左子树和右子树
-        # left_in_order = inorder[:root_index]
-        # right_in_order = inorder[root_index + 1:]
-        #
-        # # 将后序遍历按照左子树节点数量分为左子树和右子树
-        # left_post_order = postorder[:root_index]
-        # right_post_order = postorder[root_index:-1]
-        #
-        # # 递归左子树和右子树
-        # root.left = self.buildTreeII(left_in_order, left_post_order)
-        # root.right = self.buildTreeII(right_in_order, right_post_order)
-
-        return build_tree(0, len(inorder), 0, len(inorder))
+        return root
 
 
 if __name__ == '__main__':
