@@ -804,6 +804,31 @@ class Solution(object):
 
         return node_stack[0][1]
 
+    def postorderTraversal(self, root: TreeNode) -> list:
+        """
+        145. 二叉树的后序遍历
+        :see https://leetcode-cn.com/problems/binary-tree-postorder-traversal/
+        """
+        if not root:
+            return []
+
+        nodes_stack = [root]
+        result = []
+
+        while nodes_stack:
+            node = nodes_stack[-1]
+            if node.left:
+                nodes_stack.append(node.left)
+                node.left = None
+            elif node.right:
+                nodes_stack.append(node.right)
+                node.right = None
+            else:
+                result.append(node.val)
+                nodes_stack.pop()
+
+        return result
+
 
 if __name__ == '__main__':
     root = TreeNode(3)
@@ -829,5 +854,4 @@ if __name__ == '__main__':
 
     s = Solution()
     # print(s.robIII(root))
-    root = s.recoverFromPreorder("")
-    print(s.intermediate_traversal(root))
+    print(s.postorderTraversal(root))
