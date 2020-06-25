@@ -15,21 +15,23 @@ class Solution:
 
     def word_break(self, s: str, wordDict: list) -> bool:
         """
-        单词拆分
+        139. 单词拆分
         :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/275/string/1138/
         """
-        match_list = [1] + [0] * len(s)
-        for i in range(1, len(s) + 1):
-            for word in wordDict:
-                if s[:i].endswith(word) and match_list[i - len(word)] == 1:
-                    match_list[i] = 1
-                    break
+        # dp[i] 表示 s[0:i] 是否匹配成功
+        dp = [False] * (len(s) + 1)
+        dp[0] = True
 
-        return bool(match_list[len(s)])
+        for i in range(len(s) + 1):
+            for word in wordDict:
+                if i >= len(word) and dp[i - len(word)] == 1 and s[:i].endswith(word):
+                    dp[i] = True
+                    break
+        return dp[-1]
 
     def word_break_2(self, s: str, wordDict: list) -> list:
         """
-        单词拆分 II
+        140. 单词拆分 II
         :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/275/string/1139/
         """
         point_list = [[] for i in range(len(s))]
@@ -1082,4 +1084,4 @@ class Solution:
 
 
 if __name__ == "__main__":
-    print(Solution().isMatch_2('aa', 'b*aa'))
+    print(Solution().word_break("leetcode", ["leet", "code"]))
