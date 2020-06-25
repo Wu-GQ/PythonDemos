@@ -829,23 +829,122 @@ class Solution(object):
 
         return result
 
+    def zigzagLevelOrder(self, root: TreeNode) -> list:
+        """
+        103. 二叉树的锯齿形层次遍历
+        :see https://leetcode-cn.com/problems/binary-tree-zigzag-level-order-traversal/
+        """
+        if not root:
+            return []
+
+        left2right = True
+        nodes_stack = [root]
+        result = []
+
+        while nodes_stack:
+            stack = []
+            out = []
+            while nodes_stack:
+                node = nodes_stack.pop()
+                out.append(node.val)
+
+                if left2right:
+                    if node.left:
+                        stack.append(node.left)
+                    if node.right:
+                        stack.append(node.right)
+                else:
+                    if node.right:
+                        stack.append(node.right)
+                    if node.left:
+                        stack.append(node.left)
+
+            left2right = not left2right
+            nodes_stack = stack
+            result.append(out)
+
+        return result
+
+    def buildTreeII(self, inorder: list, postorder: list) -> TreeNode:
+        """
+        106. 从中序与后序遍历序列构造二叉树
+        :see https://leetcode-cn.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/
+        """
+
+        def build_tree(in_order_left, in_order_right, post_order_left, post_order_right) -> TreeNode:
+            if in_order_right - in_order_left != post_order_right - post_order_left or in_order_left == in_order_right:
+                return None
+
+            # 先找到根节点
+            root = TreeNode(postorder[post_order_right - 1])
+
+            # 在中序遍历中找到根节点的位置
+            root_index = inorder.index(root.val, in_order_left, in_order_right)
+
+            # 将中序遍历按照根节点所在位置分成左子树和右子树
+            left_in_order_left = in_order_left
+            left_in_order_right = root_index
+
+            right_in_order_left = root_index + 1
+            right_in_order_right = post_order_right - 1
+
+            # 将后序遍历按照左子树节点数量分为左子树和右子树
+            left_post_order_left = post_order_left
+            left_post_order_right = root_index
+
+            right_post_order_left = root_index
+            right_post_order_right = post_order_right - 1
+
+            print(root.val, inorder[left_in_order_left:left_in_order_right], inorder[right_in_order_left:right_in_order_right],
+                  postorder[left_post_order_left:left_post_order_right], postorder[right_post_order_left:right_post_order_right])
+
+            # 递归左子树和右子树
+            root.left = build_tree(left_in_order_left, left_in_order_right, left_post_order_left, left_post_order_right)
+            root.right = build_tree(right_in_order_left, right_in_order_right, right_post_order_left, right_post_order_right)
+
+            return root
+
+        # if len(inorder) != len(postorder) or not inorder:
+        #     return None
+        #
+        # # 先找到根节点，根节点是后序遍历的最后一位
+        # root = TreeNode(postorder[-1])
+        #
+        # # 在中序遍历中找到根节点的位置
+        # root_index = inorder.index(root.val)
+        #
+        # # 将中序遍历按照根节点所在位置分成左子树和右子树
+        # left_in_order = inorder[:root_index]
+        # right_in_order = inorder[root_index + 1:]
+        #
+        # # 将后序遍历按照左子树节点数量分为左子树和右子树
+        # left_post_order = postorder[:root_index]
+        # right_post_order = postorder[root_index:-1]
+        #
+        # # 递归左子树和右子树
+        # root.left = self.buildTreeII(left_in_order, left_post_order)
+        # root.right = self.buildTreeII(right_in_order, right_post_order)
+
+        return build_tree(0, len(inorder), 0, len(inorder))
+
 
 if __name__ == '__main__':
-    root = TreeNode(3)
-    root.left = TreeNode(-1)
-    root.right = TreeNode(4)
+    root = TreeNode(1)
+    root.left = TreeNode(2)
+    root.right = TreeNode(3)
     # # #
-    root.left.left = TreeNode(-1)
-    root.left.right = TreeNode(4)
+    root.left.left = TreeNode(4)
+    root.left.right = TreeNode(5)
 
-    root.left.left.left = TreeNode(100)
-    # root.left.right.right = TreeNode(1)
+    root.left.left.left = TreeNode(8)
+    root.left.left.right = TreeNode(9)
+
     # #
-    # # root.left.right.left = TreeNode(7)
-    # # root.left.right.right = TreeNode(4)
+    root.left.right.left = TreeNode(10)
+    root.left.right.right = TreeNode(11)
     #
-    # root.right.left = TreeNode(15)
-    # root.right.right = TreeNode(1)
+    root.right.left = TreeNode(6)
+    root.right.right = TreeNode(7)
 
     # print(Solution().lowestCommonAncestor(root, TreeNode(5), TreeNode(4)).val)
     # string = Solution().serialize(root)
@@ -854,4 +953,6 @@ if __name__ == '__main__':
 
     s = Solution()
     # print(s.robIII(root))
-    print(s.postorderTraversal(root))
+    # print(s.zigzagLevelOrder(root))
+    root = s.buildTreeII([9, 3, 15, 20, 7], [9, 15, 7, 20, 3])
+    print(s.preorderTraversal(root))
