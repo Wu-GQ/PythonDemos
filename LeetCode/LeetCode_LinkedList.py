@@ -5,8 +5,8 @@ class ListNode(object):
     """ 链表节点 """
 
     def __init__(self, x):
-        self.val = x
-        self.next = None
+        self.val: int = x
+        self.next: ListNode = None
 
 
 class LinkedList(object):
@@ -713,17 +713,39 @@ class LinkedList(object):
 
         return head
 
+    def removeDuplicateNodes(self, head: ListNode) -> ListNode:
+        """
+        面试题 02.01. 移除重复节点
+        :see https://leetcode-cn.com/problems/remove-duplicate-node-lcci/
+        """
+        if not head:
+            return head
+
+        num = [False] * 20001
+
+        p = head
+        num[p.val] = True
+
+        while p.next:
+            if num[p.next.val]:
+                p.next = p.next.next
+            else:
+                p = p.next
+                num[p.val] = True
+
+        return head
+
 
 if __name__ == '__main__':
-    data = [9, 9]
+    data = [9, 9, 1, 2, 3, 3, 2, 1]
     linked_list = LinkedList(data)
 
-    data1 = [9]
-    linked_list1 = LinkedList(data1)
+    # data1 = [9]
+    # linked_list1 = LinkedList(data1)
 
     # p: ListNode = linked_list.addTwoNumbers(LinkedList(data1).head, LinkedList(data2).head)
     # p: ListNode = linked_list.middleNode(linked_list.head)
-    result_list: ListNode = linked_list.addTwoNumbers(linked_list.head, linked_list1.head)
+    result_list: ListNode = linked_list.removeDuplicateNodes(linked_list.head)
     # print(result_list)
     p = result_list
     while p is not None:
