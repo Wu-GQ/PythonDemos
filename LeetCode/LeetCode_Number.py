@@ -597,5 +597,24 @@ class Solution:
 
         return num == 1
 
+    def kthFactor(self, n: int, k: int) -> int:
+        """
+        5433. n 的第 k 个因子
+        :param n:
+        :param k:
+        :return:
+        """
+        index = 0
+        while k > 0:
+            index += 1
+            if n % index == 0:
+                k -= 1
+
+            if index > n:
+                return -1
+
+        return index
+
+
 if __name__ == '__main__':
     print(Solution().isUgly(0))

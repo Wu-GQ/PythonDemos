@@ -1,5 +1,6 @@
 import heapq
 import string
+from queue import PriorityQueue
 
 
 class Solution:
@@ -843,7 +844,70 @@ class Solution:
 
         return result
 
+    def minNumberOfSemesters(self, n: int, dependencies: list, k: int) -> int:
+        """
+        5435. 并行课程 II
+        :param n:
+        :param dependencies:
+        :param k:
+        :return:
+        """
+        in_dict = {}
+        out_dict = {}
+        for i in dependencies:
+            out_node, in_node = i[0], i[1]
+            if in_node in in_dict:
+                in_dict[in_node].add(out_node)
+            else:
+                in_dict[in_node] = {out_node}
+
+            if out_node in out_dict:
+                out_dict[out_node].add(in_node)
+            else:
+                out_dict[out_node] = {in_node}
+
+        out_node_list = PriorityQueue()
+        for i in range(1, n + 1):
+            if i in out_dict:
+                out_node_list.put((n - len(out_dict[i]), i))
+            else:
+                out_node_list.put((n, i))
+
+        # print(out_dict, in_dict)
+
+        step = 0
+        undeleted_nodes = []
+        deleted_nodes = []
+        while not out_node_list.empty():
+            node = out_node_list.get()
+
+            if node[1] in in_dict:
+                undeleted_nodes.append(node)
+            else:
+                deleted_nodes.append(node[1])
+
+            if len(deleted_nodes) == k or out_node_list.empty():
+                index = 0
+                step += 1
+                # print(f'step: {step}, delete: {deleted_nodes}')
+
+                for i in deleted_nodes:
+                    if i in out_dict:
+                        for j in out_dict[i]:
+                            in_dict[j].remove(i)
+                            if len(in_dict[j]) == 0:
+                                del in_dict[j]
+                        del out_dict[i]
+                        index += 1
+                deleted_nodes = []
+
+                for i in undeleted_nodes:
+                    out_node_list.put((i[0], i[1]))
+                undeleted_nodes = []
+
+        return step
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.findLadders('hot', 'dog', ["hot", "dog"]))
+    print(s.minNumberOfSemesters(8, [[1, 6], [2, 7], [8, 7], [2, 5], [3, 4]], 3))
