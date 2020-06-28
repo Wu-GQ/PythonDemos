@@ -1,3 +1,4 @@
+import bisect
 import heapq
 from queue import PriorityQueue
 
@@ -810,9 +811,61 @@ class Solution:
         # 如果还有池子没被抽干，则说明不满足条件；如果 zero_count > 0，则说明最后还有几天晴天且没池子可以抽水
         return result + [1] * zero_count if not lakes_queue else []
 
+    def minSubArrayLen(self, s: int, nums: list) -> int:
+        """
+        209. 长度最小的子数组
+        :see https://leetcode-cn.com/problems/minimum-size-subarray-sum/
+        """
+        '''# 滑动窗口
+        if not nums:
+            return 0
+
+        length = len(nums)
+        left = 0
+        right = 0
+        total = nums[0]
+
+        if total >= s:
+            return 1
+        result = float('inf')
+
+        while left < length:
+            if total >= s or right == length - 1:
+                total -= nums[left]
+                left += 1
+            elif right < length - 1:
+                right += 1
+                total += nums[right]
+
+            if total >= s:
+                result = min(result, right - left + 1)
+                if result == 1:
+                    return 1
+            print(left, right, nums[left:right + 1], total)
+
+        return result if result <= length else 0
+        '''
+        # 前缀和 + 二分查找
+        total = 0
+        total_list = []
+        for i in nums:
+            total += i
+            total_list.append(total)
+
+        if total < s:
+            return 0
+
+        result = float('inf')
+        for i, v in enumerate(total_list):
+            if v >= s:
+                result = min(result, i - bisect.bisect_right(total_list, v - s, 0, i) + 1)
+            # print(i, v, target, index, result)
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.avoidFlood([3, 0, 2, 0, 2, 3]))
     # print(s.avoidFlood([2, 3, 0, 3, 0, 2]))
-    print(s.avoidFlood([3, 0, 2, ]))
+    print(s.minSubArrayLen(11, [1, 2]))
