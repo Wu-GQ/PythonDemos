@@ -56,8 +56,7 @@ class Solution:
     def isPathCrossing(self, path: str) -> bool:
         """
         5448. 判断路径是否相交
-        :param path:
-        :return:
+        :see https://leetcode-cn.com/problems/path-crossing/
         """
         node_set = {(0, 0)}
         x, y = 0, 0

@@ -1,3 +1,4 @@
+import bisect
 import heapq
 from queue import PriorityQueue
 
@@ -898,9 +899,7 @@ class Solution:
     def canArrange(self, arr: list, k: int) -> bool:
         """
         5449. 检查数组对是否可以被 k 整除
-        :param arr:
-        :param k:
-        :return:
+        :see https://leetcode-cn.com/problems/check-if-array-pairs-are-divisible-by-k/
         """
         k_list = [0 for i in range(k)]
         for i in arr:
@@ -919,25 +918,28 @@ class Solution:
     def findMaxValueOfEquation(self, points: list, k: int) -> int:
         """
         5451. 满足不等式的最大值
-        :param points:
-        :param k:
-        :return:
+        :see https://leetcode-cn.com/problems/max-value-of-equation/
         """
+        # 单调栈
         queue = [(points[0][0], points[0][0] - points[0][1])]
         result = -float('inf')
+
         for i in range(1, len(points)):
+            # 移除 xj - xi > k 的节点
             while queue and points[i][0] - queue[0][0] > k:
                 queue.pop(0)
 
+            # 如果全部节点都被移除了，说明该节点找不到前面的一个节点满足 xj - xi <= k
             if queue:
                 result = max(result, points[i][0] + points[i][1] - queue[0][1])
 
+            # 将这个节点的 xj - xi 加入单调栈
             a = points[i][0] - points[i][1]
             while queue and queue[-1][1] > a:
                 queue.pop()
             queue.append((points[i][0], a))
 
-            print(i, result, queue)
+            # print(i, result, queue)
 
         return result
 
