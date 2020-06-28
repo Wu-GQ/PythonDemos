@@ -53,7 +53,33 @@ class Solution:
 
         return False
 
+    def isPathCrossing(self, path: str) -> bool:
+        """
+        5448. 判断路径是否相交
+        :param path:
+        :return:
+        """
+        node_set = {(0, 0)}
+        x, y = 0, 0
+        for i in path:
+            if i == 'N':
+                y += 1
+            elif i == 'E':
+                x += 1
+            elif i == 'S':
+                y -= 1
+            else:
+                x -= 1
+
+            node = (x, y)
+            if node in node_set:
+                return True
+            else:
+                node_set.add(node)
+
+        return False
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.patternMatching("aa", ""))
+    print(s.isPathCrossing("NESWW"))

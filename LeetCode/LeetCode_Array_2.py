@@ -843,9 +843,55 @@ class Solution:
 
         return max_length
 
+    def canArrange(self, arr: list, k: int) -> bool:
+        """
+        5449. 检查数组对是否可以被 k 整除
+        :param arr:
+        :param k:
+        :return:
+        """
+        k_list = [0 for i in range(k)]
+        for i in arr:
+            k_list[i % k] += 1
+
+        print(k_list)
+        if k_list[0] % 2 != 0:
+            return False
+
+        for i in range(1, k // 2):
+            if k_list[i] != k_list[k - i]:
+                return False
+
+        return True
+
+    def findMaxValueOfEquation(self, points: list, k: int) -> int:
+        """
+        5451. 满足不等式的最大值
+        :param points:
+        :param k:
+        :return:
+        """
+        queue = [(points[0][0], points[0][0] - points[0][1])]
+        result = -float('inf')
+        for i in range(1, len(points)):
+            while queue and points[i][0] - queue[0][0] > k:
+                queue.pop(0)
+
+            if queue:
+                result = max(result, points[i][0] + points[i][1] - queue[0][1])
+
+            a = points[i][0] - points[i][1]
+            while queue and queue[-1][1] > a:
+                queue.pop()
+            queue.append((points[i][0], a))
+
+            print(i, result, queue)
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.avoidFlood([3, 0, 2, 0, 2, 3]))
     # print(s.avoidFlood([2, 3, 0, 3, 0, 2]))
-    print(s.longestSubarray([1, 1, 1]))
+    print(s.findMaxValueOfEquation([[1, 3], [2, 0], [5, 10], [6, -10]], 1))
