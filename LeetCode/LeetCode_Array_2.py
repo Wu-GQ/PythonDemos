@@ -811,6 +811,39 @@ class Solution:
         # 如果还有池子没被抽干，则说明不满足条件；如果 zero_count > 0，则说明最后还有几天晴天且没池子可以抽水
         return result + [1] * zero_count if not lakes_queue else []
 
+    def average(self, salary: list) -> float:
+        """
+        5432. 去掉最低工资和最高工资后的工资平均值
+        :param salary:
+        :return:
+        """
+        return (sum(salary) - max(salary) - min(salary)) / (len(salary) - 2)
+
+    def longestSubarray(self, nums: list) -> int:
+        """
+        5434. 删掉一个元素以后全为 1 的最长子数组
+        :param nums:
+        :return:
+        """
+        last_zero_index = -1
+        zero_index_list = []
+        for i in range(len(nums)):
+            if nums[i] == 0:
+                zero_index_list.append(i - last_zero_index - 1)
+                last_zero_index = i
+        zero_index_list.append(len(nums) - last_zero_index - 1)
+
+        print(zero_index_list)
+
+        if len(zero_index_list) == 1:
+            return len(nums) - 1
+
+        max_length = 0
+        for i in range(len(zero_index_list) - 1):
+            max_length = max(max_length, zero_index_list[i] + zero_index_list[i + 1])
+
+        return max_length
+
     def minSubArrayLen(self, s: int, nums: list) -> int:
         """
         209. 长度最小的子数组
