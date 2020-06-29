@@ -943,9 +943,20 @@ class Solution:
 
         return result
 
+    def maximumGap(self, nums: list) -> int:
+        """
+        164. 最大间距
+        :see https://leetcode-cn.com/problems/maximum-gap/
+        """
+        nums.sort()
+        result = 0
+        for i in range(len(nums) - 1):
+            result = max(result, nums[i + 1] - nums[i])
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.avoidFlood([3, 0, 2, 0, 2, 3]))
     # print(s.avoidFlood([2, 3, 0, 3, 0, 2]))
-    print(s.findMaxValueOfEquation([[1, 3], [2, 0], [5, 10], [6, -10]], 1))
+    print(s.maximumGap([1]))

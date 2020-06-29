@@ -37,7 +37,7 @@ class MedianFinder(object):
 class Solution(object):
     def findKthLargest(self, nums, k):
         """
-        数组中的第K个最大元素
+        215. 数组中的第K个最大元素
         :see https://leetcode-cn.com/explore/interview/card/top-interview-quesitons-in-2018/266/heap-stack-queue/1154/
         """
         # 使用最小堆获得第k大的元素

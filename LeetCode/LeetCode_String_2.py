@@ -78,7 +78,21 @@ class Solution:
 
         return False
 
+    def shortestPalindrome(self, s: str) -> str:
+        """
+        214. 最短回文串
+        :see https://leetcode-cn.com/problems/shortest-palindrome/
+        """
+        # 计算以左侧开始的最长回文串
+        index = 1
+        for i in range(1, len(s) + 1):
+            string = s[:i]
+            if string == string[::-1]:
+                index = i
+
+        return s[index::][::-1] + s
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.isPathCrossing("NESWW"))
+    print(s.shortestPalindrome("abcd"))
