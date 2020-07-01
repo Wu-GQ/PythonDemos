@@ -283,7 +283,23 @@ class Solution:
 
         return dp[-1]
 
+    def findLength(self, A: list, B: list) -> int:
+        """
+        718. 最长重复子数组
+        :see https://leetcode-cn.com/problems/maximum-length-of-repeated-subarray/
+        """
+        dp = [[0] * len(B) for _ in A]
+        result = 0
+        for i in range(len(A)):
+            for j in range(len(B)):
+                if A[i] == B[j]:
+                    dp[i][j] = dp[i - 1][j - 1] + 1 if i > 0 and j > 0 else 1
+                    result = max(result, dp[i][j])
+        # for i in dp:
+        #     print(i)
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.nthUglyNumber(20))
+    print(s.findLength([0, 0, 0, 0, 1], [1, 0, 0, 0, 0]))
