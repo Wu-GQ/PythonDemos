@@ -970,7 +970,7 @@ class Solution:
                     heapq.heapreplace(heap, -j)
         return -heap[0]
         '''
-
+        '''
         # 利用二分查找实现
         def count(target: int) -> int:
             """ 判断矩阵中比Target小的元素有多少个 """
@@ -992,6 +992,18 @@ class Solution:
             else:
                 right = mid
         return left
+        '''
+        # 利用优先队列实现
+        length = len(matrix)
+        queue = PriorityQueue()
+        for i in range(length):
+            queue.put((matrix[i][0], i, 0))
+
+        for i in range(k - 1):
+            line = queue.get()
+            if (j := line[2] + 1) < length:
+                queue.put((matrix[line[1]][j], line[1], j))
+        return queue.get()[0]
 
 
 if __name__ == '__main__':
@@ -1002,4 +1014,4 @@ if __name__ == '__main__':
         [1, 5, 9],
         [10, 11, 13],
         [12, 13, 15]
-    ], 8))
+    ], 6))
