@@ -954,9 +954,52 @@ class Solution:
             result = max(result, nums[i + 1] - nums[i])
         return result
 
+    def kthSmallest(self, matrix: list, k: int) -> int:
+        """
+        378. 有序矩阵中第K小的元素
+        :see https://leetcode-cn.com/problems/kth-smallest-element-in-a-sorted-matrix/
+        """
+        '''
+        # 利用最大堆实现
+        heap = []
+        for i in matrix:
+            for j in i:
+                if len(heap) < k:
+                    heapq.heappush(heap, -j)
+                elif j < -heap[0]:
+                    heapq.heapreplace(heap, -j)
+        return -heap[0]
+        '''
+
+        # 利用二分查找实现
+        def count(target: int) -> int:
+            """ 判断矩阵中比Target小的元素有多少个 """
+            i, j = 0, len(matrix[0]) - 1
+            result = 0
+            while i < len(matrix) and j >= 0:
+                if matrix[i][j] <= target:
+                    result += j + 1
+                    i += 1
+                else:
+                    j -= 1
+            return result
+
+        left, right = matrix[0][0], matrix[-1][-1]
+        while left < right:
+            mid = (left + right) // 2
+            if count(mid) < k:
+                left = mid + 1
+            else:
+                right = mid
+        return left
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.avoidFlood([3, 0, 2, 0, 2, 3]))
     # print(s.avoidFlood([2, 3, 0, 3, 0, 2]))
-    print(s.maximumGap([1]))
+    print(s.kthSmallest([
+        [1, 5, 9],
+        [10, 11, 13],
+        [12, 13, 15]
+    ], 8))
