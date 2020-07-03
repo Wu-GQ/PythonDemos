@@ -893,6 +893,19 @@ class Solution(object):
 
         return root
 
+    def sortedArrayToBST(self, nums: list) -> TreeNode:
+        """
+        108. 将有序数组转换为二叉搜索树
+        :see https://leetcode-cn.com/problems/convert-sorted-array-to-binary-search-tree/
+        """
+        if not nums:
+            return None
+        mid_index = len(nums) // 2
+        root = TreeNode(nums[mid_index])
+        root.left = self.sortedArrayToBST(nums[:mid_index])
+        root.right = self.sortedArrayToBST(nums[mid_index + 1:])
+        return root
+
 
 if __name__ == '__main__':
     root = TreeNode(1)
@@ -920,5 +933,5 @@ if __name__ == '__main__':
     s = Solution()
     # print(s.robIII(root))
     # print(s.zigzagLevelOrder(root))
-    root = s.buildTreeII([9, 3, 15, 20, 7], [9, 15, 7, 20, 3])
+    root = s.sortedArrayToBST([1, 2, 3, 4, 5, 6, 7, 8, 9])
     print(s.preorderTraversal(root))
