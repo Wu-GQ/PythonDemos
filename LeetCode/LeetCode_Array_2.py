@@ -943,9 +943,59 @@ class Solution:
 
         return result
 
+    def canMakeArithmeticProgression(self, arr: list) -> bool:
+        """
+        5452. 判断能否形成等差数列
+        :see https://leetcode-cn.com/problems/can-make-arithmetic-progression-from-sequence/
+        """
+        if len(arr) < 2:
+            return True
+        arr.sort()
+        diff = arr[1] - arr[0]
+        for i in range(1, len(arr) - 1):
+            if arr[i + 1] - arr[i] != diff:
+                return False
+        return True
+
+    def getLastMoment(self, n: int, left: list, right: list) -> int:
+        """
+        5453. 所有蚂蚁掉下来前的最后一刻
+        :see https://leetcode-cn.com/problems/last-moment-before-all-ants-fall-out-of-a-plank/
+        """
+        return max(max(left) if left else 0, max([n - i for i in right]) if right else 0)
+
+    def numSubmat(self, mat: list) -> int:
+        """
+        5454. 统计全 1 子矩形
+        :see https://leetcode-cn.com/problems/count-submatrices-with-all-ones/
+        """
+        dp = [[(0, 0)] * len(m) for m in mat]
+
+        for i in range(len(mat)):
+            for j in range(len(mat[i])):
+                if mat[i][j] == 1:
+                    if i == 0 and j == 0:
+                        dp[0][0] = (1, 1)
+                    elif i == 0:
+                        dp[0][j] = (dp[0][j - 1][0] + 1, 1)
+                    elif j == 0:
+                        dp[i][0] = (1, dp[i - 1][0][1] + 1)
+                    else:
+                        dp[i][j] = (dp[i][j - 1][0] + 1, dp[i - 1][j][1] + 1)
+
+        result = 0
+        for i in range(len(dp)):
+            for j in range(len(dp[i])):
+                max_width = dp[i][j][0]
+                for k in range(dp[i][j][1]):
+                    max_width = min(max_width, dp[i - k][j][0])
+                    result += max_width
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.avoidFlood([3, 0, 2, 0, 2, 3]))
     # print(s.avoidFlood([2, 3, 0, 3, 0, 2]))
-    print(s.findMaxValueOfEquation([[1, 3], [2, 0], [5, 10], [6, -10]], 1))
+    print(s.numSubmat([[1, 0, 1], [0, 1, 0], [1, 0, 1]]))
