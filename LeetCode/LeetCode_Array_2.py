@@ -943,6 +943,68 @@ class Solution:
 
         return result
 
+    def maximumGap(self, nums: list) -> int:
+        """
+        164. 最大间距
+        :see https://leetcode-cn.com/problems/maximum-gap/
+        """
+        nums.sort()
+        result = 0
+        for i in range(len(nums) - 1):
+            result = max(result, nums[i + 1] - nums[i])
+        return result
+
+    def kthSmallest(self, matrix: list, k: int) -> int:
+        """
+        378. 有序矩阵中第K小的元素
+        :see https://leetcode-cn.com/problems/kth-smallest-element-in-a-sorted-matrix/
+        """
+        '''
+        # 利用最大堆实现
+        heap = []
+        for i in matrix:
+            for j in i:
+                if len(heap) < k:
+                    heapq.heappush(heap, -j)
+                elif j < -heap[0]:
+                    heapq.heapreplace(heap, -j)
+        return -heap[0]
+        '''
+        '''
+        # 利用二分查找实现
+        def count(target: int) -> int:
+            """ 判断矩阵中比Target小的元素有多少个 """
+            i, j = 0, len(matrix[0]) - 1
+            result = 0
+            while i < len(matrix) and j >= 0:
+                if matrix[i][j] <= target:
+                    result += j + 1
+                    i += 1
+                else:
+                    j -= 1
+            return result
+
+        left, right = matrix[0][0], matrix[-1][-1]
+        while left < right:
+            mid = (left + right) // 2
+            if count(mid) < k:
+                left = mid + 1
+            else:
+                right = mid
+        return left
+        '''
+        # 利用优先队列实现
+        length = len(matrix)
+        queue = PriorityQueue()
+        for i in range(length):
+            queue.put((matrix[i][0], i, 0))
+
+        for i in range(k - 1):
+            line = queue.get()
+            if (j := line[2] + 1) < length:
+                queue.put((matrix[line[1]][j], line[1], j))
+        return queue.get()[0]
+
     def canMakeArithmeticProgression(self, arr: list) -> bool:
         """
         5452. 判断能否形成等差数列

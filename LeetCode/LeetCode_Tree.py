@@ -893,32 +893,74 @@ class Solution(object):
 
         return root
 
+    def sortedArrayToBST(self, nums: list) -> TreeNode:
+        """
+        108. 将有序数组转换为二叉搜索树
+        :see https://leetcode-cn.com/problems/convert-sorted-array-to-binary-search-tree/
+        """
+        if not nums:
+            return None
+        mid_index = len(nums) // 2
+        root = TreeNode(nums[mid_index])
+        root.left = self.sortedArrayToBST(nums[:mid_index])
+        root.right = self.sortedArrayToBST(nums[mid_index + 1:])
+        return root
+
+    def longestZigZag(self, root: TreeNode) -> int:
+        """
+        1372. 二叉树中的最长交错路径
+        :see https://leetcode-cn.com/problems/longest-zigzag-path-in-a-binary-tree/
+        """
+
+        def sub_tree_longest_zig_zag(root_node: TreeNode) -> (int, int):
+            # 返回当前节点的左节点和右节点的最长的交错路径
+            if not root_node:
+                return 0, 0
+
+            # 左节点的最长交错路径 = 左节点的右子节点的最长交错路径 + 1
+            left = sub_tree_longest_zig_zag(root_node.left)[1] + 1
+            # 右节点的最长交错路径 = 右节点的左子节点的最长交错路径 + 1
+            right = sub_tree_longest_zig_zag(root_node.right)[0] + 1
+
+            # 更新最长的交错路径
+            nonlocal result
+            result = max(result, left, right)
+
+            return left, right
+
+        result = 0
+        sub_tree_longest_zig_zag(root)
+        # 因为 result 统计的时候路径上节点的数量，边的数量 = 节点数量 - 1
+        return result - 1
+
 
 if __name__ == '__main__':
     root = TreeNode(1)
-    root.left = TreeNode(2)
-    root.right = TreeNode(3)
+    # root.left = TreeNode(2)
+    root.right = TreeNode(2)
     # # #
-    root.left.left = TreeNode(4)
-    root.left.right = TreeNode(5)
+    # root.left.left = TreeNode(4)
+    # root.left.right = TreeNode(5)
 
-    root.left.left.left = TreeNode(8)
-    root.left.left.right = TreeNode(9)
+    # root.left.left.left = TreeNode(8)
+    # root.left.left.right = TreeNode(9)
 
     # #
-    root.left.right.left = TreeNode(10)
-    root.left.right.right = TreeNode(11)
+    # root.left.right.left = TreeNode(10)
+    # root.left.right.right = TreeNode(11)
     #
-    root.right.left = TreeNode(6)
-    root.right.right = TreeNode(7)
+    root.right.left = TreeNode(3)
+    root.right.right = TreeNode(4)
 
-    # print(Solution().lowestCommonAncestor(root, TreeNode(5), TreeNode(4)).val)
+    root.right.left.right = TreeNode(5)
+
+    print(Solution().longestZigZag(root))
     # string = Solution().serialize(root)
     # print(string)
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
 
-    s = Solution()
+    # s = Solution()
     # print(s.robIII(root))
     # print(s.zigzagLevelOrder(root))
-    root = s.buildTreeII([9, 3, 15, 20, 7], [9, 15, 7, 20, 3])
-    print(s.preorderTraversal(root))
+    # root = s.sortedArrayToBST([1, 2, 3, 4, 5, 6, 7, 8, 9])
+    # print(s.preorderTraversal(root))
