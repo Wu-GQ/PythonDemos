@@ -319,30 +319,24 @@ class Solution:
 
     def isMatch2(self, s: str, p: str) -> bool:
         """
-        通配符匹配
+        44. 通配符匹配
         :see https://leetcode-cn.com/problems/wildcard-matching/
         """
         # 此处在两个字符串前加空格，是为了减少边界条件的处理
-        s = f' {s}'
-        p = f' {p}'
+        s = ' ' + s
+        p = ' ' + p
 
-        s_length = len(s)
-        p_length = len(p)
+        dp = [[False] * len(p) for _ in s]
+        dp[0][0] = True
 
-        compare_list = [[False for i in range(p_length)] for j in range(s_length)]
+        for i in range(len(s)):
+            for j in range(1, len(p)):
+                if p[j] == '*':
+                    dp[i][j] = dp[i - 1][j] or dp[i][j - 1]
+                elif s[i] == p[j] or (p[j] == '?' and i > 0):
+                    dp[i][j] = dp[i - 1][j - 1]
 
-        for i in range(s_length):
-            for j in range(p_length):
-                if i == 0 and j == 0:
-                    compare_list[i][j] = True
-                elif i > 0 and j == 0:
-                    compare_list[i][j] = False
-                elif p[j] == '*':
-                    compare_list[i][j] = compare_list[i - 1][j] or compare_list[i][j - 1]
-                elif p[j] != '*' and (s[i] == p[j] or i > 0 and p[j] == '?'):
-                    compare_list[i][j] = compare_list[i - 1][j - 1]
-
-        return compare_list[s_length - 1][p_length - 1]
+        return dp[-1][-1]
 
     def minWindow(self, s: str, t: str) -> str:
         """
