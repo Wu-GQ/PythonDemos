@@ -1055,9 +1055,22 @@ class Solution:
 
         return result
 
+    def divingBoard(self, shorter: int, longer: int, k: int) -> list:
+        """
+        面试题 16.11. 跳水板
+        :see https://leetcode-cn.com/problems/diving-board-lcci/
+        """
+        # f(n) = [shorter * i + longer * (n - i)], 0 <= i <= n
+        if k == 0:
+            return []
+        elif shorter == longer:
+            return [shorter * k]
+        else:
+            return [shorter * (k - i) + longer * i for i in range(k + 1)]
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.avoidFlood([3, 0, 2, 0, 2, 3]))
     # print(s.avoidFlood([2, 3, 0, 3, 0, 2]))
-    print(s.numSubmat([[1, 0, 1], [0, 1, 0], [1, 0, 1]]))
+    print(s.divingBoard(1, 3, 10))
