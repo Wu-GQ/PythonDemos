@@ -299,7 +299,24 @@ class Solution:
         #     print(i)
         return result
 
+    def respace(self, dictionary: list, sentence: str) -> int:
+        """
+        面试题 17.13. 恢复空格
+        :see https://leetcode-cn.com/problems/re-space-lcci/
+        """
+        length = len(sentence)
+        dp = [0] * (length + 1)
+        words = {i for i in dictionary if sentence.find(i) != -1}
+
+        for i in range(length):
+            dp[i + 1] = dp[i] + 1
+            for word in words:
+                if ((word_len := len(word)) <= i + 1) and sentence[:i + 1].endswith(word):
+                    dp[i + 1] = min(dp[i + 1], dp[i + 1 - word_len])
+        # print(dp)
+        return dp[-1]
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.findLength([0, 0, 0, 0, 1], [1, 0, 0, 0, 0]))
+    print(s.respace(['a'], 'abab'))
