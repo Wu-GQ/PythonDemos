@@ -1055,6 +1055,19 @@ class Solution:
 
         return result
 
+    def divingBoard(self, shorter: int, longer: int, k: int) -> list:
+        """
+        面试题 16.11. 跳水板
+        :see https://leetcode-cn.com/problems/diving-board-lcci/
+        """
+        # f(n) = [shorter * i + longer * (n - i)], 0 <= i <= n
+        if k == 0:
+            return []
+        elif shorter == longer:
+            return [shorter * k]
+        else:
+            return [shorter * (k - i) + longer * i for i in range(k + 1)]
+
     def rangeSum(self, nums: list, n: int, left: int, right: int) -> int:
         """
         5445. 子数组和排序后的区间和

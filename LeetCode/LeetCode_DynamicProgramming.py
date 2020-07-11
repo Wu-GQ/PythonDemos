@@ -612,19 +612,16 @@ class Solution:
         63. 不同路径 II
         :see https://leetcode-cn.com/problems/unique-paths-ii/
         """
-        # f(x,y) = f(x-1,y)+f(x,y-1) if a(x,y)==0 else 0
-        if len(obstacleGrid) == 0 or len(obstacleGrid[0]) == 0 or obstacleGrid[0][0] == 1:
-            return 0
-
+        # f(x, y) = f(x - 1, y) + f(x, y - 1) if a(x, y) == 0 else 0
         path_list = [0] * len(obstacleGrid[0])
         path_list[0] = 1
 
         for single_line in obstacleGrid:
-            for i in range(0, len(single_line)):
+            for i in range(len(single_line)):
                 if single_line[i] == 1:
                     path_list[i] = 0
                 elif i > 0:
-                    path_list[i] = path_list[i - 1] + path_list[i]
+                    path_list[i] += path_list[i - 1]
 
         return path_list[-1]
 

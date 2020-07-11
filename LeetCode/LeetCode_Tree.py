@@ -933,6 +933,21 @@ class Solution(object):
         # 因为 result 统计的时候路径上节点的数量，边的数量 = 节点数量 - 1
         return result - 1
 
+    def hasPathSum(self, root: TreeNode, sum: int) -> bool:
+        """
+        112. 路径总和
+        :see https://leetcode-cn.com/problems/path-sum/
+        """
+
+        def backtrace(node: TreeNode, total: int) -> bool:
+            if not node:
+                return False
+            if not node.left and not node.right:
+                return total + node.val == sum
+            return backtrace(node.left, total + node.val) or backtrace(node.right, total + node.val)
+
+        return backtrace(root, 0)
+
     def isBalanced(self, root: TreeNode) -> bool:
         """
         110. 平衡二叉树
