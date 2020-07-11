@@ -1055,9 +1055,38 @@ class Solution:
 
         return result
 
+    def rangeSum(self, nums: list, n: int, left: int, right: int) -> int:
+        """
+        5445. 子数组和排序后的区间和
+        :see
+        """
+        sum_list = []
+        for i in range(n):
+            start = 0
+            for j in range(i, n):
+                start += nums[j]
+                sum_list.append(start)
+        sum_list.sort()
+        print(sum_list)
+        return sum(sum_list[left - 1:right])
+
+    def minDifference(self, nums: list) -> int:
+        """
+        5446. 三次操作后最大值与最小值的最小差
+        :see
+        """
+        # 情况一，删除 nums[0], nums[1], nums[2]
+        # 情况二，删除 nums[0], nums[1], nums[-1]
+        # 情况三，删除 nums[0], nums[-2], nums[-1]
+        # 情况四，删除 nums[-3], nums[-2], nums[-1]
+        if len(nums) < 5:
+            return 0
+        nums.sort()
+        return min([nums[-1] - nums[3], nums[-2] - nums[2], nums[-3] - nums[1], nums[-4] - nums[0]])
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.avoidFlood([3, 0, 2, 0, 2, 3]))
     # print(s.avoidFlood([2, 3, 0, 3, 0, 2]))
-    print(s.numSubmat([[1, 0, 1], [0, 1, 0], [1, 0, 1]]))
+    print(s.minDifference([9, 48, 92, 48, 81, 31]))

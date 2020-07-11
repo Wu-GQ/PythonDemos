@@ -933,28 +933,56 @@ class Solution(object):
         # 因为 result 统计的时候路径上节点的数量，边的数量 = 节点数量 - 1
         return result - 1
 
+    def isBalanced(self, root: TreeNode) -> bool:
+        """
+        110. 平衡二叉树
+        :see https://leetcode-cn.com/problems/balanced-binary-tree/
+        """
+
+        def height_of_tree(root: TreeNode) -> int:
+            if not root:
+                return 0
+            elif root in height_dict:
+                return height_dict[root]
+            else:
+                height = max(height_of_tree(root.left) + 1, height_of_tree(root.right) + 1)
+                height_dict[root] = height
+                return height
+
+        def check(root: TreeNode) -> bool:
+            if not root:
+                return True
+
+            left = height_of_tree(root.left)
+            right = height_of_tree(root.right)
+
+            return (check(root.left) and check(root.right)) if abs(left - right) < 2 else False
+
+        height_dict = {}
+        return check(root)
+
 
 if __name__ == '__main__':
     root = TreeNode(1)
-    # root.left = TreeNode(2)
-    root.right = TreeNode(2)
+    root.left = TreeNode(2)
+    root.right = TreeNode(3)
     # # #
-    # root.left.left = TreeNode(4)
+    root.left.left = TreeNode(4)
     # root.left.right = TreeNode(5)
 
-    # root.left.left.left = TreeNode(8)
+    root.left.left.left = TreeNode(8)
     # root.left.left.right = TreeNode(9)
 
     # #
     # root.left.right.left = TreeNode(10)
     # root.left.right.right = TreeNode(11)
     #
-    root.right.left = TreeNode(3)
-    root.right.right = TreeNode(4)
+    root.right.left = TreeNode(5)
+    root.right.right = TreeNode(6)
 
-    root.right.left.right = TreeNode(5)
+    # root.right.left.right = TreeNode(7)
 
-    print(Solution().longestZigZag(root))
+    print(Solution().isBalanced(root))
     # string = Solution().serialize(root)
     # print(string)
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))

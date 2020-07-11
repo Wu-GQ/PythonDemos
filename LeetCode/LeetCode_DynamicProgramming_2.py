@@ -299,7 +299,26 @@ class Solution:
         #     print(i)
         return result
 
+    def winnerSquareGame(self, n: int) -> bool:
+        """
+        5446. 三次操作后最大值与最小值的最小差
+        :see
+        """
+        # first[i] 表示先手从剩 i 个石子开始取时，能否获胜
+        # first[i] = or(second[i + j * j]), i + j * j <= n
+        # second[i] 表示后手从剩 i 个石子时开始取，能否获胜(若先手选择取 j * j 个石子)
+        # second[i] = first[i + j * j]
+        first = [False] * (n + 1)
+        for i in range(1, n + 1):
+            for j in range(1, n + 1):
+                if i < j * j:
+                    break
+                if not first[i - j * j]:
+                    first[i] = True
+                    break
+        return first[-1]
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.findLength([0, 0, 0, 0, 1], [1, 0, 0, 0, 0]))
+    print(s.winnerSquareGame(1))

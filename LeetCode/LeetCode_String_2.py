@@ -92,7 +92,51 @@ class Solution:
 
         return s[index::][::-1] + s
 
+    def reformatDate(self, date: str) -> str:
+        """
+        5177. 转变日期格式
+        :see
+        """
+        month_list = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        date_list = date.split(' ')
+        month = str(month_list.index(date_list[1]))
+        day = date_list[0][:-2]
+        return f'{date_list[2]}-{month.zfill(2)}-{day.zfill(2)}'
+
+    def convertToTitle(self, n: int) -> str:
+        # return 'A' * ((n - 1) // 26) + chr((n - 1) % 26 + 65)
+        result = []
+        while n > 0:
+            a = n % 26
+            n //= 26
+            if a == 0:
+                result.append('Z')
+                n -= 1
+            else:
+                result.append(chr(a + 64))
+        return ''.join(result[::-1])
+
+    def compareVersion(self, version1: str, version2: str) -> int:
+        version1_list = version1.split('.')
+        version2_list = version2.split('.')
+
+        v1_len = len(version1_list)
+        v2_len = len(version2_list)
+
+        result = 0
+        for i in range(max(v1_len, v2_len)):
+            a = int(version1_list[i]) if i < v1_len else 0
+            b = int(version2_list[i]) if i < v2_len else 0
+            if a > b:
+                result = 1
+                break
+            elif a < b:
+                result = -1
+                break
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.shortestPalindrome("abcd"))
+    print(s.compareVersion('1.0.1', '1.1'))
