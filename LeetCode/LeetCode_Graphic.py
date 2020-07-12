@@ -907,7 +907,43 @@ class Solution:
 
         return step
 
+    def maxProbability(self, n: int, edges: list, succProb: list, start: int, end: int) -> float:
+
+        from queue import PriorityQueue
+
+        def dij() -> int:
+            prob = [0] * n
+            prob[start] = 1
+            check = [0] * n
+
+            q = PriorityQueue()
+            q.put((1, start))
+
+            while not q.empty():
+                node = q.get()[1]
+                if node == end:
+                    return prob[end]
+
+                check[node] = 1
+                for i in range(n):
+                    if check[i] == 0 and graphic[node][i] * prob[node] > prob[i]:
+                        prob[i] = graphic[node][i] * prob[node]
+                        q.put((-prob[i], i))
+
+            return prob[end]
+
+        graphic = [[0] * n for _ in range(n)]
+        for i in range(n):
+            graphic[i][i] = 1
+        for i in range(len(edges)):
+            x, y = edges[i][0], edges[i][1]
+            graphic[x][y] = succProb[i]
+            graphic[y][x] = succProb[i]
+
+        return dij()
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minNumberOfSemesters(8, [[1, 6], [2, 7], [8, 7], [2, 5], [3, 4]], 3))
+    print(s.maxProbability(5, [[2, 3], [1, 2], [3, 4], [1, 3], [1, 4], [0, 1], [2, 4], [0, 4], [0, 2]],
+                           [0.06, 0.26, 0.49, 0.25, 0.2, 0.64, 0.23, 0.21, 0.77], 0, 3))
