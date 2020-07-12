@@ -908,6 +908,10 @@ class Solution:
         return step
 
     def maxProbability(self, n: int, edges: list, succProb: list, start: int, end: int) -> float:
+        """
+        5211. 概率最大的路径
+        :see https://leetcode-cn.com/problems/path-with-maximum-probability/
+        """
 
         from queue import PriorityQueue
 
@@ -917,28 +921,40 @@ class Solution:
             check = [0] * n
 
             q = PriorityQueue()
-            q.put((1, start))
+            q.put((-1, start))
 
             while not q.empty():
-                node = q.get()[1]
-                if node == end:
-                    return prob[end]
+                p, node = q.get()
+                p = -p
 
+                if node == end:
+                    return p
+                if p < prob[end]:
+                    continue
                 check[node] = 1
-                for i in range(n):
-                    if check[i] == 0 and graphic[node][i] * prob[node] > prob[i]:
-                        prob[i] = graphic[node][i] * prob[node]
-                        q.put((-prob[i], i))
+
+                if node not in graphic:
+                    continue
+
+                for nn, pp in graphic[node]:
+                    if check[nn] == 0 and pp * prob[node] > prob[nn]:
+                        prob[nn] = pp * prob[node]
+                        q.put((-prob[nn], nn))
 
             return prob[end]
 
-        graphic = [[0] * n for _ in range(n)]
-        for i in range(n):
-            graphic[i][i] = 1
+        graphic = {}
         for i in range(len(edges)):
-            x, y = edges[i][0], edges[i][1]
-            graphic[x][y] = succProb[i]
-            graphic[y][x] = succProb[i]
+            x, y, p = edges[i][0], edges[i][1], succProb[i]
+            if x in graphic:
+                graphic[x].append((y, p))
+            else:
+                graphic[x] = [(y, p)]
+
+            if y in graphic:
+                graphic[y].append((x, p))
+            else:
+                graphic[y] = [(x, p)]
 
         return dij()
 
