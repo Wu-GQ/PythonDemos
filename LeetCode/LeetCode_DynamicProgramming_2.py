@@ -316,7 +316,23 @@ class Solution:
         # print(dp)
         return dp[-1]
 
+    def numTrees(self, n: int) -> int:
+        """
+        96. 不同的二叉搜索树
+        :see https://leetcode-cn.com/problems/unique-binary-search-trees/
+        """
+        # dp[n] 表示 n 个节点时可以组成的二叉搜索树
+        # 将 i 作为根节点，左子树有 i - 1 个节点，右子树有 n - i 个节点
+        # dp[i] = sum(dp[j - 1] * dp[i - j], 1 <= j <= i)
+        dp = [1, 1]
+        for i in range(2, n + 1):
+            total = 0
+            for j in range(1, i + 1):
+                total += dp[j - 1] * dp[i - j]
+            dp.append(total)
+        return dp[-1]
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.respace(['a'], 'abab'))
+    print(s.numTrees(3))
