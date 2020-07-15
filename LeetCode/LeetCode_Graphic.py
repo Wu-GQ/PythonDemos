@@ -907,7 +907,59 @@ class Solution:
 
         return step
 
+    def maxProbability(self, n: int, edges: list, succProb: list, start: int, end: int) -> float:
+        """
+        5211. 概率最大的路径
+        :see https://leetcode-cn.com/problems/path-with-maximum-probability/
+        """
+
+        from queue import PriorityQueue
+
+        def dij() -> int:
+            prob = [0] * n
+            prob[start] = 1
+            check = [0] * n
+
+            q = PriorityQueue()
+            q.put((-1, start))
+
+            while not q.empty():
+                p, node = q.get()
+                p = -p
+
+                if node == end:
+                    return p
+                if p < prob[end]:
+                    continue
+                check[node] = 1
+
+                if node not in graphic:
+                    continue
+
+                for nn, pp in graphic[node]:
+                    if check[nn] == 0 and pp * prob[node] > prob[nn]:
+                        prob[nn] = pp * prob[node]
+                        q.put((-prob[nn], nn))
+
+            return prob[end]
+
+        graphic = {}
+        for i in range(len(edges)):
+            x, y, p = edges[i][0], edges[i][1], succProb[i]
+            if x in graphic:
+                graphic[x].append((y, p))
+            else:
+                graphic[x] = [(y, p)]
+
+            if y in graphic:
+                graphic[y].append((x, p))
+            else:
+                graphic[y] = [(x, p)]
+
+        return dij()
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minNumberOfSemesters(8, [[1, 6], [2, 7], [8, 7], [2, 5], [3, 4]], 3))
+    print(s.maxProbability(5, [[2, 3], [1, 2], [3, 4], [1, 3], [1, 4], [0, 1], [2, 4], [0, 4], [0, 2]],
+                           [0.06, 0.26, 0.49, 0.25, 0.2, 0.64, 0.23, 0.21, 0.77], 0, 3))
