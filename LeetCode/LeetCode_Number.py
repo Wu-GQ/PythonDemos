@@ -615,6 +615,53 @@ class Solution:
 
         return index
 
+    def toHex(self, num: int) -> str:
+        """
+        405. 数字转换为十六进制数
+        :see https://leetcode-cn.com/problems/convert-a-number-to-hexadecimal/
+        """
+        # 补码 = 符号位不变，原码取反后加 1
+        # 二进制原码，i = 0 为最低位
+        bin_list = [0] * 32
+        # 判断是否是负数
+        is_negative = num < 0
+
+        # 转换为二进制原码
+        num = abs(num)
+        index = 0
+        while num > 0 and index < 32:
+            bin_list[index] = num % 2
+            index += 1
+            num >>= 1
+
+        # 反转原码
+        if is_negative:
+            bin_list = [1 - i for i in bin_list]
+            c = 1
+            for i in range(32):
+                if c > 0:
+                    tmp = bin_list[i] + c
+                    bin_list[i] = tmp % 2
+                    c = tmp // 2
+                else:
+                    break
+
+        # 符号位赋值
+        bin_list[-1] = 1 if is_negative else 0
+
+        # 二进制转16进制
+        hex_string = '0123456789abcdef'
+        result = []
+        for i in range(0, 32, 4):
+            r = bin_list[i] + bin_list[i + 1] * 2 + bin_list[i + 2] * 4 + bin_list[i + 3] * 8
+            result.insert(0, hex_string[r])
+
+        # 去掉前置0
+        while result and result[0] == '0':
+            result.pop(0)
+
+        return ''.join(result) if result else '0'
+
 
 if __name__ == '__main__':
-    print(Solution().isUgly(0))
+    print(Solution().toHex(-4))
