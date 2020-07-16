@@ -958,8 +958,36 @@ class Solution:
 
         return dij()
 
+    def isBipartite(self, graph: list) -> bool:
+        """
+        785. 判断二分图
+        :see https://leetcode-cn.com/problems/is-graph-bipartite/
+        """
+        a_set = set()
+        b_set = set()
+
+        for i in range(len(graph)):
+            if not i:
+                continue
+            queue = [i]
+            a_set.add(i)
+            while queue:
+                node = queue.pop(0)
+                for j in graph[node]:
+                    queue.append(j)
+                    if node in a_set:
+                        b_set.add(j)
+                    else:
+                        a_set.add(j)
+
+                    if j in a_set and j in b_set:
+                        return False
+
+                graph[node] = []
+
+        return True
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.maxProbability(5, [[2, 3], [1, 2], [3, 4], [1, 3], [1, 4], [0, 1], [2, 4], [0, 4], [0, 2]],
-                           [0.06, 0.26, 0.49, 0.25, 0.2, 0.64, 0.23, 0.21, 0.77], 0, 3))
+    print(s.isBipartite([[1], [0]]))
