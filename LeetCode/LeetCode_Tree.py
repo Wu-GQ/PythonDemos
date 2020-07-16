@@ -976,6 +976,30 @@ class Solution(object):
         height_dict = {}
         return check(root)
 
+    def findBottomLeftValue(self, root: TreeNode) -> int:
+        """
+        513. 找树左下角的值
+        :see https://leetcode-cn.com/problems/find-bottom-left-tree-value/
+        """
+        queue = [root]
+        first = root.val
+        while queue:
+            length = len(queue)
+            first = queue[0].val
+            while queue:
+                node = queue.pop(0)
+                length -= 1
+
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+
+                if length == 0:
+                    break
+
+        return first
+
 
 if __name__ == '__main__':
     root = TreeNode(1)
@@ -985,19 +1009,19 @@ if __name__ == '__main__':
     root.left.left = TreeNode(4)
     # root.left.right = TreeNode(5)
 
-    root.left.left.left = TreeNode(8)
+    # root.left.left.left = TreeNode(8)
     # root.left.left.right = TreeNode(9)
 
     # #
     # root.left.right.left = TreeNode(10)
     # root.left.right.right = TreeNode(11)
     #
-    root.right.left = TreeNode(5)
-    root.right.right = TreeNode(6)
+    # root.right.left = TreeNode(5)
+    # root.right.right = TreeNode(6)
 
     # root.right.left.right = TreeNode(7)
 
-    print(Solution().isBalanced(root))
+    print(Solution().findBottomLeftValue(root))
     # string = Solution().serialize(root)
     # print(string)
     # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
