@@ -18,7 +18,32 @@ class Solution:
                     result.append(matrix[j][i - j])
         return result
 
+    def closestToTarget(self, arr: list, target: int) -> int:
+        """
+        5466. 最多的不重叠子字符串
+        :param arr:
+        :param target:
+        :return:
+        """
+        result = abs(target - arr[0])
+        for i in range(len(arr)):
+            if i > 0 and arr[i] == arr[i - 1]:
+                continue
+            t = arr[i]
+            for j in range(i, len(arr)):
+                if j > 0 and arr[j] == arr[j - 1]:
+                    continue
+                t &= arr[j]
+                print(i, j, t)
+                if t == target:
+                    return 0
+                if abs(t - target) < result:
+                    result = abs(t - target)
+                if t == 0:
+                    continue
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.findDiagonalOrder([]))
+    print(s.closestToTarget([70, 15, 21, 96], 4))

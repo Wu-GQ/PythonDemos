@@ -987,7 +987,50 @@ class Solution:
 
         return True
 
+    def countSubTrees(self, n: int, edges: list, labels: str) -> list:
+        """
+        5465. 子树中标签相同的节点数
+        :param n:
+        :param edges:
+        :param labels:
+        :return:
+        """
+
+        def dfs(index: int) -> dict:
+            ch_dict = {labels[index]: 1}
+            checked[index] = 1
+            for i in out_dict.get(index, []):
+                # ch_dict.update(dfs(i))
+                if checked[i] == 1:
+                    continue
+                tmp = dfs(i)
+                for j in tmp:
+                    if j in ch_dict:
+                        ch_dict[j] += tmp[j]
+                    else:
+                        ch_dict[j] = tmp[j]
+            result[index] = ch_dict[labels[index]]
+            print(index, ch_dict)
+            return ch_dict
+
+        out_dict = {}
+        for a, b in edges:
+            if a in out_dict:
+                out_dict[a].append(b)
+            else:
+                out_dict[a] = [b]
+
+            if b in out_dict:
+                out_dict[b].append(a)
+            else:
+                out_dict[b] = [a]
+
+        result = [0] * n
+        checked = [0] * n
+        dfs(0)
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.isBipartite([[1], [0]]))
+    print(s.countSubTrees(7, [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]], 'aaabaaa'))

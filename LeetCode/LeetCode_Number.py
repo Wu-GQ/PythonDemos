@@ -662,6 +662,23 @@ class Solution:
 
         return ''.join(result) if result else '0'
 
+    def numWaterBottles(self, numBottles: int, numExchange: int) -> int:
+        """
+        5464. 换酒问题
+        :param numBottles:
+        :param numExchange:
+        :return:
+        """
+        result = 0
+        a, b = numBottles, 0
+        while a > 0:
+            result += a
+            b += a
+            tmp = b // numExchange
+            a = tmp
+            b -= tmp * numExchange
+        return result
+
 
 if __name__ == '__main__':
-    print(Solution().toHex(-4))
+    print(Solution().numWaterBottles(2, 3))
