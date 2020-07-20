@@ -679,6 +679,44 @@ class Solution:
             b -= tmp * numExchange
         return result
 
+    def subarrayBitwiseORs(self, A: list) -> int:
+        """
+        898. 子数组按位或操作
+        :see https://leetcode-cn.com/problems/bitwise-ors-of-subarrays/
+        """
+        '''
+        对于子数组 A[:i]，包含 A[0:i], A[1:i], A[2:i], ..., A[i-1:i]
+        但是考虑到位运算的性质，A[j] 必定小于等于 A[j]|A[j+1]，且 A[j]|A[j+1] 包含了 A[j] 二进制表示下的所有位置的 1
+        由于 0 <= A[i] <= 10^9，因此对应每一个以 A[i] 结尾的子数组，最多存在 30 种情况(2^30 > 10^9)
+        最差的情况就是[1, 2, 4, 8, 16, ..., 2^29]，这就恰好存在 30 种情况
+        所以，时间复杂度为 O(30 * N)
+        '''
+        result = set()
+        # temp 存储以某一位结尾的所有结果
+        temp = set()
+        for i in A:
+            temp = {i | j for j in temp} | {i}
+            result |= temp
+        # print(result)
+        return len(result)
+
+    def closestToTarget(self, arr: list, target: int) -> int:
+        """
+        1521. 找到最接近目标值的函数值
+        :see https://leetcode-cn.com/problems/find-a-value-of-a-mysterious-function-closest-to-target/
+        """
+        result = abs(arr[0] - target)
+        # temp 存储以某一位结尾的所有结果
+        temp = set()
+        for i in arr:
+            temp = {i & j for j in temp} | {i}
+            # print(i, temp)
+            for j in temp:
+                result = min(result, abs(j - target))
+            if result == 0:
+                return 0
+        return result
+
 
 if __name__ == '__main__':
-    print(Solution().numWaterBottles(2, 3))
+    print(Solution().closestToTarget([1, 2, 4, 8, 16], 0))

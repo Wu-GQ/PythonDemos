@@ -17,4 +17,4 @@ if __name__ == '__main__':
     a = {1: 2}
     b = {1: 1}
     a.update(b)
-    print(1 | 1)
+    print(1 | 4)
