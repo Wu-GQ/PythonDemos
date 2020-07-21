@@ -2,10 +2,11 @@ from queue import Queue
 
 
 class TreeNode:
-    def __init__(self, x):
-        self.val = x
-        self.left = None
-        self.right = None
+
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
 
 
 class Solution(object):
@@ -1000,8 +1001,36 @@ class Solution(object):
 
         return first
 
+    def generateTrees(self, n: int) -> list:
+        """
+        95. 不同的二叉搜索树 II
+        :see https://leetcode-cn.com/problems/unique-binary-search-trees-ii/
+        """
+
+        def generate_sub_tree(start: int, end: int) -> list:
+            """ 以 start ... end-1 为节点组成的所有二叉搜索树 """
+            if start >= end:
+                return [None]
+            if (start, end) in sub_trees_dict:
+                return sub_trees_dict[start, end]
+
+            sub_trees_list = []
+            for i in range(start, end):
+                right_list = generate_sub_tree(i + 1, end)
+                for j in generate_sub_tree(start, i):
+                    for k in right_list:
+                        sub_trees_list.append(TreeNode(i, j, k))
+
+            sub_trees_dict[start, end] = sub_trees_list
+            return sub_trees_list
+
+        sub_trees_dict = {}
+        return generate_sub_tree(1, n + 1) if n > 0 else []
+
 
 if __name__ == '__main__':
+    s = Solution()
+
     root = TreeNode(1)
     root.left = TreeNode(2)
     root.right = TreeNode(3)
@@ -1022,12 +1051,3 @@ if __name__ == '__main__':
     # root.right.left.right = TreeNode(7)
 
     print(Solution().findBottomLeftValue(root))
-    # string = Solution().serialize(root)
-    # print(string)
-    # print(Solution().getSkyline([[1, 2, 1], [1, 2, 2], [1, 2, 3]]))
-
-    # s = Solution()
-    # print(s.robIII(root))
-    # print(s.zigzagLevelOrder(root))
-    # root = s.sortedArrayToBST([1, 2, 3, 4, 5, 6, 7, 8, 9])
-    # print(s.preorderTraversal(root))
