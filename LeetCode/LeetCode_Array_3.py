@@ -18,32 +18,28 @@ class Solution:
                     result.append(matrix[j][i - j])
         return result
 
-    def closestToTarget(self, arr: list, target: int) -> int:
+    def findMin(self, nums: list) -> int:
         """
-        5466. 最多的不重叠子字符串
-        :param arr:
-        :param target:
-        :return:
+        154. 寻找旋转排序数组中的最小值 II
+        :see https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array-ii/
         """
-        result = abs(target - arr[0])
-        for i in range(len(arr)):
-            if i > 0 and arr[i] == arr[i - 1]:
-                continue
-            t = arr[i]
-            for j in range(i, len(arr)):
-                if j > 0 and arr[j] == arr[j - 1]:
-                    continue
-                t &= arr[j]
-                print(i, j, t)
-                if t == target:
-                    return 0
-                if abs(t - target) < result:
-                    result = abs(t - target)
-                if t == 0:
-                    continue
-        return result
+        l, r = 0, len(nums) - 1
+        while l < r:
+            mid = (l + r) // 2
+            print(l, mid, r, nums[l], nums[mid], nums[r])
+            if nums[l] <= nums[mid] < nums[r] or nums[l] < nums[mid] <= nums[r]:
+                break
+            elif nums[mid] == nums[r] or nums[l] == nums[r]:
+                r -= 1
+            elif nums[l] == nums[mid]:
+                l += 1
+            elif nums[r] < nums[l] < nums[mid] or nums[r] < nums[l] < nums[mid]:
+                l = mid
+            elif nums[mid] < nums[r] < nums[l] or nums[mid] < nums[r] < nums[l]:
+                r = mid
+        return nums[l]
 
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.closestToTarget([70, 15, 21, 96], 4))
+    print(s.findMin([5, 5, 1, 3, 5]))
