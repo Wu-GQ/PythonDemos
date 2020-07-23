@@ -717,6 +717,26 @@ class Solution:
                 return 0
         return result
 
+    def closestDivisors(self, num: int) -> list:
+        """
+        1362. 最接近的因数
+        :see https://leetcode-cn.com/problems/closest-divisors/
+        """
+        floor = math.ceil(math.sqrt(num + 2)) + 1
+        result, diff = [1, num + 1], num
+        for i in range(2, floor):
+            if (num + 1) % i == 0:
+                a = (num + 1) // i
+                if a < diff + i:
+                    result = [a, i]
+                    diff = a - i
+            if (num + 2) % i == 0:
+                a = (num + 2) // i
+                if a < diff + i:
+                    result = [a, i]
+                    diff = a - i
+        return result
+
 
 if __name__ == '__main__':
-    print(Solution().closestToTarget([1, 2, 4, 8, 16], 0))
+    print(Solution().closestDivisors(123))
