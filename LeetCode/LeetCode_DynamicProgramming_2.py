@@ -351,7 +351,34 @@ class Solution:
             dp.append(total)
         return dp[-1]
 
+    def divisorGame(self, N: int) -> bool:
+        """
+        1025. 除数博弈
+        :see https://leetcode-cn.com/problems/divisor-game/
+        """
+        '''
+        假设当前数字为n
+        A先手：
+        假设A选了i，i满足以上条件
+        A[n] = or(B[n - i]), 0 < i < N 且 N % i == 0
+        因为A选择最优，所以A需要遍历所有满足条件的i，只要一个B[n - i]为True，A[n]即为True
+        B后手:
+        B[n] = A[n - i]
+        
+        由于A赢则B输，B赢则A输，所以只需要一个dp即可同时表示A和B的状态
+        dp[n] = or(not dp[n - i]), 0 < i < N 且 N % i == 0
+        '''
+        dp = [False] * (N + 1)
+        for n in range(2, N + 1):
+            for i in range(1, n):
+                if n % i == 0 and not dp[n - i]:
+                    dp[n] = True
+                    break
+        # print(dp)
+        return dp[N]
+        # return not N & 1
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.numTrees(3))
+    print(s.divisorGame(1))
