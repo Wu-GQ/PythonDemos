@@ -39,7 +39,50 @@ class Solution:
                 r = mid
         return nums[l]
 
+    def numOfSubarrays(self, arr: list) -> int:
+        """
+        5457. 和为奇数的子数组数目
+        :param arr:
+        :return:
+        """
+        # 记录从第一个数字开始的奇数和出现的次数
+        count = 0
+        # 记录从第一个数字开始的和
+        total = 0
+
+        result = 0
+        for i in range(len(arr)):
+            total += arr[i]
+            # 当sum[:i + 1]为奇数时，需要加上arr[:i]的奇数和出现的次数，即i - count + 1
+            # 当sum[:i + 1]为偶数时，需要加上arr[:i]的偶数和出现的次数，即count
+            if total % 2 == 1:
+                result += i - count + 1
+                count += 1
+            else:
+                result += count
+            # print(i, total, result, count)
+
+        return result % 1000000007
+
+    def minNumberOperations(self, target: list) -> int:
+        """
+        5459. 形成目标数组的子数组最少增加次数
+        :param target:
+        :return:
+        """
+        target.append(0)
+        stack = [0]
+        result = 0
+        for i in range(len(target)):
+            top = stack[-1]
+            while stack and target[i] <= stack[-1]:
+                stack.pop()
+            result += max(top - target[i], 0)
+            stack.append(target[i])
+            # print(i, result, stack)
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.findMin([5, 5, 1, 3, 5]))
+    print(s.numOfSubarrays([1, 3, 5]))

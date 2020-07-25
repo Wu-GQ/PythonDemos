@@ -136,7 +136,29 @@ class Solution:
 
         return result
 
+    def numSplits(self, s: str) -> int:
+        """
+        5458. 字符串的好分割数目
+        :param s:
+        :return:
+        """
+        left = {}
+        right = {}
+        for i in s:
+            right[i] = right.get(i, 0) + 1
+
+        result = 0
+        for i in s:
+            left[i] = left.get(i, 0) + 1
+            right[i] -= 1
+            if right[i] == 0:
+                del right[i]
+            if len(left) == len(right):
+                result += 1
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.compareVersion('1.0.1', '1.1'))
+    print(s.numSplits('abcd'))

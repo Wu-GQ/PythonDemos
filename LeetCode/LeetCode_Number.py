@@ -737,6 +737,18 @@ class Solution:
                     diff = a - i
         return result
 
+    def countOdds(self, low: int, high: int) -> int:
+        """
+        5456. 在区间范围内统计奇数数目
+        :param low:
+        :param high:
+        :return:
+        """
+        result = (high - low) // 2
+        if low % 2 == 1 or high % 2 == 1:
+            result += 1
+        return result
+
 
 if __name__ == '__main__':
-    print(Solution().closestDivisors(123))
+    print(Solution().countOdds(2, 4))
