@@ -1027,6 +1027,71 @@ class Solution(object):
         sub_trees_dict = {}
         return generate_sub_tree(1, n + 1) if n > 0 else []
 
+    def countPairs(self, root: TreeNode, distance: int) -> int:
+        """
+        5474. 好叶子节点对的数量
+        :see https://leetcode-cn.com/problems/number-of-good-leaf-nodes-pairs/
+        """
+
+        def dp(node: TreeNode) -> list:
+            nonlocal result
+            if not node:
+                return []
+            elif not node.left and not node.right:
+                return [0]
+            elif not node.left:
+                right = dp(node.right)
+                for i in range(len(right)):
+                    right[i] += 1
+                return right
+            elif not node.right:
+                left = dp(node.left)
+                for i in range(len(left)):
+                    left[i] += 1
+                return left
+            else:
+                left = dp(node.left)
+                right = dp(node.right)
+                for i in left:
+                    for j in right:
+                        if i + 1 + j + 1 <= distance:
+                            result += 1
+                # print('---', node.val, left, right)
+                new = []
+                i, j = 0, 0
+                while i < len(left) or j < len(right):
+                    if i == len(left):
+                        if right[j] <= distance:
+                            new.append(right[j] + 1)
+                            j += 1
+                        else:
+                            break
+                    elif j == len(right):
+                        if left[i] <= distance:
+                            new.append(left[i] + 1)
+                            i += 1
+                        else:
+                            break
+                    elif left[i] < right[j]:
+                        if left[i] <= distance:
+                            new.append(left[i] + 1)
+                            i += 1
+                        else:
+                            break
+                    else:
+                        if right[j] <= distance:
+                            new.append(right[j] + 1)
+                            j += 1
+                        else:
+                            break
+                # print(node.val, new)
+
+                return new
+
+        result = 0
+        dp(root)
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
@@ -1036,7 +1101,7 @@ if __name__ == '__main__':
     root.right = TreeNode(3)
     # # #
     root.left.left = TreeNode(4)
-    # root.left.right = TreeNode(5)
+    root.left.right = TreeNode(5)
 
     # root.left.left.left = TreeNode(8)
     # root.left.left.right = TreeNode(9)
@@ -1045,9 +1110,9 @@ if __name__ == '__main__':
     # root.left.right.left = TreeNode(10)
     # root.left.right.right = TreeNode(11)
     #
-    # root.right.left = TreeNode(5)
-    # root.right.right = TreeNode(6)
+    root.right.left = TreeNode(6)
+    root.right.right = TreeNode(7)
 
     # root.right.left.right = TreeNode(7)
 
-    print(Solution().findBottomLeftValue(root))
+    print(Solution().countPairs(root, 3))

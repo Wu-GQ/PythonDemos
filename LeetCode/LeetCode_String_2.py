@@ -158,7 +158,30 @@ class Solution:
 
         return result
 
+    def restoreString(self, s: str, indices: list) -> str:
+        """
+        5472. 重新排列字符串
+        :see https://leetcode-cn.com/problems/shuffle-string/
+        """
+        result = [''] * len(indices)
+        for i in range(len(indices)):
+            result[indices[i]] = s[i]
+        return ''.join(result)
+
+    def minFlips(self, target: str) -> int:
+        """
+        5473. 灯泡开关 IV
+        :see https://leetcode-cn.com/problems/bulb-switcher-iv/
+        """
+        last = '0'
+        result = 0
+        for i in target:
+            if i != last:
+                result += 1
+                last = i
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.numSplits('abcd'))
+    print(s.minFlips('001011101'))
