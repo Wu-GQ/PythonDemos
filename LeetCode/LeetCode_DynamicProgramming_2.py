@@ -378,7 +378,36 @@ class Solution:
         return dp[N]
         # return not N & 1
 
+    def longestIncreasingPath(self, matrix: list) -> int:
+        """
+        329. 矩阵中的最长递增路径
+        :see https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/
+        """
+
+        def max_path(x: int, y: int) -> int:
+            if dp[x][y] > 1:
+                return dp[x][y]
+            result = 1
+            for i, j in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]:
+                if 0 <= i < len(matrix) and 0 <= j < len(matrix[i]) and matrix[i][j] < matrix[x][y]:
+                    result = max(result, max_path(i, j) + 1)
+            dp[x][y] = result
+            return result
+
+        if not matrix or not matrix[0]:
+            return 0
+        dp = [[1] * len(matrix[i]) for i in range(len(matrix))]
+        ans = 0
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                ans = max(ans, max_path(i, j))
+        return ans
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.divisorGame(1))
+    print(s.longestIncreasingPath([
+        [9, 9, 4],
+        [6, 6, 8],
+        [2, 1, 1]
+    ]))
