@@ -403,11 +403,24 @@ class Solution:
                 ans = max(ans, max_path(i, j))
         return ans
 
+    def isSubsequence(self, s: str, t: str) -> bool:
+        """
+        392. 判断子序列
+        :see https://leetcode-cn.com/problems/is-subsequence/
+        """
+        s = ' ' + s
+        t = ' ' + t
+        dp = [[False] * len(t) for _ in s]
+        for i in range(len(t)):
+            dp[0][i] = True
+        for i in range(1, len(s)):
+            for j in range(1, len(t)):
+                dp[i][j] = dp[i][j - 1]
+                if not dp[i][j] and s[i] == t[j]:
+                    dp[i][j] = dp[i - 1][j - 1]
+        return dp[-1][-1]
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.longestIncreasingPath([
-        [9, 9, 4],
-        [6, 6, 8],
-        [2, 1, 1]
-    ]))
+    print(s.isSubsequence('axc', 'ahbgdc'))
