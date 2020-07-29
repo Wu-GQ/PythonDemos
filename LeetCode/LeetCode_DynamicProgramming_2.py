@@ -428,8 +428,30 @@ class Solution:
 
         def bfs(point: tuple, target_list: list) -> dict:
             """ 始发点到目标列表中所有节点的最短距离，若不可达，则为float('inf') """
-            pass
-            return {}
+            target_set = set(target_list)
+            if point in target_set:
+                target_set.remove(point)
+            queue = [point]
+            checked = set()
+            distance_dict = {point: 0}
+            step = 0
+            while queue and target_set:
+                length = len(queue)
+                step += 1
+                while length > 0 and target_set:
+                    length -= 1
+                    x, y = queue.pop(0)
+                    checked.add((x, y))
+                    for i, j in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+                        if 0 <= i < len(maze) and 0 <= j < len(maze[i]) and maze[i][j] != '#' and (i, j) not in checked:
+                            next_point = (i, j)
+                            queue.append(next_point)
+                            if next_point in target_set:
+                                target_set.remove(next_point)
+                                distance_dict[next_point] = step
+            for i in target_set:
+                distance_dict[i] = float('inf')
+            return distance_dict
 
         # 1. 找到所有的关键点：起点、终点、石堆、机关
         start, end = (), ()
@@ -450,7 +472,7 @@ class Solution:
 
         # 3. 如果不存在机关，可以直达终点
         if not buttons:
-            return start_all_dict[end] if end in start_all_dict else -1
+            return start_all_dict[end] if end in start_all_dict and start_all_dict[end] != float('inf') else -1
 
         # 4. 任意机关到石堆 + 终点的最短距离
         buttons_stones_dict = {}
@@ -463,7 +485,7 @@ class Solution:
             # 5.1. 起点 -> 石堆 -> 该机关
             button_start_distance = float('inf')
             for stone in stones:
-                button_start_distance = min(button_start_distance, start_all_dict[stone] + buttons_stones_dict[stone])
+                button_start_distance = min(button_start_distance, start_all_dict[stone] + buttons_stones_dict[button][stone])
             if button in buttons_all_dict:
                 buttons_all_dict[button][start] = button_start_distance
             else:
@@ -471,25 +493,52 @@ class Solution:
 
             # 5.2. 该机关 -> 石堆 -> 另一机关
             for other in buttons:
-                # TODO: buttons_all_dict[other] 存在，但是 buttons_all_dict[other][button] 不存在
-                if other in buttons_all_dict:
-                    button_other_distance = float('inf')
-                    for stone in stones:
-                        button_other_distance = min(button_other_distance, buttons_stones_dict[button][stone] + buttons_stones_dict[other][stone])
-                    buttons_all_dict[button][other] = button_other_distance
+                if other in buttons_all_dict and button in buttons_all_dict[other]:
+                    continue
+                button_other_distance = float('inf')
+                for stone in stones:
+                    button_other_distance = min(button_other_distance, buttons_stones_dict[button][stone] + buttons_stones_dict[other][stone])
+                buttons_all_dict[button][other] = button_other_distance
+                if other not in buttons_all_dict:
                     buttons_all_dict[other] = {button: button_other_distance}
+                else:
+                    buttons_all_dict[other][button] = button_other_distance
 
             # 5.3. 该机关 -> 终点
-            buttons_all_dict[button][end] = buttons_stones_dict[end]
+            buttons_all_dict[button][end] = buttons_stones_dict[button][end]
 
         # 6. 确认每个机关皆可以到达起点和终点
         for button in buttons:
-            if buttons_stones_dict[button][start] == float('inf') or buttons_stones_dict[button][end] == float('inf'):
+            if buttons_all_dict[button][start] == float('inf') or buttons_all_dict[button][end] == float('inf'):
                 return -1
 
-        # 7.
+        # 7. 状态压缩，i-将已完成的任务置为1，未完成的任务置为0，j-当前在哪个机关
+        dp = [[float('inf')] * len(buttons) for _ in range(1 << len(buttons))]
+        for i in range(len(buttons)):
+            dp[1 << i][i] = buttons_all_dict[buttons[i]][start]
+
+        # 8. 动态规划，dp[i | 1 << k][k] = min(dp[i][j] + buttons_all_dict[buttons[j]][buttons[k]])，k-下一个机关
+        for i in range(1, 1 << len(buttons)):
+            for j in range(len(buttons)):
+                # 确认 j 机关在这个范围内
+                if i & (1 << j):
+                    for k in range(len(buttons)):
+                        # 确认 k 机关不在这个范围内
+                        if not (i & (1 << k)):
+                            next = i | (1 << k)
+                            dp[next][k] = min(dp[next][k], dp[i][j] + buttons_all_dict[buttons[j]][buttons[k]])
+
+        # 9. 走完所有的机关后，加上最后一个机关到终点的距离
+        result = float('inf')
+        all_buttons_status = (1 << len(buttons)) - 1
+        for i in range(len(buttons)):
+            result = min(result, dp[all_buttons_status][i] + buttons_all_dict[buttons[i]][end])
+        return result
 
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.isSubsequence('axc', 'ahbgdc'))
+    print(s.minimalSteps([
+        "..#..",
+        ".S#..",
+        "..#T#"]))
