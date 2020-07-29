@@ -216,7 +216,280 @@ class Solution:
 
         return dp[-1][-1]
 
+    def getKthMagicNumber(self, k: int) -> int:
+        """
+        面试题 17.09. 第 k 个数
+        :see https://leetcode-cn.com/problems/get-kth-magic-number-lcci/
+        """
+        # 考虑3个数列
+        # i:  0, 1, 2, 3, ...
+        # 3i: 1, 3, 9, 15, ...
+        # 5i: 1, 5, 10, 15, ...
+        # 7i: 1, 7, 14, 21, ...
+        # 如何合并这三个数列，并得到第 k 个小的数
+
+        three, five, seven = 0, 0, 0
+        dp = [1]
+        for i in range(k - 1):
+            num = min((dp[three] * 3, dp[five] * 5, dp[seven] * 7))
+            if num % 3 == 0:
+                three += 1
+            if num % 5 == 0:
+                five += 1
+            if num % 7 == 0:
+                seven += 1
+            dp.append(num)
+        # print(dp)
+        return dp[-1]
+
+    def nthUglyNumber(self, n: int) -> int:
+        """
+        264. 丑数 II
+        :see https://leetcode-cn.com/problems/ugly-number-ii/
+        """
+        # 与上面那题的解法相同
+        two, three, five = 0, 0, 0
+        dp = [1]
+        for _ in range(n - 1):
+            num = min((dp[two] * 2, dp[three] * 3, dp[five] * 5))
+            if num % 2 == 0:
+                two += 1
+            if num % 3 == 0:
+                three += 1
+            if num % 5 == 0:
+                five += 1
+            dp.append(num)
+        # print(dp)
+        return dp[-1]
+
+    def nthSuperUglyNumber(self, n: int, primes: list) -> int:
+        """
+        313. 超级丑数
+        :see https://leetcode-cn.com/problems/super-ugly-number/
+        """
+        # 与上面那题的解法相同
+        primes_length = len(primes)
+        primes_times = [0] * primes_length
+        dp = [1]
+
+        for _ in range(n - 1):
+            num = min([dp[primes_times[i]] * primes[i] for i in range(primes_length)])
+
+            for i in range(primes_length):
+                if num % primes[i] == 0:
+                    primes_times[i] += 1
+
+            dp.append(num)
+
+        return dp[-1]
+
+    def findLength(self, A: list, B: list) -> int:
+        """
+        718. 最长重复子数组
+        :see https://leetcode-cn.com/problems/maximum-length-of-repeated-subarray/
+        """
+        dp = [[0] * len(B) for _ in A]
+        result = 0
+        for i in range(len(A)):
+            for j in range(len(B)):
+                if A[i] == B[j]:
+                    dp[i][j] = dp[i - 1][j - 1] + 1 if i > 0 and j > 0 else 1
+                    result = max(result, dp[i][j])
+        # for i in dp:
+        #     print(i)
+        return result
+
+    def winnerSquareGame(self, n: int) -> bool:
+        """
+        5446. 三次操作后最大值与最小值的最小差
+        :see
+        """
+        # first[i] 表示先手从剩 i 个石子开始取时，能否获胜
+        # first[i] = or(second[i + j * j]), i + j * j <= n
+        # second[i] 表示后手从剩 i 个石子时开始取，能否获胜(若先手选择取 j * j 个石子)
+        # second[i] = first[i + j * j]
+        first = [False] * (n + 1)
+        for i in range(1, n + 1):
+            for j in range(1, n + 1):
+                if i < j * j:
+                    break
+                if not first[i - j * j]:
+                    first[i] = True
+                    break
+        return first[-1]
+
+    def respace(self, dictionary: list, sentence: str) -> int:
+        """
+        面试题 17.13. 恢复空格
+        :see https://leetcode-cn.com/problems/re-space-lcci/
+        """
+        length = len(sentence)
+        dp = [0] * (length + 1)
+        words = {i for i in dictionary if sentence.find(i) != -1}
+
+        for i in range(length):
+            dp[i + 1] = dp[i] + 1
+            for word in words:
+                if ((word_len := len(word)) <= i + 1) and sentence[:i + 1].endswith(word):
+                    dp[i + 1] = min(dp[i + 1], dp[i + 1 - word_len])
+        # print(dp)
+        return dp[-1]
+
+    def numTrees(self, n: int) -> int:
+        """
+        96. 不同的二叉搜索树
+        :see https://leetcode-cn.com/problems/unique-binary-search-trees/
+        """
+        # dp[n] 表示 n 个节点时可以组成的二叉搜索树
+        # 将 i 作为根节点，左子树有 i - 1 个节点，右子树有 n - i 个节点
+        # dp[i] = sum(dp[j - 1] * dp[i - j], 1 <= j <= i)
+        dp = [1, 1]
+        for i in range(2, n + 1):
+            total = 0
+            for j in range(1, i + 1):
+                total += dp[j - 1] * dp[i - j]
+            dp.append(total)
+        return dp[-1]
+
+    def divisorGame(self, N: int) -> bool:
+        """
+        1025. 除数博弈
+        :see https://leetcode-cn.com/problems/divisor-game/
+        """
+        '''
+        假设当前数字为n
+        A先手：
+        假设A选了i，i满足以上条件
+        A[n] = or(B[n - i]), 0 < i < N 且 N % i == 0
+        因为A选择最优，所以A需要遍历所有满足条件的i，只要一个B[n - i]为True，A[n]即为True
+        B后手:
+        B[n] = A[n - i]
+        
+        由于A赢则B输，B赢则A输，所以只需要一个dp即可同时表示A和B的状态
+        dp[n] = or(not dp[n - i]), 0 < i < N 且 N % i == 0
+        '''
+        dp = [False] * (N + 1)
+        for n in range(2, N + 1):
+            for i in range(1, n):
+                if n % i == 0 and not dp[n - i]:
+                    dp[n] = True
+                    break
+        # print(dp)
+        return dp[N]
+        # return not N & 1
+
+    def longestIncreasingPath(self, matrix: list) -> int:
+        """
+        329. 矩阵中的最长递增路径
+        :see https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/
+        """
+
+        def max_path(x: int, y: int) -> int:
+            if dp[x][y] > 1:
+                return dp[x][y]
+            result = 1
+            for i, j in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]:
+                if 0 <= i < len(matrix) and 0 <= j < len(matrix[i]) and matrix[i][j] < matrix[x][y]:
+                    result = max(result, max_path(i, j) + 1)
+            dp[x][y] = result
+            return result
+
+        if not matrix or not matrix[0]:
+            return 0
+        dp = [[1] * len(matrix[i]) for i in range(len(matrix))]
+        ans = 0
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                ans = max(ans, max_path(i, j))
+        return ans
+
+    def isSubsequence(self, s: str, t: str) -> bool:
+        """
+        392. 判断子序列
+        :see https://leetcode-cn.com/problems/is-subsequence/
+        """
+        s = ' ' + s
+        t = ' ' + t
+        dp = [[False] * len(t) for _ in s]
+        for i in range(len(t)):
+            dp[0][i] = True
+        for i in range(1, len(s)):
+            for j in range(1, len(t)):
+                dp[i][j] = dp[i][j - 1]
+                if not dp[i][j] and s[i] == t[j]:
+                    dp[i][j] = dp[i - 1][j - 1]
+        return dp[-1][-1]
+
+    def minimalSteps(self, maze: list) -> int:
+        """
+        LCP 13. 寻宝
+        :see https://leetcode-cn.com/problems/xun-bao/
+        """
+
+        def bfs(point: tuple, target_list: list) -> dict:
+            """ 始发点到目标列表中所有节点的最短距离，若不可达，则为float('inf') """
+            pass
+            return {}
+
+        # 1. 找到所有的关键点：起点、终点、石堆、机关
+        start, end = (), ()
+        stones, buttons = [], []
+        for i in range(len(maze)):
+            for j in range(len(maze[i])):
+                if maze[i][j] == 'M':
+                    buttons.append((i, j))
+                elif maze[i][j] == 'O':
+                    stones.append((i, j))
+                elif maze[i][j] == 'S':
+                    start = (i, j)
+                elif maze[i][j] == 'T':
+                    end = (i, j)
+
+        # 2. 起点到其它关键点的最短距离
+        start_all_dict = bfs(start, stones + buttons + [end])
+
+        # 3. 如果不存在机关，可以直达终点
+        if not buttons:
+            return start_all_dict[end] if end in start_all_dict else -1
+
+        # 4. 任意机关到石堆 + 终点的最短距离
+        buttons_stones_dict = {}
+        for button in buttons:
+            buttons_stones_dict[button] = bfs(button, stones + [end])
+
+        # 5. 任意机关到起点、其它机关、终点的最短距离
+        buttons_all_dict = {}
+        for button in buttons:
+            # 5.1. 起点 -> 石堆 -> 该机关
+            button_start_distance = float('inf')
+            for stone in stones:
+                button_start_distance = min(button_start_distance, start_all_dict[stone] + buttons_stones_dict[stone])
+            if button in buttons_all_dict:
+                buttons_all_dict[button][start] = button_start_distance
+            else:
+                buttons_all_dict[button] = {start: button_start_distance}
+
+            # 5.2. 该机关 -> 石堆 -> 另一机关
+            for other in buttons:
+                # TODO: buttons_all_dict[other] 存在，但是 buttons_all_dict[other][button] 不存在
+                if other in buttons_all_dict:
+                    button_other_distance = float('inf')
+                    for stone in stones:
+                        button_other_distance = min(button_other_distance, buttons_stones_dict[button][stone] + buttons_stones_dict[other][stone])
+                    buttons_all_dict[button][other] = button_other_distance
+                    buttons_all_dict[other] = {button: button_other_distance}
+
+            # 5.3. 该机关 -> 终点
+            buttons_all_dict[button][end] = buttons_stones_dict[end]
+
+        # 6. 确认每个机关皆可以到达起点和终点
+        for button in buttons:
+            if buttons_stones_dict[button][start] == float('inf') or buttons_stones_dict[button][end] == float('inf'):
+                return -1
+
+        # 7.
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minDifficulty([11, 111, 22, 222, 33, 333, 44, 444], 6))
+    print(s.isSubsequence('axc', 'ahbgdc'))
