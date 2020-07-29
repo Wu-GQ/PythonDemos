@@ -181,7 +181,76 @@ class Solution:
                 last = i
         return result
 
+    def romanToInt(self, s: str) -> int:
+        """
+        13. 罗马数字转整数
+        :see https://leetcode-cn.com/problems/roman-to-integer/
+        """
+        s += ' '
+        result = 0
+        index = 0
+        while index < len(s):
+            if s[index] == 'I':
+                if s[index + 1] == 'V':
+                    result += 4
+                    index += 2
+                elif s[index + 1] == 'X':
+                    result += 9
+                    index += 2
+                else:
+                    result += 1
+                    index += 1
+            elif s[index] == 'V':
+                result += 5
+                index += 1
+            elif s[index] == 'X':
+                if s[index + 1] == 'L':
+                    result += 40
+                    index += 2
+                elif s[index + 1] == 'C':
+                    result += 90
+                    index += 2
+                else:
+                    result += 10
+                    index += 1
+            elif s[index] == 'L':
+                result += 50
+                index += 1
+            elif s[index] == 'C':
+                if s[index + 1] == 'D':
+                    result += 400
+                    index += 2
+                elif s[index + 1] == 'M':
+                    result += 900
+                    index += 2
+                else:
+                    result += 100
+                    index += 1
+            elif s[index] == 'D':
+                result += 500
+                index += 1
+            elif s[index] == 'M':
+                result += 1000
+                index += 1
+            else:
+                index += 1
+        return result
+
+    def intToRoman(self, num: int) -> str:
+        """
+        12. 整数转罗马数字
+        :see https://leetcode-cn.com/problems/integer-to-roman/
+        """
+        num2ch_list = ((1000, 'M'), (900, 'CM'), (500, 'D'), (400, 'CD'), (100, 'C'), (90, 'XC'),
+                       (50, 'L'), (40, 'XL'), (10, 'X'), (9, 'IX'), (5, 'V'), (4, 'IV'), (1, 'I'))
+        result = []
+        for n, ch in num2ch_list:
+            while num >= n:
+                result.append(ch)
+                num -= n
+        return ''.join(result)
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minFlips('001011101'))
+    print(s.intToRoman(1994))

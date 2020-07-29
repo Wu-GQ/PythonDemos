@@ -82,7 +82,90 @@ class Solution:
             # print(i, result, stack)
         return result
 
+    def searchRange(self, nums: list, target: int) -> list:
+        """
+        34. 在排序数组中查找元素的第一个和最后一个位置
+        :see https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array/
+        """
+        # 仿bisect_left找左边界
+        left1, right1 = 0, len(nums)
+        while left1 < right1:
+            mid = left1 + (right1 - left1) // 2
+            if nums[mid] < target:
+                left1 = mid + 1
+            else:
+                right1 = mid
+
+        # 仿bisect_right找右边界
+        left2, right2 = 0, len(nums)
+        while left2 < right2:
+            mid = left2 + (right2 - left2) // 2
+            if nums[mid] <= target:
+                left2 = mid + 1
+            else:
+                right2 = mid
+
+        return [left1, left2 - 1] if left1 < left2 else [-1, -1]
+
+    def isValidSudoku(self, board: list) -> bool:
+        """
+        36. 有效的数独
+        :see https://leetcode-cn.com/problems/valid-sudoku/
+        """
+
+        def check(nums: list) -> bool:
+            nums.sort()
+            for i in range(1, len(nums)):
+                if nums[i] == nums[i - 1] and nums[i] != '.':
+                    # print(nums)
+                    return False
+            return True
+
+        # 校验每行
+        for row in board:
+            if not check(row[:]):
+                return False
+
+        # 校验每列
+        for j in range(9):
+            if not check([board[i][j] for i in range(9)]):
+                return False
+
+        # 校验每小格
+        for i in range(9):
+            x = i // 3 * 3 + 1
+            y = (3 * i + 1) % 9
+            # print(x, y)
+            if not check([board[x - 1][y - 1], board[x - 1][y], board[x - 1][y + 1],
+                          board[x][y - 1], board[x][y], board[x][y + 1],
+                          board[x + 1][y - 1], board[x + 1][y], board[x + 1][y + 1]]):
+                return False
+
+        return True
+
+    def combinationSum(self, candidates: list, target: int) -> list:
+        """
+        39. 组合总和
+        :see https://leetcode-cn.com/problems/combination-sum/
+        """
+
+        def backtrace(index: int, total: int, nums: list):
+            if total == target:
+                result.append(nums[:])
+                return
+            elif total > target:
+                return
+
+            for i in range(index, len(candidates)):
+                nums.append(candidates[i])
+                backtrace(i, total + candidates[i], nums)
+                nums.pop()
+
+        result = []
+        backtrace(0, 0, [])
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.numOfSubarrays([1, 3, 5]))
+    print(s.combinationSum([2, 3, 5], 8))
