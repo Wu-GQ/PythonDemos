@@ -165,7 +165,38 @@ class Solution:
         backtrace(0, 0, [])
         return result
 
+    def combinationSum2(self, candidates: list, target: int) -> list:
+        """
+        40. 组合总和 II
+        :see https://leetcode-cn.com/problems/combination-sum-ii/
+        """
+
+        def backtrace(index, total: int, nums: list):
+            # 终止条件
+            if total == target:
+                result.append(nums[:])
+                return
+            elif total > target:
+                return
+
+            for i in range(index, len(candidates)):
+                # 去重
+                if i > index and candidates[i] == candidates[i - 1]:
+                    continue
+                # 先加入这个值
+                nums.append(candidates[i])
+                # 回溯入口。注意，此处 i + 1 表示不能重复利用同一个数字，这是跟第39题的核心差别
+                backtrace(i + 1, total + candidates[i], nums)
+                # 这个值的回溯结束后，把这个值移除
+                nums.pop()
+
+        # 排序，以便回溯中的去重操作
+        candidates.sort()
+        result = []
+        backtrace(0, 0, [])
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.combinationSum([2, 3, 5], 8))
+    print(s.combinationSum2([2, 5, 2, 1, 2], 5))
