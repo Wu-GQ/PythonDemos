@@ -196,7 +196,47 @@ class Solution:
         backtrace(0, 0, [])
         return result
 
+    def smallestRange(self, nums: list) -> list:
+        """
+        632. 最小区间
+        :see https://leetcode-cn.com/problems/smallest-range-covering-elements-from-k-lists/
+        """
+        # 解题：思路将所有数组的数字升序放到一个大数组中，然后找到这个大数组中包含所有数组数字的最小区间即可
+        # 1. 实现所有数组的合并和排序
+        all_nums = []
+        for i in range(len(nums)):
+            for j in range(len(nums[i])):
+                all_nums.append((nums[i][j], i, j))
+        all_nums.sort()
+
+        # 2. 使用滑动窗口，找到包含所有数组数组的子数组
+        # 包左包右
+        left, right = 0, 0
+        # 用{数字所在数组: 该数组数字出现的次数}表示是否所有的数组都在这个all_nums[left:right+1]的子数组内
+        index_dict = {all_nums[0][1]: 1}
+
+        result = [all_nums[0][0], all_nums[-1][0]]
+        while left <= right:
+            # 右指针移动末尾时，结束即可
+            if right == len(all_nums) - 1:
+                break
+
+            # 右指针右移，对应的数组数字出现次数+1
+            right += 1
+            index_dict[all_nums[right][1]] = index_dict.get(all_nums[right][1], 0) + 1
+
+            # 左指针所在数组的数字若已经出现多次，则左指针右移
+            while left < right and index_dict[all_nums[left][1]] > 1:
+                index_dict[all_nums[left][1]] -= 1
+                left += 1
+
+            # 若此时窗口内的数字已包含所有数组，则更新result
+            if len(index_dict) == len(nums) and all_nums[right][0] - all_nums[left][0] < result[1] - result[0]:
+                result = [all_nums[left][0], all_nums[right][0]]
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.combinationSum2([2, 5, 2, 1, 2], 5))
+    print(s.smallestRange([[4, 10, 15, 24, 26], [0, 9, 12, 20], [5, 18, 22, 30]]))
