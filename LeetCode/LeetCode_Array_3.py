@@ -165,7 +165,115 @@ class Solution:
         backtrace(0, 0, [])
         return result
 
+    def countGoodTriplets(self, arr: list, a: int, b: int, c: int) -> int:
+        """
+        统计好三元组
+        :see
+        """
+        result = 0
+        for i in range(len(arr)):
+            for j in range(i + 1, len(arr)):
+                for k in range(j + 1, len(arr)):
+                    if abs(arr[i] - arr[j]) <= a and abs(arr[j] - arr[k]) <= b and abs(arr[i] - arr[k]) <= c:
+                        result += 1
+        return result
+
+    def getWinner(self, arr: list, k: int) -> int:
+        """
+        找出数组游戏的赢家
+        :see
+        """
+        times = 0
+        index = 0
+        for i in range(1, len(arr)):
+            if arr[i] < arr[index]:
+                times += 1
+            else:
+                times = 1
+                index = i
+
+            if times == k:
+                return arr[index]
+
+        return arr[index]
+
+    def maxSum(self, nums1: list, nums2: list) -> int:
+        """
+        最大得分
+        :see
+        """
+        num1_dict = {}
+        for i in range(len(nums1)):
+            num1_dict[nums1[i]] = i
+
+        nums2_dict = {}
+        for i in range(len(nums2)):
+            nums2_dict[nums2[i]] = i
+
+        index1 = 0
+        num1_s = 0
+        index2 = 0
+        num2_s = 0
+        while index1 < len(nums1) or index2 < len(nums2):
+            if index1 == len(nums1):
+                num2_s += nums2[index2]
+                index2 += 1
+            elif index2 == len(nums2):
+                num1_s += nums1[index1]
+                index1 += 1
+            elif nums1[index1] == nums2[index2]:
+                r = nums1[index1] + max(num1_s, num2_s)
+                num1_s = r
+                num2_s = r
+                index1 += 1
+                index2 += 1
+            elif nums1[index1] < nums2[index2]:
+                num1_s += nums1[index1]
+                index1 += 1
+            else:
+                num2_s += nums2[index2]
+                index2 += 1
+
+        return max(num1_s, num2_s) % (pow(10, 9) + 7)
+
+    def minSwaps(self, grid: list) -> int:
+        """
+        排布二进制网格的最少交换次数
+        :see
+        """
+        one_list = [0] * len(grid)
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                if grid[i][j] == 1:
+                    one_list[i] = j
+
+            if one_list[i] == len(grid[i]):
+                return -1
+
+        # print(one_list)
+
+        count = 0
+        index = 0
+        while index < len(one_list):
+            if one_list[index] > index:
+                tmp = index
+                for i in range(index + 1, len(one_list)):
+                    if one_list[i] <= index:
+                        tmp = i
+                        break
+                # print(tmp)
+                if tmp == index:
+                    return -1
+                count += tmp - index
+                a = one_list.pop(tmp)
+                one_list.insert(index, a)
+            # print(index, one_list)
+
+            index += 1
+
+        return count
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.combinationSum([2, 3, 5], 8))
+    print(s.minSwaps([[0, 1, 1, 0], [0, 1, 1, 0], [0, 1, 1, 0], [0, 1, 1, 0]]))
