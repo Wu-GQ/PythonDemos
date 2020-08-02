@@ -165,6 +165,77 @@ class Solution:
         backtrace(0, 0, [])
         return result
 
+    def combinationSum2(self, candidates: list, target: int) -> list:
+        """
+        40. 组合总和 II
+        :see https://leetcode-cn.com/problems/combination-sum-ii/
+        """
+
+        def backtrace(index, total: int, nums: list):
+            # 终止条件
+            if total == target:
+                result.append(nums[:])
+                return
+            elif total > target:
+                return
+
+            for i in range(index, len(candidates)):
+                # 去重
+                if i > index and candidates[i] == candidates[i - 1]:
+                    continue
+                # 先加入这个值
+                nums.append(candidates[i])
+                # 回溯入口。注意，此处 i + 1 表示不能重复利用同一个数字，这是跟第39题的核心差别
+                backtrace(i + 1, total + candidates[i], nums)
+                # 这个值的回溯结束后，把这个值移除
+                nums.pop()
+
+        # 排序，以便回溯中的去重操作
+        candidates.sort()
+        result = []
+        backtrace(0, 0, [])
+        return result
+
+    def smallestRange(self, nums: list) -> list:
+        """
+        632. 最小区间
+        :see https://leetcode-cn.com/problems/smallest-range-covering-elements-from-k-lists/
+        """
+        # 解题：思路将所有数组的数字升序放到一个大数组中，然后找到这个大数组中包含所有数组数字的最小区间即可
+        # 1. 实现所有数组的合并和排序
+        all_nums = []
+        for i in range(len(nums)):
+            for j in range(len(nums[i])):
+                all_nums.append((nums[i][j], i, j))
+        all_nums.sort()
+
+        # 2. 使用滑动窗口，找到包含所有数组数组的子数组
+        # 包左包右
+        left, right = 0, 0
+        # 用{数字所在数组: 该数组数字出现的次数}表示是否所有的数组都在这个all_nums[left:right+1]的子数组内
+        index_dict = {all_nums[0][1]: 1}
+
+        result = [all_nums[0][0], all_nums[-1][0]]
+        while left <= right:
+            # 右指针移动末尾时，结束即可
+            if right == len(all_nums) - 1:
+                break
+
+            # 右指针右移，对应的数组数字出现次数+1
+            right += 1
+            index_dict[all_nums[right][1]] = index_dict.get(all_nums[right][1], 0) + 1
+
+            # 左指针所在数组的数字若已经出现多次，则左指针右移
+            while left < right and index_dict[all_nums[left][1]] > 1:
+                index_dict[all_nums[left][1]] -= 1
+                left += 1
+
+            # 若此时窗口内的数字已包含所有数组，则更新result
+            if len(index_dict) == len(nums) and all_nums[right][0] - all_nums[left][0] < result[1] - result[0]:
+                result = [all_nums[left][0], all_nums[right][0]]
+
+        return result
+
     def countGoodTriplets(self, arr: list, a: int, b: int, c: int) -> int:
         """
         统计好三元组

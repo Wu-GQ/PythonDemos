@@ -250,7 +250,40 @@ class Solution:
                 num -= n
         return ''.join(result)
 
+    def multiply(self, num1: str, num2: str) -> str:
+        """
+        43. 字符串相乘
+        :see https://leetcode-cn.com/problems/multiply-strings/
+        """
+        num1 = num1[::-1]
+        num2 = num2[::-1]
+
+        result = [0] * (len(num1) + len(num2) + 1)
+        for i in range(len(num1)):
+            tmp = [0] * (len(num2) + 1)
+            carry = 0
+            for j in range(len(num2)):
+                r = int(num2[j]) * int(num1[i]) + carry
+                if r >= 10:
+                    carry = r // 10
+                    r %= 10
+                else:
+                    carry = 0
+                tmp[j] = r
+            tmp[len(num2)] = carry
+
+            for j in range(len(tmp)):
+                result[i + j] += tmp[j]
+                if result[i + j] >= 10:
+                    result[i + j + 1] += result[i + j] // 10
+                    result[i + j] %= 10
+
+        while result and result[-1] == 0:
+            result.pop()
+
+        return ''.join([str(i) for i in result[::-1]]) if result else '0'
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.intToRoman(1994))
+    print(s.multiply('586429', '0'))
