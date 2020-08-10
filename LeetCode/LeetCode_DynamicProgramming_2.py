@@ -535,10 +535,40 @@ class Solution:
             result = min(result, dp[all_buttons_status][i] + buttons_all_dict[buttons[i]][end])
         return result
 
+    def minCost(self, n: int, cuts: list) -> int:
+        """
+        1547. 切棍子的最小成本
+        :see https://leetcode-cn.com/problems/minimum-cost-to-cut-a-stick/
+        """
+        # dp[i][j] = (x, y)，i和j表示从第i段到第j段（包括第j段），x表示合并这几段的最小成本，y表示这几段的总长度
+        # dp[i][j] = (min(dp[i][k][0] + dp[i][k][1] + dp[k][j][0] + dp[k][j][1]), dp[i][k][1] + dp[k][j][1])
+        nums = []
+        old = 0
+        for i in cuts:
+            nums.append(i - old)
+            old = i
+        nums.append(n - old)
+        print(nums)
+
+        dp = [[(0, 0) for _ in nums] for _ in nums]
+        for i in range(len(nums)):
+            dp[i][i] = (0, nums[i])
+
+        for t in range(1, len(nums)):
+            for i in range(len(nums) - t):
+                j = t + i
+                dp[i][j] = (100000, 0)
+                for k in range(i, j):
+                    temp = dp[i][k][0] + dp[i][k][1] + dp[k][j][0] + dp[k][j][1]
+                    if temp < dp[i][j][0]:
+                        dp[i][j] = (temp, dp[i][k][1] + dp[k][j][1])
+
+        for i in dp:
+            print(i)
+
+        return dp[0][-1][0]
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minimalSteps([
-        "..#..",
-        ".S#..",
-        "..#T#"]))
+    print(s.minCost(7, [1, 3, 4, 5]))
