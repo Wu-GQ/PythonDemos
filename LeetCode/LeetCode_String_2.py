@@ -283,7 +283,28 @@ class Solution:
 
         return ''.join([str(i) for i in result[::-1]]) if result else '0'
 
+    def countBinarySubstrings(self, s: str) -> int:
+        """
+        696. 计数二进制子串
+        :see https://leetcode-cn.com/problems/count-binary-substrings/
+        """
+        nums = []
+        old, times = s[0], 0
+        for i in s:
+            if i == old:
+                times += 1
+            else:
+                nums.append(times)
+                old, times = i, 1
+        nums.append(times)
+
+        result = 0
+        for i in range(len(nums) - 1):
+            result += min(nums[i], nums[i + 1])
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.multiply('586429', '0'))
+    print(s.countBinarySubstrings('11111'))

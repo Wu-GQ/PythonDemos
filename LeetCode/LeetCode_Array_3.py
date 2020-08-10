@@ -344,7 +344,30 @@ class Solution:
 
         return count
 
+    def maxNonOverlapping(self, nums: list, target: int) -> int:
+        """
+        5471. 和为目标值的最大数目不重叠非空子数组数目
+        :see https://leetcode-cn.com/problems/maximum-number-of-non-overlapping-subarrays-with-sum-equals-target/
+        """
+        prefix_sum = 0
+        prefix_index_dict = {0: 0}
+        dp = [0] * (len(nums) + 1)
+        for i in range(len(nums)):
+            prefix_sum += nums[i]
+            dp[i + 1] = dp[i]
+            if prefix_sum - target in prefix_index_dict:
+                index = prefix_index_dict[prefix_sum - target]
+                dp[i + 1] = max(dp[i + 1], dp[index] + 1)
+            prefix_index_dict[prefix_sum] = i + 1
+        # print(prefix_index_dict)
+        # print(dp)
+
+        return dp[-1]
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minSwaps([[0, 1, 1, 0], [0, 1, 1, 0], [0, 1, 1, 0], [0, 1, 1, 0]]))
+    print(s.maxNonOverlapping([-2, 6, 6, 3, 5, 4, 1, 2, 8], 10))
+    print(s.maxNonOverlapping([-1, 3, 5, 1, 4, 2, -9], 6))
+    print(s.maxNonOverlapping([1, 1, 1, 1, 1], 2))
+    print(s.maxNonOverlapping([3, 0], 3))
