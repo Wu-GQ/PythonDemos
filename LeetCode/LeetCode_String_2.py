@@ -326,7 +326,45 @@ class Solution:
 
         return max_times <= k
 
+    def minInsertions(self, s: str) -> int:
+        """
+        1541. 平衡括号字符串的最少插入次数
+        :see https://leetcode-cn.com/problems/minimum-insertions-to-balance-a-parentheses-string/
+        """
+        # 遇到左括号+2，遇到右括号-1，
+        # 分情况讨论，balance可能的值为0、奇数、非0偶数
+        # 1. balance=0
+        # (1) 遇到左括号，balance=2
+        # (2) 遇到右括号，需要插入一个左括号，并使balance+=1
+        # 2. balance=奇数
+        # (1) 遇到左括号，需要插入一个右括号，并使balance+=1
+        # (2) 遇到右括号，balance-=1
+        # 3. balance=非0偶数
+        # (1) 遇到左括号，balance+=2
+        # (2) 遇到右括号，balance-=1
+        balance = 0
+        result = 0
+        for i in s:
+            if balance == 0:
+                if i == '(':
+                    balance += 2
+                else:
+                    result += 1
+                    balance += 1
+            elif balance % 2 == 1:
+                if i == '(':
+                    result += 1
+                    balance += 1
+                else:
+                    balance -= 1
+            else:
+                if i == '(':
+                    balance += 2
+                else:
+                    balance -= 1
+        return result + balance
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.canConvertString('aab', 'bbb', 27))
+    print(s.minInsertions('()()))'))
