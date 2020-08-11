@@ -304,7 +304,29 @@ class Solution:
 
         return result
 
+    def canConvertString(self, s: str, t: str, k: int) -> bool:
+        """
+        1540. K 次操作转变字符串
+        :see https://leetcode-cn.com/problems/can-convert-string-in-k-moves/
+        """
+        if len(s) != len(t):
+            return False
+
+        times_list = [0] * 26
+        for i in range(len(s)):
+            diff = ord(t[i]) - ord(s[i])
+            if diff < 0:
+                diff += 26
+            times_list[diff] += 1
+
+        max_times = 0
+        for i in range(1, len(times_list)):
+            if times_list[i] > 0:
+                max_times = max(max_times, (times_list[i] - 1) * 26 + i)
+
+        return max_times <= k
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.countBinarySubstrings('11111'))
+    print(s.canConvertString('aab', 'bbb', 27))
