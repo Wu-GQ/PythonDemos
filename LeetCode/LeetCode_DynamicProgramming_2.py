@@ -540,8 +540,10 @@ class Solution:
         1547. 切棍子的最小成本
         :see https://leetcode-cn.com/problems/minimum-cost-to-cut-a-stick/
         """
+        # 把切棍子问题，转换成合并棍子的问题，然后用区间动归
         # dp[i][j] = (x, y)，i和j表示从第i段到第j段（包括第j段），x表示合并这几段的最小成本，y表示这几段的总长度
-        # dp[i][j] = (min(dp[i][k][0] + dp[i][k][1] + dp[k][j][0] + dp[k][j][1]), dp[i][k][1] + dp[k][j][1])
+        # dp[i][j] = (min(dp[i][k][0] + dp[i][k][1] + dp[k+1][j][0] + dp[k+1][j][1]), dp[i][k][1] + dp[k+1][j][1])
+        cuts.sort()
         nums = []
         old = 0
         for i in cuts:
@@ -550,25 +552,21 @@ class Solution:
         nums.append(n - old)
         print(nums)
 
-        dp = [[(0, 0) for _ in nums] for _ in nums]
+        dp = [[(-1, 0) for _ in nums] for _ in nums]
         for i in range(len(nums)):
             dp[i][i] = (0, nums[i])
 
         for t in range(1, len(nums)):
             for i in range(len(nums) - t):
                 j = t + i
-                dp[i][j] = (100000, 0)
                 for k in range(i, j):
-                    temp = dp[i][k][0] + dp[i][k][1] + dp[k][j][0] + dp[k][j][1]
-                    if temp < dp[i][j][0]:
-                        dp[i][j] = (temp, dp[i][k][1] + dp[k][j][1])
-
-        for i in dp:
-            print(i)
+                    temp = dp[i][k][0] + dp[i][k][1] + dp[k + 1][j][0] + dp[k + 1][j][1]
+                    if dp[i][j][0] < 0 or temp < dp[i][j][0]:
+                        dp[i][j] = (temp, dp[i][k][1] + dp[k + 1][j][1])
 
         return dp[0][-1][0]
 
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minCost(7, [1, 3, 4, 5]))
+    print(s.minCost(9, [5, 6, 1, 4, 2]))
