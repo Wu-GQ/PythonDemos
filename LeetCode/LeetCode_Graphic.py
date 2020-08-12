@@ -3,6 +3,12 @@ import string
 from queue import PriorityQueue
 
 
+class Node:
+    def __init__(self, val=0, neighbors=[]):
+        self.val = val
+        self.neighbors = neighbors
+
+
 class Solution:
     def ladderLength(self, beginWord: str, endWord: str, wordList: list) -> int:
         """
@@ -1029,6 +1035,31 @@ class Solution:
         checked = [0] * n
         dfs(0)
         return result
+
+    def cloneGraph(self, node: Node) -> Node:
+        """
+        133. 克隆图
+        :see https://leetcode-cn.com/problems/clone-graph/
+        """
+
+        def create_node(n: Node) -> Node:
+            if not n:
+                return n
+            if n.val in node_dict:
+                return node_dict[n.val]
+
+            new_node = Node(n.val, [])
+            node_dict[n.val] = new_node
+
+            node_list = []
+            for i in n.neighbors:
+                node_list.append(create_node(i))
+            new_node.neighbors = node_list
+
+            return new_node
+
+        node_dict = {}
+        return create_node(node)
 
 
 if __name__ == '__main__':
