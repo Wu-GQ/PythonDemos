@@ -364,7 +364,31 @@ class Solution:
                     balance -= 1
         return result + balance
 
+    def longestAwesome(self, s: str) -> int:
+        """
+        1542. 找出最长的超赞子字符串
+        :see https://leetcode-cn.com/problems/find-longest-awesome-substring/submissions/
+        """
+        # 用二进制来表示当前数字数量的奇偶个数
+        num = 0
+        num_dict = {0: -1}
+        result = 0
+        for i in range(len(s)):
+            num ^= 1 << int(s[i])
+            if num in num_dict:
+                result = max(result, i - num_dict[num])
+
+            for j in range(10):
+                tmp = num ^ (1 << j)
+                if tmp in num_dict:
+                    result = max(result, i - num_dict[tmp])
+
+            if num not in num_dict:
+                num_dict[num] = i
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minInsertions('()()))'))
+    print(s.longestAwesome('343481'))
