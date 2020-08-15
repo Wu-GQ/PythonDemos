@@ -770,7 +770,54 @@ class Solution:
 
         return dp[0][-1][0]
 
+    def removeBoxes(self, boxes: list) -> int:
+        """
+        546. 移除盒子
+        :see https://leetcode-cn.com/problems/remove-boxes/
+        """
+
+        # PS：很难，看不懂就再去看次题解吧，第一次先按照代码抄一遍
+        # 对于每个盒子，有两种选择
+        # 1. 直接把相邻相同的全部移除
+        # 2. 把不相邻的盒子合并后一起移除，在这之前，先移除破坏相邻的所有盒子
+        #
+        # dfs(i, j, k) 表示
+        # 当前处理的区间 [l, r], 目的是要移除区间最右边的盒子也就是box[r]
+        # k 表示该区间外，即在区间右侧，有连续k个和box[r]相同颜色的盒子可以一起删除
+        # f[i][j][k] 表示该操作的最大收益
+
+        def dfs(l: int, r: int, k: int) -> int:
+            # [l, r]区间内, 目前能够删除k个与 b[r]相同颜色盒子的的最大收益
+            if l > r:
+                return 0
+
+            # k 说明 b[r] 后面有 k 个和 b[r] 相同的值
+            # 也就是能连续删除 k + 1 个 b[r]
+            while l < r and boxes[r] == boxes[r - 1]:
+                r -= 1
+                k += 1
+
+            # 若已经有答案，直接返回
+            if dp[l][r][k] > 0:
+                return dp[l][r][k]
+
+            # 决策1：直接删除
+            # 删除 k + 1 个，递归处理前面的区间[l, r - 1]
+            dp[l][r][k] = dfs(l, r - 1, 0) + (k + 1) ** 2
+
+            # 决策2：在 [l, r-1] 区间找到和 b[r] 相同颜色的盒子，合并起来一起删除
+            for i in range(l, r):
+                if boxes[i] == boxes[r]:
+                    # 若找到了相同颜色的盒子，将 [l, r - 1] 分成 [l, i] 和 [i + 1, r - 1]
+                    dp[l][r][k] = max(dp[l][r][k], dfs(l, i, k + 1) + dfs(i + 1, r - 1, 0))
+
+            return dp[l][r][k]
+
+        n = len(boxes)
+        dp = [[[0 for _ in range(n)] for _ in range(n)] for _ in range(n)]
+        return dfs(0, n - 1, 0)
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minCost(9, [5, 6, 1, 4, 2]))
+    print(s.removeBoxes([1, 3, 2, 2, 2, 3, 4, 3, 1]))
