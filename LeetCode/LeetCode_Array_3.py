@@ -344,6 +344,22 @@ class Solution:
 
         return count
 
+    def findKthPositive(self, arr: list, k: int) -> int:
+        """
+        5468. 第 k 个缺失的正整数
+        :see https://leetcode-cn.com/problems/kth-missing-positive-number/
+        """
+        index = 1
+        for i in range(len(arr)):
+            while arr[i] != index:
+                k -= 1
+                if k == 0:
+                    return index
+                index += 1
+            index += 1
+
+        return index + k - 1 if index > 1 else index + k
+
 
 if __name__ == '__main__':
     s = Solution()

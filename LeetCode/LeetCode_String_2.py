@@ -283,7 +283,41 @@ class Solution:
 
         return ''.join([str(i) for i in result[::-1]]) if result else '0'
 
+    def makeGood(self, s: str) -> str:
+        """
+        1544. 整理字符串
+        :see https://leetcode-cn.com/problems/make-the-string-great/
+        """
+        string_list = list(s)
+        while True:
+            times = 0
+            index = 0
+            while index < len(string_list) - 1:
+                if string_list[index] != string_list[index + 1] and (
+                        string_list[index].upper() == string_list[index + 1] or string_list[index].lower() == string_list[index + 1]):
+                    a = string_list.pop(index + 1)
+                    b = string_list.pop(index)
+                    times += 1
+                    print(a, b)
+                else:
+                    index += 1
+            if times == 0:
+                break
+            print(string_list)
+        return ''.join(string_list)
+
+    def findKthBit(self, n: int, k: int) -> str:
+        """
+        1545. 找出第 N 个二进制字符串中的第 K 位
+        :see https://leetcode-cn.com/problems/find-kth-bit-in-nth-binary-string/
+        """
+        s = [0]
+        for i in range(1, n):
+            s = s + [1] + [1 - j for j in s[::-1]]
+            # print(s)
+        return str(s[k - 1])
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.multiply('586429', '0'))
+    print(s.findKthBit(4, 11))
