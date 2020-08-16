@@ -283,6 +283,111 @@ class Solution:
 
         return ''.join([str(i) for i in result[::-1]]) if result else '0'
 
+    def countBinarySubstrings(self, s: str) -> int:
+        """
+        696. 计数二进制子串
+        :see https://leetcode-cn.com/problems/count-binary-substrings/
+        """
+        nums = []
+        old, times = s[0], 0
+        for i in s:
+            if i == old:
+                times += 1
+            else:
+                nums.append(times)
+                old, times = i, 1
+        nums.append(times)
+
+        result = 0
+        for i in range(len(nums) - 1):
+            result += min(nums[i], nums[i + 1])
+
+        return result
+
+    def canConvertString(self, s: str, t: str, k: int) -> bool:
+        """
+        1540. K 次操作转变字符串
+        :see https://leetcode-cn.com/problems/can-convert-string-in-k-moves/
+        """
+        if len(s) != len(t):
+            return False
+
+        times_list = [0] * 26
+        for i in range(len(s)):
+            diff = ord(t[i]) - ord(s[i])
+            if diff < 0:
+                diff += 26
+            times_list[diff] += 1
+
+        max_times = 0
+        for i in range(1, len(times_list)):
+            if times_list[i] > 0:
+                max_times = max(max_times, (times_list[i] - 1) * 26 + i)
+
+        return max_times <= k
+
+    def minInsertions(self, s: str) -> int:
+        """
+        1541. 平衡括号字符串的最少插入次数
+        :see https://leetcode-cn.com/problems/minimum-insertions-to-balance-a-parentheses-string/
+        """
+        # 遇到左括号+2，遇到右括号-1，
+        # 分情况讨论，balance可能的值为0、奇数、非0偶数
+        # 1. balance=0
+        # (1) 遇到左括号，balance=2
+        # (2) 遇到右括号，需要插入一个左括号，并使balance+=1
+        # 2. balance=奇数
+        # (1) 遇到左括号，需要插入一个右括号，并使balance+=1
+        # (2) 遇到右括号，balance-=1
+        # 3. balance=非0偶数
+        # (1) 遇到左括号，balance+=2
+        # (2) 遇到右括号，balance-=1
+        balance = 0
+        result = 0
+        for i in s:
+            if balance == 0:
+                if i == '(':
+                    balance += 2
+                else:
+                    result += 1
+                    balance += 1
+            elif balance % 2 == 1:
+                if i == '(':
+                    result += 1
+                    balance += 1
+                else:
+                    balance -= 1
+            else:
+                if i == '(':
+                    balance += 2
+                else:
+                    balance -= 1
+        return result + balance
+
+    def longestAwesome(self, s: str) -> int:
+        """
+        1542. 找出最长的超赞子字符串
+        :see https://leetcode-cn.com/problems/find-longest-awesome-substring/submissions/
+        """
+        # 用二进制来表示当前数字数量的奇偶个数
+        num = 0
+        num_dict = {0: -1}
+        result = 0
+        for i in range(len(s)):
+            num ^= 1 << int(s[i])
+            if num in num_dict:
+                result = max(result, i - num_dict[num])
+
+            for j in range(10):
+                tmp = num ^ (1 << j)
+                if tmp in num_dict:
+                    result = max(result, i - num_dict[tmp])
+
+            if num not in num_dict:
+                num_dict[num] = i
+
+        return result
+
     def makeGood(self, s: str) -> str:
         """
         1544. 整理字符串
