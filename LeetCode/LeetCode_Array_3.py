@@ -380,7 +380,46 @@ class Solution:
 
         return index + k - 1 if index > 1 else index + k
 
+    def maxDistance(self, position: list, m: int) -> int:
+        """
+        1552. 两球之间的磁力
+        :see https://leetcode-cn.com/problems/magnetic-force-between-two-balls/
+        """
+        # 对position进行排序
+        position.sort()
+
+        low = 0
+        high = position[-1]
+        print('->', low, high)
+        while low < high:
+            # 使用二分法开始测试最多可以放几个球
+            mid = (low + high) // 2
+
+            # 以mid作为间距，来推测可以放多少个球
+            count = 1
+            old = position[0]
+            for i in range(1, len(position)):
+                if position[i] - old >= mid:
+                    count += 1
+                    old = position[i]
+
+                if count > m:
+                    break
+
+            # print(mid, count)
+
+            # 根据可放的count数量，来改变间距。可放的球数量count大于等于m，说明间距过小，应该增大间距，反之则减少
+            if count >= m:
+                low = mid + 1
+            else:
+                high = mid
+
+            # print('->', low, high)
+
+        return low - 1
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minSwaps([[0, 1, 1, 0], [0, 1, 1, 0], [0, 1, 1, 0], [0, 1, 1, 0]]))
+    print(s.maxDistance(
+        [269826447, 974181916, 225871443, 189215924, 664652743, 592895362, 754562271, 335067223, 996014894, 510353008, 48640772, 228945137], 3))
