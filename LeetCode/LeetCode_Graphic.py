@@ -1061,7 +1061,58 @@ class Solution:
         node_dict = {}
         return create_node(node)
 
+    def updateBoard(self, board: list, click: list) -> list:
+        """
+        529. 扫雷游戏
+        :see https://leetcode-cn.com/problems/minesweeper/
+        """
+        # 确认点击的地方是否为地雷，是则直接结束
+        click_x, click_y = click
+        if board[click_x][click_y] == 'M':
+            board[click_x][click_y] = 'X'
+            return board
+
+        # 用来存储某坐标附近的地雷数量
+        num_board = [[0 for _ in i] for i in board]
+
+        # 找到所有的地雷'M'，更新地雷周围一圈的地板数字
+        for i in range(len(board)):
+            for j in range(len(board[i])):
+                if board[i][j] == 'M':
+                    num_board[i][j] = -1
+                    for x, y in [(i - 1, j - 1), (i - 1, j), (i - 1, j + 1), (i, j - 1), (i, j + 1), (i + 1, j - 1), (i + 1, j), (i + 1, j + 1)]:
+                        if 0 <= x < len(board) and 0 <= y < len(board[i]) and board[x][y] != 'M':
+                            num_board[x][y] += 1
+
+        # 若点击的地方为大于0的数字，则只改变这个点击位置的字母即可
+        if num_board[click_x][click_y] > 0:
+            board[click_x][click_y] = str(num_board[click_x][click_y])
+            return board
+
+        # 若点击位置的数字为0，则需要从这个坐标开始dfs/bfs，翻出附近所有的白块和第一次遍历遇见的数字
+        checked = {(click_x, click_y)}
+        queue = [(click_x, click_y)]
+        while queue:
+            node_x, node_y = queue.pop(0)
+            if num_board[node_x][node_y] == 0:
+                board[node_x][node_y] = 'B'
+            elif num_board[node_x][node_y] > 0:
+                board[node_x][node_y] = str(num_board[node_x][node_y])
+                continue
+
+            for i, j in [(node_x - 1, node_y - 1), (node_x - 1, node_y), (node_x - 1, node_y + 1), (node_x, node_y - 1), (node_x, node_y + 1),
+                         (node_x + 1, node_y - 1), (node_x + 1, node_y), (node_x + 1, node_y + 1)]:
+                if 0 <= i < len(board) and 0 <= j < len(board[i]) and (i, j) not in checked:
+                    queue.append((i, j))
+                    checked.add((i, j))
+
+        return board
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.countSubTrees(7, [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]], 'aaabaaa'))
+    ans = s.updateBoard(
+        [['E', 'E', 'E', 'E', 'E'], ['E', 'E', 'E', 'E', 'E'], ['E', 'E', 'E', 'E', 'E'], ['E', 'E', 'E', 'E', 'E'], ['E', 'E', 'E', 'E', 'E']],
+        [3, 2])
+    for i in ans:
+        print(i)
