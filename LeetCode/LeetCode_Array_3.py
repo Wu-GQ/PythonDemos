@@ -418,8 +418,45 @@ class Solution:
 
         return low - 1
 
+    def judgePoint24(self, nums: list) -> bool:
+        """
+        679. 24 点游戏
+        :see https://leetcode-cn.com/problems/24-game/
+        """
+
+        def four(nums: list):
+            for i in range(len(nums)):
+                for j in range(i + 1, len(nums)):
+                    left = []
+                    for k in range(len(nums)):
+                        if k != i and k != j:
+                            left.append(nums[k])
+
+                    if three(left + [nums[i] + nums[j]]) or three(left + [nums[i] - nums[j]]) or three(left + [nums[j] - nums[i]]) or three(
+                            left + [nums[i] * nums[j]]) or (nums[j] != 0 and three(left + [nums[i] / nums[j]])) or (
+                            nums[i] != 0 and three(left + [nums[j] / nums[i]])):
+                        return True
+            return False
+
+        def three(nums: list):
+            print(f'three: {nums}')
+            for i in range(len(nums)):
+                for j in range(i + 1, len(nums)):
+                    left = nums[3 - i - j]
+                    if two(left, nums[i] + nums[j]) or two(left, nums[i] - nums[j]) or two(left, nums[j] - nums[i]) or two(left,
+                                                                                                                           nums[i] * nums[j]) or (
+                            nums[j] != 0 and two(left, nums[i] / nums[j])) or (nums[i] != 0 and two(left, nums[j] / nums[i])):
+                        return True
+            return False
+
+        def two(a, b):
+            print(f'two: {a}, {b}')
+            return a + b == 24 or a - b == 24 or b - a == 24 or a * b == 24 or (b != 0 and abs(a / b - 24) < 0.00001) or (
+                    a != 0 and abs(b / a - 24) < 0.00001)
+
+        return four(nums)
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.maxDistance(
-        [269826447, 974181916, 225871443, 189215924, 664652743, 592895362, 754562271, 335067223, 996014894, 510353008, 48640772, 228945137], 3))
+    print(s.judgePoint24([3, 3, 8, 8]))
