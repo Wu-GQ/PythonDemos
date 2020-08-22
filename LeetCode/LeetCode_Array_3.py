@@ -456,7 +456,21 @@ class Solution:
 
         return four(nums)
 
+    def minOperations(self, nums: list) -> int:
+        """
+        5481. 得到目标数组的最少函数调用次数
+        :param nums:
+        :return:
+        """
+        result = 0
+        max_length = 0
+        for i in nums:
+            s = bin(i)
+            max_length = max(max_length, len(s))
+            result += s.count('1')
+        return result + max_length - 3
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.judgePoint24([3, 3, 8, 8]))
+    print(s.minOperations([1, 5]))

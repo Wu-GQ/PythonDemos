@@ -1108,11 +1108,57 @@ class Solution:
 
         return board
 
+    def findSmallestSetOfVertices(self, n: int, edges: list) -> list:
+        """
+        5480. 可以到达所有点的最少点数目
+        :param n:
+        :param edges:
+        :return:
+        """
+        nums = [0] * n
+        for o, i in edges:
+            nums[i] += 1
+        result = []
+        for i in range(n):
+            if nums[i] == 0:
+                result.append(i)
+        return result
+
+    def containsCycle(self, grid: list) -> bool:
+        """
+        5482. 二维网格图中探测环
+        :param grid:
+        :return:
+        """
+
+        def dfs_by_stack(a, b, ch: str) -> bool:
+            stack = [(a, b, 0)]
+            while stack:
+                x, y, index = stack.pop()
+                grid[x][y] = f'{grid[x][y]}{index}'
+                for i, j in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]:
+                    if 0 <= i < len(grid) and 0 <= j < len(grid[i]):
+                        if grid[i][j] == ch:
+                            # 如果只是字母且字母相同，则视为未走过的格子，并在该格子后加上编号
+                            stack.append((i, j, index + 1))
+                        elif grid[i][j][0] == ch:
+                            # 如果格子不是纯字母且首字母相同，则说明这个格子之前走过，那么计算两个格子之间的步差
+                            step = int(grid[i][j][1:])
+                            if index - step >= 3:
+                                return True
+            return False
+
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                if grid[i][j].isalpha() and dfs_by_stack(i, j, grid[i][j]):
+                    return True
+
+        for i in grid:
+            print(i)
+
+        return False
+
 
 if __name__ == '__main__':
     s = Solution()
-    ans = s.updateBoard(
-        [['E', 'E', 'E', 'E', 'E'], ['E', 'E', 'E', 'E', 'E'], ['E', 'E', 'E', 'E', 'E'], ['E', 'E', 'E', 'E', 'E'], ['E', 'E', 'E', 'E', 'E']],
-        [3, 2])
-    for i in ans:
-        print(i)
+    print(s.containsCycle([["a", "a", "a", "a"], ["a", "b", "b", "a"], ["a", "b", "b", "a"], ["a", "a", "a", "a"]]))
