@@ -1,3 +1,6 @@
+from functools import lru_cache
+
+
 class Solution:
 
     def minScoreTriangulation(self, A: list) -> int:
@@ -817,7 +820,69 @@ class Solution:
         dp = [[[0 for _ in range(n)] for _ in range(n)] for _ in range(n)]
         return dfs(0, n - 1, 0)
 
+    def stoneGameV(self, stoneValue: list) -> int:
+        """
+        5498. 石子游戏 V
+        :see https://leetcode-cn.com/problems/stone-game-v/
+        """
+        ''' 动态规划解法，超时
+        # 前缀和，i到j的前缀和为p_sum_list[j + 1]-p_sum_list[i]
+        p_sum_list = [0]
+        for i in stoneValue:
+            p_sum_list.append(p_sum_list[-1] + i)
+
+        # dp[i][j]表示从i开始到j为止(包括j),可获得的最大分数
+        # dp[i][j] = max(i到k的和较小 ? dp[i][k] + 线段和 : dp[k][j] + 线段和)
+        dp = [[0] * len(stoneValue) for _ in stoneValue]
+        for i in range(len(stoneValue) - 1):
+            dp[i][i + 1] = min(stoneValue[i], stoneValue[i + 1])
+
+        for t in range(2, len(stoneValue)):
+            for i in range(len(stoneValue) - t):
+                j = t + i
+
+                for k in range(i, j + 1):
+                    left = p_sum_list[k] - p_sum_list[i]
+                    right = p_sum_list[j + 1] - p_sum_list[k]
+                    if left < right:
+                        dp[i][j] = max(dp[i][j], dp[i][k - 1] + left)
+                    elif left > right:
+                        dp[i][j] = max(dp[i][j], dp[k][j] + right)
+                    else:
+                        dp[i][j] = max(dp[i][j], max(dp[i][k - 1], dp[k][j]) + left)
+
+        return 0
+        '''
+        # 记忆化递归
+        # 前缀和，i到j的前缀和为p_sum_list[j + 1]-p_sum_list[i]
+        p_sum_list = [0]
+        for i in stoneValue:
+            p_sum_list.append(p_sum_list[-1] + i)
+
+        @lru_cache(None)
+        def dfs(start: int, end: int) -> int:
+            """ [start, end]区间内的最大得分 """
+            if start >= end:
+                return 0
+            elif start + 1 == end:
+                return min(stoneValue[start], stoneValue[end])
+
+            value = 0
+            for k in range(start, end + 1):
+                left = p_sum_list[k] - p_sum_list[start]
+                right = p_sum_list[end + 1] - p_sum_list[k]
+                if left < right:
+                    value = max(value, dfs(start, k - 1) + left)
+                elif left > right:
+                    value = max(value, dfs(k, end) + right)
+                else:
+                    value = max(value, max(dfs(start, k - 1), dfs(k, end)) + left)
+            return value
+
+        return dfs(0, len(stoneValue) - 1)
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.removeBoxes([1, 3, 2, 2, 2, 3, 4, 3, 1]))
+    # print(s.stoneGameV([1, 1, 2]))
+    print(s.stoneGameV([98, 77, 24, 49, 6, 12, 2, 44, 51, 96]))
