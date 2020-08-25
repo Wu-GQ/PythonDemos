@@ -779,6 +779,21 @@ class Solution:
         factorial_list = [0, 1, 2, 6, 24, 120, 720, 5040, 40320]
         return get_permutation([i for i in range(1, n + 1)], k)
 
+    def thousandSeparator(self, n: int) -> str:
+        """
+        5479. 千位分隔数
+        :param n:
+        :return:
+        """
+        if n == 0:
+            return '0'
+        a = []
+        while n > 0:
+            a.append(str(n % 1000).zfill(3))
+            n //= 1000
+        a[-1] = str(int(a[-1]))
+        return '.'.join(a[::-1])
+
 
 if __name__ == '__main__':
-    print(Solution().getPermutation(3, 3))
+    print(Solution().thousandSeparator(50000))

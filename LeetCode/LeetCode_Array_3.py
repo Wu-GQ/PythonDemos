@@ -418,6 +418,103 @@ class Solution:
 
         return low - 1
 
+    def judgePoint24(self, nums: list) -> bool:
+        """
+        679. 24 点游戏
+        :see https://leetcode-cn.com/problems/24-game/
+        """
+
+        def four(nums: list):
+            for i in range(len(nums)):
+                for j in range(i + 1, len(nums)):
+                    left = []
+                    for k in range(len(nums)):
+                        if k != i and k != j:
+                            left.append(nums[k])
+
+                    if three(left + [nums[i] + nums[j]]) or three(left + [nums[i] - nums[j]]) or three(left + [nums[j] - nums[i]]) or three(
+                            left + [nums[i] * nums[j]]) or (nums[j] != 0 and three(left + [nums[i] / nums[j]])) or (
+                            nums[i] != 0 and three(left + [nums[j] / nums[i]])):
+                        return True
+            return False
+
+        def three(nums: list):
+            print(f'three: {nums}')
+            for i in range(len(nums)):
+                for j in range(i + 1, len(nums)):
+                    left = nums[3 - i - j]
+                    if two(left, nums[i] + nums[j]) or two(left, nums[i] - nums[j]) or two(left, nums[j] - nums[i]) or two(left,
+                                                                                                                           nums[i] * nums[j]) or (
+                            nums[j] != 0 and two(left, nums[i] / nums[j])) or (nums[i] != 0 and two(left, nums[j] / nums[i])):
+                        return True
+            return False
+
+        def two(a, b):
+            print(f'two: {a}, {b}')
+            return a + b == 24 or a - b == 24 or b - a == 24 or a * b == 24 or (b != 0 and abs(a / b - 24) < 0.00001) or (
+                    a != 0 and abs(b / a - 24) < 0.00001)
+
+        return four(nums)
+
+    def minOperations(self, nums: list) -> int:
+        """
+        5481. 得到目标数组的最少函数调用次数
+        :param nums:
+        :return:
+        """
+        result = 0
+        max_length = 0
+        for i in nums:
+            s = bin(i)
+            max_length = max(max_length, len(s))
+            result += s.count('1')
+        return result + max_length - 3
+
+    def mostVisited(self, n: int, rounds: list) -> list:
+        """
+        5495. 圆形赛道上经过次数最多的扇区
+        :see https://leetcode-cn.com/problems/most-visited-sector-in-a-circular-track/
+        """
+        nums = [0] * (n + 1)
+        nums[rounds[0]] += 1
+        for i in range(1, len(rounds)):
+            if rounds[i] > rounds[i - 1]:
+                for j in range(rounds[i - 1] + 1, rounds[i] + 1):
+                    nums[j] += 1
+            else:
+                for j in range(rounds[i - 1] + 1, n + 1):
+                    nums[j] += 1
+                for j in range(1, rounds[i] + 1):
+                    nums[j] += 1
+
+        sorted_nums = sorted([(nums[i], i) for i in range(len(nums))])[::-1]
+        # print(sorted_nums)
+        result = [sorted_nums[0][1]]
+        for i in range(1, len(sorted_nums)):
+            if sorted_nums[i][0] == sorted_nums[0][0]:
+                result.append(sorted_nums[i][1])
+            else:
+                break
+        return sorted(result)
+
+    def maxCoins(self, piles: list) -> int:
+        """
+        5496. 你可以获得的最大硬币数目
+        :see https://leetcode-cn.com/problems/maximum-number-of-coins-you-can-get/
+        """
+        piles.sort(reverse=True)
+        result = 0
+        for i in range(2 * len(piles) // 3):
+            if i % 2 == 1:
+                result += piles[i]
+        return result
+
+    def findLatestStep(self, arr: list, m: int) -> int:
+        """
+        5497. 查找大小为 M 的最新分组
+        :see https://leetcode-cn.com/problems/find-latest-group-of-size-m/
+        """
+
     def findSubsequences(self, nums: list) -> list:
         """
         491. 递增子序列
