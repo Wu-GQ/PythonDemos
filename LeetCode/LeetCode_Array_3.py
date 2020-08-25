@@ -418,8 +418,29 @@ class Solution:
 
         return low - 1
 
+    def findSubsequences(self, nums: list) -> list:
+        """
+        491. 递增子序列
+        :see https://leetcode-cn.com/problems/increasing-subsequences/
+        """
+        # 用字典存以数字key结尾的所有递增子序列
+        all_list = {}
+
+        for i in nums:
+            # 把单个数字也当做一个递增子序列，以便后续计算
+            new_list = [[i]]
+            # 遍历字典中所有结尾数字key小于等于当前数字的情况，将其所有递增子序列加上当前数字
+            for j in all_list:
+                if j <= i:
+                    for k in all_list[j]:
+                        new_list.append(k + [i])
+            # 此时的new_list，就是遍历到i时，以数字i结尾的所有递增子序列
+            all_list[i] = new_list
+
+        # 从下标1开始的原因是，去掉由单个数字组成的递增子序列
+        return [all_list[i][j] for i in all_list for j in range(1, len(all_list[i]))]
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.maxDistance(
-        [269826447, 974181916, 225871443, 189215924, 664652743, 592895362, 754562271, 335067223, 996014894, 510353008, 48640772, 228945137], 3))
+    print(s.findSubsequences([4, 6, 7, 7]))
