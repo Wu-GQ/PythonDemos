@@ -1158,7 +1158,53 @@ class Solution:
 
         return False
 
+    def findItinerary(self, tickets: list) -> list:
+        """
+        332. 重新安排行程
+        :see https://leetcode-cn.com/problems/reconstruct-itinerary/
+        """
+
+        def backtrace(node: str, paths: list) -> bool:
+            nonlocal result
+            # print(node, paths)
+            if len(paths) == len(tickets) + 1:
+                result = paths
+                return True
+
+            if node in out_dict:
+                for i in out_dict[node]:
+                    if (node, i) in all_paths and all_paths[(node, i)] > 0:
+                        all_paths[(node, i)] -= 1
+                        r = backtrace(i, paths + [i])
+                        all_paths[(node, i)] += 1
+
+                        if r:
+                            return True
+            return False
+
+        all_paths = {}
+        out_dict = {}
+        for o, i in tickets:
+            all_paths[(o, i)] = all_paths.get((o, i), 0) + 1
+            if o in out_dict:
+                out_dict[o].append(i)
+            else:
+                out_dict[o] = [i]
+
+        for i in out_dict:
+            out_dict[i].sort()
+
+        result = []
+        backtrace('JFK', ['JFK'])
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.containsCycle([["a", "a", "a", "a"], ["a", "b", "b", "a"], ["a", "b", "b", "a"], ["a", "a", "a", "a"]]))
+    # print(s.findItinerary(
+    #     [['JFK', 'A'], ['JFK', 'B'], ['B', 'JFK'], ['JFK', 'B'], ['B', 'JFK'], ['JFK', 'C'], ['C', 'JFK'], ['JFK', 'C'], ['C', 'JFK']]))
+    # print(s.findItinerary([["MUC", "LHR"], ["JFK", "MUC"], ["SFO", "SJC"], ["LHR", "SFO"]]))
+    # print(s.findItinerary([["JFK", "SFO"], ["JFK", "ATL"], ["SFO", "ATL"], ["ATL", "JFK"], ["ATL", "SFO"]]))
+    print(s.findItinerary(
+        [["EZE", "AXA"], ["TIA", "ANU"], ["ANU", "JFK"], ["JFK", "ANU"], ["ANU", "EZE"], ["TIA", "ANU"], ["AXA", "TIA"], ["TIA", "JFK"],
+         ["ANU", "TIA"], ["JFK", "TIA"]]))
