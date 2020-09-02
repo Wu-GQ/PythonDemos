@@ -422,7 +422,15 @@ class Solution:
             # print(s)
         return str(s[k - 1])
 
+    def isNumber(self, s: str) -> bool:
+        """
+        剑指 Offer 20. 表示数值的字符串
+        :see https://leetcode-cn.com/problems/biao-shi-shu-zhi-de-zi-fu-chuan-lcof/
+        """
+        import re
+        return re.match(r'^\s*[+-]?((\d+(\.\d*)?)|(\.\d+))([eE][+-]?\d+)?\s*$', s) is not None
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.findKthBit(4, 11))
+    print(s.isNumber('+100'))
