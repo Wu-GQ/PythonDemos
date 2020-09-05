@@ -755,29 +755,32 @@ class Solution:
         :see https://leetcode-cn.com/problems/permutation-sequence/
         """
 
-        def get_permutation(nums: list, k: int) -> str:
-            """ 递归求第k个排列 """
+        def get_permutation(nums: list, kK: int) -> str:
+            """ 递归求第 kK 个排列，从 0 开始计算第 1 个排列 """
             '''
-            1. 以nums=[1,2,3,4]，k=9为例
+            1. 以nums=[1,2,3,4]，kK=9为例
                 1) 若固定的第一位数字为1，则其它三个数字自由排序，有3!=6种可能，小于6，因此第一位必然不可能为1
                 2) 若固定的第一位数字位2，则其它三个数字自由排序，有3!=6种可能，6 + 6 > 9，因此第一位数字为2
-            2. 当第一位数字2固定后，nums=[1,3,4]，k=9-6=3
+            2. 当第一位数字2固定后，nums=[1,3,4]，kK=9-6=3
                 1) 若固定的第二位数字为1，则其它两个数字自由排序，有2!=2种可能，小于3，因此第二位必然不可能为1
                 2) 若固定的第二位数字为3，则其它两个数字自由排序，有2种可能，2 + 2 > 3，因此第二位数字为3
-            3. 当第二位数字固定后，nums=[1,4]，k=3-2=1
+            3. 当第二位数字固定后，nums=[1,4]，kK=3-2=1
                 1) 若固定的第三位数字为1，则剩余一个数字，有1种可能，1=1，因此第三位数字为1
-            4. 当第三位数字固定后，nums=[4]，k=1-1=0
+            4. 当第三位数字固定后，nums=[4]，kK=1-1=0
                 1) 若固定的第四位数字为4，则剩余零个数字，有0种可能，0=0，因此第四位数字未4
             '''
             if not nums:
                 return ''
+            # value 表示 len(nums) - 1 个数字，可以组成多少种组合
             value = factorial_list[len(nums) - 1]
-            index = k // value if k > value > 0 else 0
-            return f'{nums.pop(index)}{get_permutation(nums, k - index * value)}'
+            # index 表示取第 index 个数字
+            index = kK // value if value > 0 else 0
+            # 将第 index 个数字取出后，剩下的继续递归
+            return f'{nums.pop(index)}{get_permutation(nums, kK - index * value)}'
 
         # 阶乘列表
         factorial_list = [0, 1, 2, 6, 24, 120, 720, 5040, 40320]
-        return get_permutation([i for i in range(1, n + 1)], k)
+        return get_permutation([i for i in range(1, n + 1)], k - 1)
 
     def thousandSeparator(self, n: int) -> str:
         """
@@ -796,4 +799,8 @@ class Solution:
 
 
 if __name__ == '__main__':
-    print(Solution().thousandSeparator(50000))
+    factorial_list = [0, 1, 2, 6, 24, 120, 720, 5040, 40320]
+    for i in range(5):
+        print(f'---- {i} ----')
+        for j in range(1, factorial_list[i] + 1):
+            print(Solution().getPermutation(i, j))
