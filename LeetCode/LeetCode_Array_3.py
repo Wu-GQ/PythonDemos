@@ -537,7 +537,35 @@ class Solution:
         # 从下标1开始的原因是，去掉由单个数字组成的递增子序列
         return [all_list[i][j] for i in all_list for j in range(1, len(all_list[i]))]
 
+    def findLengthOfShortestSubarray(self, arr: list) -> int:
+        """
+        5493. 删除最短的子数组使剩余数组有序
+        :see https://leetcode-cn.com/problems/shortest-subarray-to-be-removed-to-make-array-sorted/
+        """
+        import bisect
+        # 右侧最长升序子序列
+        right_begin = 0
+        for i in range(len(arr) - 1, 0, -1):
+            if arr[i] < arr[i - 1]:
+                right_begin = i
+                break
+
+        # 删除左侧所有数字的长度
+        result = right_begin
+        if result == 0:
+            return 0
+
+        # 左侧最长上升子序列
+        for i in range(0, len(arr)):
+            if i > 0 and arr[i] < arr[i - 1]:
+                break
+            # 二分查找当前数字在右侧可插入的位置，当前数字的下标和插入位置之间的数字可被删除
+            index = bisect.bisect_left(arr, arr[i], right_begin)
+            result = min(result, index - 1 - i)
+            print(arr[i], index, result)
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.findSubsequences([4, 6, 7, 7]))
+    print(s.findLengthOfShortestSubarray([1, 2, 3]))
