@@ -565,7 +565,77 @@ class Solution:
             print(arr[i], index, result)
         return result
 
+    def numTriplets(self, nums1: list, nums2: list) -> int:
+        """
+        5508. 数的平方等于两数乘积的方法数
+        :see https://leetcode-cn.com/problems/number-of-ways-where-square-of-number-is-equal-to-product-of-two-numbers/
+        """
+        num1_dict = {}
+        num2_dict = {}
+
+        for i in nums1:
+            num1_dict[i] = num1_dict.get(i, 0) + 1
+        for i in nums2:
+            num2_dict[i] = num2_dict.get(i, 0) + 1
+
+        result = 0
+
+        for i in num1_dict:
+            product = i * i
+            for j in num2_dict:
+                if product % j == 0:
+                    other = product // j
+                    if i > other:
+                        continue
+                    if j == other:
+                        result += num1_dict[i] * num2_dict[j] * (num2_dict[j] - 1) // 2
+                    elif other in num2_dict:
+                        result += num1_dict[i] * num2_dict[j] * num2_dict[other]
+                    # print(i, j, other, num1_dict[i], num2_dict[j], num2_dict.get(other, 0))
+
+        for j in num2_dict:
+            product = j * j
+            for i in num1_dict:
+                if product % i == 0:
+                    other = product // i
+                    if j > other:
+                        continue
+                    if i == other:
+                        result += num2_dict[j] * num1_dict[i] * (num1_dict[i] - 1) // 2
+                    elif other in num1_dict:
+                        result += num2_dict[j] * num1_dict[i] * num1_dict[other]
+                    # print(j, i, other, num2_dict[j], num1_dict[i], num1_dict.get(other, 0))
+
+        return result
+
+    def minCost(self, s: str, cost: list) -> int:
+        """
+        5509. 避免重复字母的最小删除成本
+        :see https://leetcode-cn.com/problems/minimum-deletion-cost-to-avoid-repeating-letters/
+        """
+        # 加入最后一个字符，减少边界条件的处理
+        s += ' '
+        cost.append(0)
+
+        result = 0
+        max_cost = cost[0]
+        total_cost = cost[0]
+
+        for i in range(1, len(s)):
+            if s[i] != s[i - 1]:
+                # 当前字符将发生改变
+                result += total_cost - max_cost
+
+                # 重置计数
+                max_cost = cost[i]
+                total_cost = cost[i]
+            else:
+                max_cost = max(max_cost, cost[i])
+                total_cost += cost[i]
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.findLengthOfShortestSubarray([1, 2, 3]))
+    print(s.minCost('aabaa', [1, 2, 3, 4, 1]))
