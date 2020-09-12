@@ -430,7 +430,96 @@ class Solution:
         import re
         return re.match(r'^\s*[+-]?((\d+(\.\d*)?)|(\.\d+))([eE][+-]?\d+)?\s*$', s) is not None
 
+    def calculate(self, s: str) -> int:
+        """
+        LCP 17. 速算机器人
+        :see
+        """
+        x, y = 1, 0
+        for i in s:
+            if i == 'A':
+                x = 2 * x + y
+            else:
+                y = 2 * y + x
+        return x + y
+
+    def minimumOperations(self, leaves: str) -> int:
+        """
+        LCP 19. 秋叶收藏集
+        :see
+        """
+        '''
+        1. 对两侧的字符进行特殊处理。这样做的好处可以减少边界情况的处理
+            1) 如果一侧为y，则需要变为r，调整次数至少为1；如果两侧都是y，那么至少为2
+        2. 从最简单的思路去想，要变成ryr的形式，需要先选中一个区间，这个区间内所有字母都为y，
+           那么要把区间左侧和右侧的y变成r，把区间中间的r都变成y
+        3. 接下来就是化简。
+            1) 最佳的情况下，选中的区间的左侧必然是一组连续y的开始，右侧恰好是一组连续y的结束。
+            2) 此时，需要调整的次数为: 区间左侧y的数量 + 区间内r的数量 + 区间右侧y的数量
+            3) 假设 count[i] 为下标i(包括下标i)左侧y的数量，区间为 start ~ end (区间包括start, 不包括end)，那么
+                区间左侧y的数量: count[start] - 1
+                区间内部r的数量: (end - start - 1) - (count[end] - count[start])
+                区间右侧y的数量: count[-1] - count[end]
+                需要调整的数量为: count[-1] - 2 + (2 * count[start] - start) - (2 * count[end] - end)
+            4) 上面那个式子，可以将 2 * count[i] - i 实为一个变量 f[i]，那么这个问题就转化为
+                求最小调整的数量为 count[-1] - 2 + min(f[start] - f[end])，
+                其中，start 为一组连续的y开始的坐标，end为一组连续的y结束的下一个坐标
+        '''
+        # 首尾特殊处理
+        result = 0
+        if leaves[0] == 'y':
+            result += 1
+        if leaves[-1] == 'y':
+            result += 1
+
+        # 每一组连续的y的下标
+        yellow_index = []
+        start = -1
+        # 左侧y的数量 * 2 - 下标
+        arr = [float('inf')]
+        y_count = 0
+
+        # 因为首尾已经处理，所以从下标1开始算
+        for i in range(1, len(leaves) - 1):
+            if leaves[i] == 'y':
+                if i == 1 or leaves[i - 1] == 'r':
+                    start = i
+                y_count += 1
+            elif leaves[i] == 'r' and start != -1 and leaves[i - 1] == 'y':
+                yellow_index.append((start, i))
+            arr.append(2 * y_count - i)
+
+        # 对最后一组y进行处理
+        if leaves[len(leaves) - 2] == 'y':
+            yellow_index.append((start, len(leaves) - 1))
+        arr.append(2 * y_count - len(leaves) + 1)
+
+        # 当有一组连续的y时
+        if len(yellow_index) == 1:
+            return result
+        # 当一个y都没有时
+        if len(yellow_index) == 0:
+            return result + 1
+
+        # 保持 f[start] 最小，遍历 f[end]，求 f[start] - f[end] 最小的差值
+        min_func = float('inf')
+        rr = float('inf')
+        for i in range(len(yellow_index)):
+            start = yellow_index[i][0]
+            end = yellow_index[i][1]
+
+            min_func = min(min_func, arr[start])
+            rr = min(rr, min_func - arr[end])
+            # print(i, start, end, min_func, rr)
+
+        return result + y_count - 2 + rr
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.isNumber('+100'))
+    # print(s.minimumOperations('rryryyyr'))
+    print(s.minimumOperations('rrryyyrryyyrr'))
+    # print(s.minimumOperations('rryryyyrryyrr'))
+    # print(s.minimumOperations('yrrrrrryyy'))
+    # print(s.minimumOperations('ryyyrrrrrr'))
+    # print(s.minimumOperations('ryryryryry'))
