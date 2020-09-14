@@ -667,6 +667,40 @@ class Solution:
             result += bisect.bisect_right(drinks, left)
         return result
 
+    def unhappyFriends(self, n: int, preferences: list, pairs: list) -> int:
+        """
+        1583. 统计不开心的朋友
+        :see https://leetcode-cn.com/problems/count-unhappy-friends/
+        """
+        # 预处理
+        preferences_dict_list = []
+        for arr in preferences:
+            preferences_dict_list.append({arr[i]: n - i for i in range(len(arr))})
+
+        pairs_dict = {}
+        for i in pairs:
+            pairs_dict[i[0]] = i[1]
+            pairs_dict[i[1]] = i[0]
+
+        result = 0
+        # 从0开始遍历
+        for x in range(n):
+            # 找到 x 的配对 y
+            y = pairs_dict[x]
+            # 找到 x 的亲密关系中，所有比 y 亲密的对象 u
+            for u in preferences[x]:
+                if u == y:
+                    break
+                # 找到 u 的配对 v
+                v = pairs_dict[u]
+
+                # 比较 u - x 的亲密关系和 u - v 的亲密关系
+                if preferences_dict_list[u][x] > preferences_dict_list[u][v]:
+                    result += 1
+                    break
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
