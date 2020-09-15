@@ -22,6 +22,7 @@ class Solution:
         result += self.intermediate_traversal(root.right)
         '''
 
+        ''' # 迭代
         result = []
         stack = [root]
         node = root
@@ -37,6 +38,32 @@ class Solution:
 
             # 开始遍历右节点
             node = node.right
+        '''
+
+        # Morris 中序遍历
+        result = []
+        node = root
+        while node:
+            if not node.left:
+                # node 无左孩子，则输出 node 的值，node = node.right；
+                result.append(node.val)
+                node = node.right
+            else:
+                # node 有左孩子，则找到左子树的最右的节点作为 next
+                # 当遍历完一颗左子树后，next.right用来指向左子树遍历完成后的第一个节点，以继续遍历中间节点和右子树
+                next = node.left
+                while next.right and next.right != node:
+                    next = next.right
+
+                if next.right:
+                    # 若 next.right 为空，将 next.right 指向 node 自身
+                    next.right = None
+                    result.append(node.val)
+                    node = node.right
+                else:
+                    # 若 next.right 不为空,说明左子树已遍历完成
+                    next.right = node
+                    node = node.left
 
         return result
 
