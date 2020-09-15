@@ -16,9 +16,27 @@ class Solution:
         if root is None:
             return []
 
+        ''' # 递归
         result = self.intermediate_traversal(root.left)
         result.append(root.val)
         result += self.intermediate_traversal(root.right)
+        '''
+
+        result = []
+        stack = [root]
+        node = root
+        while stack:
+            # 左节点走到头
+            while node:
+                stack.append(node)
+                node = node.left
+
+            # 输出中间节点
+            node = stack.pop()
+            result.append(node.val)
+
+            # 开始遍历右节点
+            node = node.right
 
         return result
 
@@ -58,11 +76,11 @@ if __name__ == '__main__':
     s = Solution()
 
     root = TreeNode(1)
-    root.left = TreeNode(3)
-    # root.right = TreeNode(3)
+    root.left = TreeNode(2)
+    root.right = TreeNode(3)
     # # #
-    # root.left.left = TreeNode(4)
-    root.left.right = TreeNode(2)
+    root.left.left = TreeNode(4)
+    root.left.right = TreeNode(5)
 
     # root.left.left.left = TreeNode(8)
     # root.left.left.right = TreeNode(9)
@@ -71,10 +89,10 @@ if __name__ == '__main__':
     # root.left.right.left = TreeNode(10)
     # root.left.right.right = TreeNode(11)
     #
-    # root.right.left = TreeNode(6)
+    root.right.left = TreeNode(6)
     # root.right.right = TreeNode(7)
 
     # root.right.left.right = TreeNode(7)
 
-    print(s.recoverTree(root))
+    # print(s.recoverTree(root))
     print(s.intermediate_traversal(root))
