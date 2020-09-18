@@ -402,35 +402,56 @@ class Solution:
 
     def permute(self, nums: list) -> list:
         """
-        全排列
+        46. 全排列
         :see https://leetcode-cn.com/problems/permutations/
         """
+
+        def backtrace(index: int):
+            if index == len(nums):
+                result.append(nums[:])
+                return
+
+            for i in range(index, len(nums)):
+                nums[index], nums[i] = nums[i], nums[index]
+                backtrace(index + 1)
+                nums[index], nums[i] = nums[i], nums[index]
+
         if len(nums) == 0:
             return []
         result = []
+        backtrace(0)
+        return result
 
-        def permutation(nums: list, start_index: int):
-            if len(nums) == start_index:
-                result.append(nums.copy())
+    def permuteUnique(self, nums: list) -> list:
+        """
+        47. 全排列 II
+        :see https://leetcode-cn.com/problems/permutations-ii/
+        """
 
-            used_index_set = set()
-            for i in range(start_index, len(nums)):
-                if nums[i] in used_index_set:
+        def backtrace(index: int):
+            if index == len(nums):
+                result.append(nums[:])
+                return
+
+            # 将结果放到nums的前半部分，后半部分继续回溯
+            checked = set()
+            for i in range(index, len(nums)):
+                if nums[i] in checked:
                     continue
                 else:
-                    used_index_set.add(nums[i])
+                    checked.add(nums[i])
 
-                # 把第i位放到最前面，然后对剩下的部分进行全排列
-                nums[start_index], nums[i] = nums[i], nums[start_index]
+                nums[index], nums[i] = nums[i], nums[index]
+                backtrace(index + 1)
+                nums[index], nums[i] = nums[i], nums[index]
 
-                print(f'start_index: {start_index}, i: {i}, result: {nums}')
+        # 当没有数字的时候需要特殊处理，否则会返回[[]]
+        if not nums:
+            return []
 
-                # 注释掉下面这句递归的语句，再理解代码原理比较简单
-                permutation(nums, start_index + 1)
-
-                nums[start_index], nums[i] = nums[i], nums[start_index]
-
-        permutation(nums, 0)
+        # 回溯找出所有不重复的全排列
+        result = []
+        backtrace(0)
 
         return result
 
