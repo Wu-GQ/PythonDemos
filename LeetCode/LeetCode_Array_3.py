@@ -701,7 +701,21 @@ class Solution:
 
         return result
 
+    def findRedundantConnection(self, edges: list) -> list:
+        """
+        684. 冗余连接
+        :see https://leetcode-cn.com/problems/redundant-connection/
+        """
+        from LeetCode.Class.UnionFindClass import UnionFindClass
+        union = UnionFindClass(len(edges) + 1)
+        for u, v in edges:
+            if union.find_parent(u) == union.find_parent(v):
+                return [u, v]
+            union.union(u, v)
+            # print(union.father)
+        return []
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.breakfastNumber([2, 1, 1], [8, 9, 5, 1], 9))
+    print(s.findRedundantConnection([[1, 2], [1, 3], [2, 3]]))
