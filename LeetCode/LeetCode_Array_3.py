@@ -715,7 +715,40 @@ class Solution:
             # print(union.father)
         return []
 
+    def isMagic(self, target: list) -> bool:
+        """
+        魔术排列
+        :param target:
+        :return:
+        """
+        l, r = 1, len(target)
+        while l <= r:
+            k = (l + r) // 2
+
+            first_error = False
+            arr = [i for i in range(1, len(target) + 1)]
+            count = 0
+            while arr:
+                arr = arr[1::2] + arr[::2]
+
+                length = min(k, len(arr))
+                if target[count * k:count * k + length] == arr[:length]:
+                    if not first_error:
+                        l = k + 1
+                        first_error = True
+                    arr = arr[length:]
+                else:
+                    if not first_error:
+                        r = k - 1
+                    break
+                count += 1
+
+            if not arr:
+                return True
+
+        return False
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.findRedundantConnection([[1, 2], [1, 3], [2, 3]]))
+    print(s.isMagic([2, 4, 1, 3, 5]))
