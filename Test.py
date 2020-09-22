@@ -14,7 +14,7 @@ def sort(a: list, x):
 
 if __name__ == '__main__':
     # print(sort([0, 1, 2, 3, 5, 6], 4))
-    a = {1: 2}
-    b = {1: 1}
-    a.update(b)
-    print(1 | 4)
+    result = [1]
+    for i in range(1, 27):
+        result.append(result[-1] * i)
+    print(result)

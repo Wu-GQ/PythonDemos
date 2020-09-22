@@ -797,6 +797,35 @@ class Solution:
         a[-1] = str(int(a[-1]))
         return '.'.join(a[::-1])
 
+    def paintingPlan(self, n: int, k: int) -> int:
+        """
+        黑白方格画
+        :param n:
+        :param k:
+        :return:
+        """
+
+        def combine(n: int, m: int) -> int:
+            """ 从n个元素中取m个元素的个数 """
+            fact = [1, 1, 2, 6, 24, 120, 720]
+            return fact[n] // (fact[n - m] * fact[m])
+
+        if k == 0 or k == n * n:
+            return 1
+
+        result = 0
+        for row in range(n + 1):
+            left = k - row * n
+            if left < 0:
+                break
+
+            if left == 0 or left % (n - row) == 0:
+                col = left // (n - row) if left > 0 else 0
+                print(row, col, combine(n, row) * combine(n, col))
+                result += combine(n, row) * combine(n, col)
+
+        return result
+
 
 if __name__ == '__main__':
     factorial_list = [0, 1, 2, 6, 24, 120, 720, 5040, 40320]
