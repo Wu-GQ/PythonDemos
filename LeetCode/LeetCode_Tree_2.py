@@ -98,16 +98,48 @@ class Solution:
 
         print(self.intermediate_traversal(root))
 
+    def minCameraCover(self, root: TreeNode) -> int:
+        """
+        968. 监控二叉树
+        :see https://leetcode-cn.com/problems/binary-tree-cameras/
+        """
+
+        def min_camera_count_of_subtree(node: TreeNode) -> (int, int, int):
+            """
+            判断以当前节点作为根节点的子树，所需的最小摄像头数量
+            :param node: 子树的根节点
+            :return: 子树根节点没有监控时、有监控没摄像头时、有监控有摄像头时的最小摄像头数量
+            """
+            if not node:
+                return 0, 0, 1
+
+            left_non_monitor, left_non_camera, left_camera = min_camera_count_of_subtree(node.left)
+            right_non_monitor, right_non_camera, right_camera = min_camera_count_of_subtree(node.right)
+
+            # 根节点没有监控时，最小摄像头数量为左右节点有监控没摄像头时的数量之和
+            non_monitor = left_non_camera + right_non_camera
+
+            # 根节点有监控没摄像头时
+            non_camera = min(left_camera + min(right_camera, right_non_camera), min(left_camera, left_non_camera) + right_camera)
+
+            # 如果根节点有监控
+            camera = min(left_non_monitor, left_non_camera, left_camera) + min(right_non_monitor, right_non_camera, right_camera) + 1
+
+            # print(node.val, non_monitor, non_camera, camera)
+            return non_monitor, non_camera, camera
+
+        return min(min_camera_count_of_subtree(root)[1:])
+
 
 if __name__ == '__main__':
     s = Solution()
 
     root = TreeNode(1)
-    root.left = TreeNode(2)
-    root.right = TreeNode(3)
+    # root.left = TreeNode(2)
+    # root.right = TreeNode(3)
     # # #
-    root.left.left = TreeNode(4)
-    root.left.right = TreeNode(5)
+    # root.left.left = TreeNode(3)
+    # root.left.right = TreeNode(4)
 
     # root.left.left.left = TreeNode(8)
     # root.left.left.right = TreeNode(9)
@@ -116,10 +148,10 @@ if __name__ == '__main__':
     # root.left.right.left = TreeNode(10)
     # root.left.right.right = TreeNode(11)
     #
-    root.right.left = TreeNode(6)
+    # root.right.left = TreeNode(6)
     # root.right.right = TreeNode(7)
 
     # root.right.left.right = TreeNode(7)
 
     # print(s.recoverTree(root))
-    print(s.intermediate_traversal(root))
+    print(s.minCameraCover(root))
