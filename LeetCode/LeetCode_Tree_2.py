@@ -1,3 +1,6 @@
+from LeetCode.LeetCode_Tree import TreeNode
+
+
 class TreeNode:
 
     def __init__(self, val=0, left=None, right=None):
@@ -130,16 +133,57 @@ class Solution:
 
         return min(min_camera_count_of_subtree(root)[1:])
 
+    def treeToDoublyList(self, root: TreeNode) -> TreeNode:
+        """
+        剑指 Offer 36. 二叉搜索树与双向链表
+        :see https://leetcode-cn.com/problems/er-cha-sou-suo-shu-yu-shuang-xiang-lian-biao-lcof/
+        """
+
+        def inorder(node: TreeNode):
+            nonlocal head_before, last
+            if not node:
+                return
+
+            inorder(node.left)
+
+            print(last.val, node.val)
+
+            # 确定头结点
+            if not head_before.right:
+                head_before.right = node
+
+            # 连接上一节点
+            node.left = last
+            last.right = node
+
+            # 更新上一节点
+            last = node
+
+            inorder(node.right)
+
+        if not root:
+            return root
+
+        head_before = TreeNode(0)
+        last = head_before
+        inorder(root)
+
+        # 连接首尾节点
+        last.right = head_before.right
+        head_before.right.left = last
+
+        return last.right
+
 
 if __name__ == '__main__':
     s = Solution()
 
-    root = TreeNode(1)
-    # root.left = TreeNode(2)
-    # root.right = TreeNode(3)
+    root = TreeNode(4)
+    root.left = TreeNode(2)
+    root.right = TreeNode(5)
     # # #
-    # root.left.left = TreeNode(3)
-    # root.left.right = TreeNode(4)
+    root.left.left = TreeNode(1)
+    root.left.right = TreeNode(3)
 
     # root.left.left.left = TreeNode(8)
     # root.left.left.right = TreeNode(9)
@@ -154,4 +198,4 @@ if __name__ == '__main__':
     # root.right.left.right = TreeNode(7)
 
     # print(s.recoverTree(root))
-    print(s.minCameraCover(root))
+    print(s.treeToDoublyList(root))
