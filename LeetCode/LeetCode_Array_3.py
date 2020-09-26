@@ -748,7 +748,27 @@ class Solution:
 
         return False
 
+    def minNumber(self, nums: list) -> str:
+        """
+        剑指 Offer 45. 把数组排成最小的数
+        :see https://leetcode-cn.com/problems/ba-shu-zu-pai-cheng-zui-xiao-de-shu-lcof/
+        """
+
+        def compare(a: int, b: int) -> int:
+            af = str(a) + str(b)
+            bf = str(b) + str(a)
+            if af < bf:
+                return -1
+            elif af > bf:
+                return 1
+            return 0
+
+        import functools
+        nums.sort(key=functools.cmp_to_key(compare))
+        print(nums)
+        return ''.join([str(i) for i in nums])
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.isMagic([2, 4, 1, 3, 5]))
+    print(s.minNumber([20, 4, 1, 3, 5]))
