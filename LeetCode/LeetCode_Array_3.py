@@ -768,7 +768,36 @@ class Solution:
         print(nums)
         return ''.join([str(i) for i in nums])
 
+    def getMaxLen(self, nums: list) -> int:
+        """
+        1567. 乘积为正数的最长子数组长度
+        :see https://leetcode-cn.com/problems/maximum-length-of-subarray-with-positive-product/
+        """
+        negative_length = 0
+        positive_length = 0
+        result = 0
+
+        for i in range(len(nums)):
+            if nums[i] == 0:
+                negative_length = 0
+                positive_length = 0
+                continue
+
+            if nums[i] < 0:
+                positive_length, negative_length = negative_length, positive_length
+                if positive_length > 0:
+                    positive_length += 1
+                negative_length += 1
+            else:
+                if negative_length > 0:
+                    negative_length += 1
+                positive_length += 1
+
+            result = max(result, positive_length)
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minNumber([20, 4, 1, 3, 5]))
+    print(s.getMaxLen([-1, 2, 2, -1]))
