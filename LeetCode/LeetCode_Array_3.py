@@ -797,7 +797,37 @@ class Solution:
 
         return result
 
+    def minTime(self, time: list, m: int) -> int:
+        """
+        LCP 12. 小张刷题计划
+        :see https://leetcode-cn.com/problems/xiao-zhang-shua-ti-ji-hua/
+        """
+        l, r = 0, 10000
+        while l < r:
+            t = (l + r) // 2
+
+            total_time = 0
+            max_time = 0
+            day = 0
+            for i in time:
+                total_time += i
+                max_time = max(max_time, i)
+
+                if total_time - max_time > t:
+                    total_time = i
+                    max_time = i
+                    day += 1
+
+            day += 1
+
+            print(l, r, t, day)
+            if day > m:
+                l = t + 1
+            else:
+                r = t
+        return l
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.getMaxLen([-1, 2, 2, -1]))
+    print(s.minTime([1, 2, 3], 3))
