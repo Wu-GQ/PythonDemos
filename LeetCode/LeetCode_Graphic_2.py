@@ -120,9 +120,86 @@ class Solution:
 
         return dp[dst][-1] if dp[dst][-1] != float('inf') else -1
 
+    def sumOfDistancesInTree(self, N: int, edges: List[List[int]]) -> List[int]:
+        """
+        834. 树中距离之和
+        :see https://leetcode-cn.com/problems/sum-of-distances-in-tree/
+        """
+
+        def dfs_for_distance(node: int, parent: int, step: int) -> int:
+            """ 通过DFS统计距离之和 """
+            if node not in neigh_dict:
+                return 0
+
+            # i到所有子节点的距离
+            sub_dist = 0
+            for i in neigh_dict[node]:
+                if i != parent:
+                    sub_dist += dfs_for_distance(i, node, step + 1)
+
+            return sub_dist + step
+
+        def dfs_for_sub_node_count(node: int, parent: int) -> int:
+            """ 通过DFS，统计以parent为父节点，node为根节点所在子树的节点数量之和 """
+            if node not in neigh_dict:
+                return 0
+
+            sub_node_count = 0
+            for i in neigh_dict[node]:
+                if i != parent:
+                    sub_node_count += dfs_for_sub_node_count(i, node)
+
+            # 以parent为父节点，node为根节点所在子树的节点数量之和
+            son_count_dict[node, parent] = sub_node_count + 1
+            # 以node为父节点，parent为根节点所在子树的节点数量之和
+            son_count_dict[parent, node] = N - sub_node_count - 1
+
+            return sub_node_count + 1
+
+        def dfs_for_all_node_distance(node: int, parent: int):
+            """ 通过DFS，统计从parent点的节点距离之和转换为node的节点距离之和 """
+            if node not in neigh_dict:
+                return
+
+            # 比如说统计节点2，0和2的距离之和转换方式为result[2] = result[0] + son_count_dict[0, 2] - son_count_dict[2, 0]
+            if node != parent:
+                result[node] = result[parent] + son_count_dict[parent, node] - son_count_dict[node, parent]
+
+            # 递归计算子节点的距离之和
+            for i in neigh_dict[node]:
+                if i != parent:
+                    dfs_for_all_node_distance(i, node)
+
+        # 建立邻接表
+        neigh_dict = {}
+        for item in edges:
+            a, b = item[0], item[1]
+            if a in neigh_dict:
+                neigh_dict[a].append(b)
+            else:
+                neigh_dict[a] = [b]
+
+            if b in neigh_dict:
+                neigh_dict[b].append(a)
+            else:
+                neigh_dict[b] = [a]
+
+        result = [0] * N
+
+        # 先把0当成树的根节点，统计节点0与其他所有节点的距离之和
+        result[0] = dfs_for_distance(0, 0, 0)
+
+        # 统计当0为根节点时，各个节点的子节点数量
+        son_count_dict = {}
+        dfs_for_sub_node_count(0, 0)
+
+        # 从0的相邻节点开始，逐个统计每个节点到所有节点的距离之和
+        dfs_for_all_node_distance(0, 0)
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    arr = [[3, 4, 7], [6, 2, 2], [0, 2, 7], [0, 1, 2], [1, 7, 8], [4, 5, 2], [0, 3, 2], [7, 0, 6], [3, 2, 7], [1, 3, 10], [1, 5, 1], [4, 1, 6],
-           [4, 7, 5], [5, 7, 10]]
-    print(s.findCheapestPrice(8, arr, 4, 3, 7))
+    arr = [[0, 1], [0, 2], [2, 3], [2, 4], [2, 5]]
+    print(s.sumOfDistancesInTree(6, arr))
