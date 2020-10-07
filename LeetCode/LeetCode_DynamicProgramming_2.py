@@ -881,8 +881,30 @@ class Solution:
 
         return dfs(0, len(stoneValue) - 1)
 
+    def minSteps(self, n: int) -> int:
+        """
+        650. 只有两个键的键盘
+        :see https://leetcode-cn.com/problems/2-keys-keyboard/
+        """
+        # dp[i][j] 表示打印i个字符，粘贴长度为j个字符时的最小步数
+        dp = [[float('inf')] * (n + 1) for _ in range(n + 1)]
+        dp[1][0] = 0
+        dp[1][1] = 1
+
+        for i in range(2, n + 1):
+            # min_time 表示打印i个字符时的最小步数
+            min_time = float('inf')
+
+            for j in range(1, i):
+                dp[i][j] = dp[i - j][j] + 1
+                min_time = min(min_time, dp[i][j])
+
+            dp[i][i] = min_time + 1
+
+        return min(dp[n])
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.stoneGameV([1, 1, 2]))
-    print(s.stoneGameV([98, 77, 24, 49, 6, 12, 2, 44, 51, 96]))
+    print(s.minSteps(1))
