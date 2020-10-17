@@ -198,8 +198,49 @@ class Solution:
 
         return result
 
+    def totalNQueens(self, n: int) -> int:
+        """
+        52. N皇后 II
+        :see https://leetcode-cn.com/problems/n-queens-ii/
+        """
+
+        def check(index: int, value: int) -> bool:
+            for i in range(index):
+                # 不能处于同列：y值不能相同
+                if arr[i] == value:
+                    return False
+
+                # 不能处于同一左上右下对角线：y-x不能相同
+                if arr[i] - i == value - index:
+                    return False
+
+                # 不能处于同一右上左下对角线：x + y不能相同
+                if arr[i] + i == value + index:
+                    return False
+
+            return True
+
+        def backtrace(index: int):
+            nonlocal result
+            if index == n:
+                result += 1
+                return
+
+            for i in range(n):
+                arr[index] = i
+                if check(index, i):
+                    backtrace(index + 1)
+
+        if n < 2:
+            return n
+
+        result = 0
+        arr = [-1] * n
+        backtrace(0)
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    arr = [[0, 1], [0, 2], [2, 3], [2, 4], [2, 5]]
-    print(s.sumOfDistancesInTree(6, arr))
+    for i in range(20):
+        print(s.totalNQueens(i))
