@@ -735,9 +735,36 @@ class LinkedList(object):
 
         return head
 
+    def reorderList(self, head: ListNode) -> None:
+        """
+        143. 重排链表
+        :see https://leetcode-cn.com/problems/reorder-list/
+        """
+        if not head or not head.next:
+            return
+
+        slow, fast = head, head.next
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+
+        reverse = slow.next
+        slow.next = None
+        stack = []
+        while reverse:
+            stack.append(reverse)
+            reverse = reverse.next
+
+        slow, fast = head, head.next
+        while stack and slow:
+            node = stack.pop()
+            slow.next = node
+            node.next = fast
+            slow, fast = fast, fast.next if fast else None
+
 
 if __name__ == '__main__':
-    data = [9, 9, 1, 2, 3, 3, 2, 1]
+    data = [1]
     linked_list = LinkedList(data)
 
     # data1 = [9]
@@ -745,9 +772,10 @@ if __name__ == '__main__':
 
     # p: ListNode = linked_list.addTwoNumbers(LinkedList(data1).head, LinkedList(data2).head)
     # p: ListNode = linked_list.middleNode(linked_list.head)
-    result_list: ListNode = linked_list.removeDuplicateNodes(linked_list.head)
+    # result_list: ListNode = linked_list.removeDuplicateNodes(linked_list.head)
     # print(result_list)
-    p = result_list
+    linked_list.reorderList(linked_list.head)
+    p = linked_list.head
     while p is not None:
         print(p.val, end=' ')
         p = p.next
