@@ -514,11 +514,38 @@ class Solution:
 
         return result + y_count - 2 + rr
 
+    def partitionLabels(self, S: str) -> list:
+        """
+        763. 划分字母区间
+        :see https://leetcode-cn.com/problems/partition-labels/
+        """
+        end_dict = {}
+        for i in range(len(S)):
+            end_dict[S[i]] = i
+
+        result = []
+
+        start_index = -1
+        ch_set = set()
+
+        for i in range(len(S)):
+            ch_set.add(S[i])
+
+            # 当这个字母是最后一次出现时，移除
+            if end_dict[S[i]] == i:
+                ch_set.remove(S[i])
+
+            if not ch_set:
+                result.append(i - start_index)
+                start_index = i
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.minimumOperations('rryryyyr'))
-    print(s.minimumOperations('rrryyyrryyyrr'))
+    print(s.partitionLabels('ababcbacadefegdehijhklij'))
     # print(s.minimumOperations('rryryyyrryyrr'))
     # print(s.minimumOperations('yrrrrrryyy'))
     # print(s.minimumOperations('ryyyrrrrrr'))
