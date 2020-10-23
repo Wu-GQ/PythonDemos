@@ -109,45 +109,39 @@ class LinkedList(object):
 
     def isPalindrome(self, head) -> bool:
         """
-        回文链表
-        :see https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/6/linked-list/45/
+        234. 回文链表
+        :see https://leetcode-cn.com/problems/palindrome-linked-list/
         """
-        if head is None or head.next is None:
+
+        def compare_linked_list(a: ListNode, b: ListNode) -> bool:
+            """ 比较两个链表的值是否相同 """
+            while a and b:
+                if a.val != b.val:
+                    return False
+                a = a.next
+                b = b.next
+            return a is None and b is None
+
+        if not head or not head.next:
             return True
 
-        # 通过快慢指针确定链表的中间位置和末尾位置
-        slow_pointer = head
-        fast_pointer = head
+        # 找到中间节点，同时反转前半段链表
+        slow_before, slow, fast = None, head, head
+        while fast and fast.next:
+            fast = fast.next.next
 
-        while fast_pointer.next is not None and fast_pointer.next.next is not None:
-            slow_pointer = slow_pointer.next
-            fast_pointer = fast_pointer.next.next
+            # 反转前半段链表
+            slow_next = slow.next
+            slow.next = slow_before
+            slow_before, slow = slow, slow_next
 
-        # 反转后半部分的链表节点
-        p = slow_pointer
-        q = slow_pointer.next
+        print(fast is not None, slow_before.val, slow.val)
 
-        while q.next is not None:
-            t = q.next
-
-            q.next = p
-            p = q
-            q = t
-
-        q.next = p
-
-        slow_pointer.next = None
-
-        # 比较前半部分链表和后半部分链表的值
-        p = head
-        while p is not None and q is not None:
-            if p.val == q.val:
-                p = p.next
-                q = q.next
-            else:
-                return False
-
-        return True
+        # 当fast非空，说明链表为奇数长度，否则为偶数长度
+        if fast:
+            return compare_linked_list(slow_before, slow.next)
+        else:
+            return compare_linked_list(slow_before, slow)
 
     def quick_sort(self, head) -> ListNode:
         """ 链表的快速排序 """
@@ -764,7 +758,7 @@ class LinkedList(object):
 
 
 if __name__ == '__main__':
-    data = [1]
+    data = [1, 2, 3, 2, 1]
     linked_list = LinkedList(data)
 
     # data1 = [9]
@@ -774,8 +768,4 @@ if __name__ == '__main__':
     # p: ListNode = linked_list.middleNode(linked_list.head)
     # result_list: ListNode = linked_list.removeDuplicateNodes(linked_list.head)
     # print(result_list)
-    linked_list.reorderList(linked_list.head)
-    p = linked_list.head
-    while p is not None:
-        print(p.val, end=' ')
-        p = p.next
+    print(linked_list.isPalindrome(linked_list.head))
