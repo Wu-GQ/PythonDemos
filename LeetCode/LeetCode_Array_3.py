@@ -827,7 +827,45 @@ class Solution:
                 r = t
         return l
 
+    def countRangeSum(self, nums: list, lower: int, upper: int) -> int:
+        """
+        327. 区间和的个数
+        :see https://leetcode-cn.com/problems/count-of-range-sum/
+        """
+        import bisect
+
+        # 出现的前缀和的次数
+        prefix_dict = {0: 1}
+        # 出现的前缀和序列，无重复
+        prefix_sum_list = [0]
+        # 前缀和
+        prefix_sum = 0
+
+        result = 0
+
+        for i in nums:
+            prefix_sum += i
+
+            # 左侧起点: prefix_sum - upper, 右侧终点: prefix_sum - lower
+            index = bisect.bisect_left(prefix_sum_list, prefix_sum - upper)
+            for j in range(index, len(prefix_sum_list)):
+                if prefix_sum_list[j] <= prefix_sum - lower:
+                    result += prefix_dict[prefix_sum_list[j]]
+                else:
+                    break
+
+            print(prefix_dict, prefix_sum_list, index)
+
+            # 添加当前前缀和
+            if prefix_sum in prefix_dict:
+                prefix_dict[prefix_sum] += 1
+            else:
+                prefix_dict[prefix_sum] = 1
+                bisect.insort(prefix_sum_list, prefix_sum)
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.minTime([1, 2, 3], 3))
+    print(s.countRangeSum([-2, 5, -1], -2, 2))
