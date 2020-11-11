@@ -903,8 +903,59 @@ class Solution:
 
         return min(dp[n])
 
+    def findRotateSteps(self, ring: str, key: str) -> int:
+        """
+        514. 自由之路
+        :see https://leetcode-cn.com/problems/freedom-trail/
+        """
+        # 存储每个字母所在的位置
+        char_index_dict = {}
+        for i in range(len(ring)):
+            if ring[i] in char_index_dict:
+                char_index_dict[ring[i]].append(i)
+            else:
+                char_index_dict[ring[i]] = [i]
+
+        # 存储当前所在的位置和已经使用步数
+        dp = {0: 0}
+        # 上一个字母
+        last = ''
+
+        for ch in key:
+            # 当字母相同时，不需要移动
+            if ch == last:
+                for i in dp:
+                    dp[i] += 1
+                continue
+
+            last = ch
+
+            # 从 dp 所在的位置 到 ch字母所有的位置
+            next_dp = {}
+
+            for end_index in char_index_dict[ch]:
+                min_step = float('inf')
+
+                for start_index in dp:
+                    distance = abs(end_index - start_index)
+                    min_step = min(min_step, dp[start_index] + min(distance, len(ring) - distance))
+
+                    # 相邻的，肯定是最小的步数
+                    if min_step == 1:
+                        break
+
+                # 加上打印字母的一步
+                next_dp[end_index] = min_step + 1
+
+            # 更新
+            dp = next_dp
+
+            # print(dp)
+
+        return min(dp.values())
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.stoneGameV([1, 1, 2]))
-    print(s.minSteps(1))
+    print(s.findRotateSteps("xrrakuulnczywjs", "jrlucwzakzussrlckyjjsuwkuarnaluxnyzcnrxxwruyr"))
