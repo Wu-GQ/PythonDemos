@@ -541,11 +541,49 @@ class Solution:
 
         return result
 
+    def reorganizeString(self, S: str) -> str:
+        """
+        767. 重构字符串
+        :see https://leetcode-cn.com/problems/reorganize-string/
+        """
+        ch_list = [[0, chr(i + 97)] for i in range(26)]
+        for i in S:
+            # heapq模块只有最小堆，因此用负数实现最大堆
+            ch_list[ord(i) - 97][0] -= 1
+
+        # 初始化最大堆
+        import heapq
+        heapq.heapify(ch_list)
+
+        result = []
+
+        while ch_list[0][0] < 0:
+            # 最多数量的两个字符组成一对，将这两个字符重新放入最大堆。
+            # 因为最大堆的特性，当能凑对时，本次的second!=下次的first。
+            first = heapq.heappop(ch_list)
+            second = heapq.heappop(ch_list)
+
+            # 如果最大的字符和上一个字符相同，说明这个字符的数量过多，已经无法凑对。
+            if result and first[1] == result[-1]:
+                return ''
+
+            result.append(first[1])
+            first[0] += 1
+
+            if second[0] < 0:
+                result.append(second[1])
+                second[0] += 1
+
+            heapq.heappush(ch_list, first)
+            heapq.heappush(ch_list, second)
+
+        return ''.join(result)
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.minimumOperations('rryryyyr'))
-    print(s.partitionLabels('ababcbacadefegdehijhklij'))
+    print(s.reorganizeString('aaaaabbbccc'))
     # print(s.minimumOperations('rryryyyrryyrr'))
     # print(s.minimumOperations('yrrrrrryyy'))
     # print(s.minimumOperations('ryyyrrrrrr'))
