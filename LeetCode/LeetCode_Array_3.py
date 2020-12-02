@@ -1,3 +1,6 @@
+from typing import List
+
+
 class Solution:
 
     def findDiagonalOrder(self, matrix: list) -> list:
@@ -865,7 +868,102 @@ class Solution:
 
         return result
 
+    def maxNumber(self, nums1: List[int], nums2: List[int], k: int) -> List[int]:
+        """
+        321. 拼接最大数
+        :see https://leetcode-cn.com/problems/create-maximum-number/
+        """
+        '''
+        从nums1中按顺序选出i个数字组成的最大数组
+        再从nums2中按顺序选出k-i个数字组成的最大数组
+        然后将选出的k个数字进行归并得到结果
+        将最大的结果返回
+        '''
+
+        def select_max_number_list(arr: List[int]) -> List[List[int]]:
+            """ 从nums1中逐个删除0个到删除len(nums1)个数字，使剩下数字组成的数组最大 """
+            res = [arr[:]]
+            for _ in range(len(arr)):
+                # 找到第一个i+1比i大的数字，删除第i个数字即可
+                i = 0
+                while i < len(arr):
+                    if i == len(arr) - 1:
+                        arr.pop()
+                    elif arr[i] < arr[i + 1]:
+                        arr.pop(i)
+                        break
+                    else:
+                        i += 1
+                res.append(arr[:])
+            return res
+
+        def merge(arr1: List[int], arr2: List[int]) -> List[int]:
+            """ 将两个数组合并，使合并后数组组成的数字最大 """
+            res = []
+            i = 0
+            j = 0
+            while i < len(arr1) or j < len(arr2):
+                if i == len(arr1):
+                    res.append(arr2[j])
+                    j += 1
+                elif j == len(arr2) or arr1[i] > arr2[j]:
+                    res.append(arr1[i])
+                    i += 1
+                elif arr1[i] < arr2[j]:
+                    res.append(arr2[j])
+                    j += 1
+                else:
+                    # 当两个数字相同的时候，需要比较这两个数字后面的数字哪边大
+                    comp_res = True
+                    ti, tj = i, j
+                    while ti < len(arr1) or tj < len(arr2):
+                        if ti == len(arr1):
+                            comp_res = False
+                            break
+                        elif tj == len(arr2):
+                            break
+                        elif arr1[ti] != arr2[tj]:
+                            comp_res = arr1[ti] > arr2[tj]
+                            break
+                        ti += 1
+                        tj += 1
+
+                    if comp_res:
+                        res.append(arr1[i])
+                        i += 1
+                    else:
+                        res.append(arr2[j])
+                        j += 1
+            return res
+
+        def compare_list(arr1: List[int], arr2: List[int]) -> bool:
+            """ 比较两个数组的大小 """
+            if len(arr1) != len(arr2):
+                return len(arr1) > len(arr2)
+            for i in range(len(arr1)):
+                if arr1[i] > arr2[i]:
+                    return True
+                elif arr1[i] < arr2[i]:
+                    return False
+            return True
+
+        length1 = len(nums1)
+        length2 = len(nums2)
+
+        max_nums1_list = select_max_number_list(nums1)
+        max_nums2_list = select_max_number_list(nums2)
+
+        result = []
+        for i in range(max(0, k - length2), min(length1, k) + 1):
+            tmp = merge(max_nums1_list[-i - 1], max_nums2_list[-k + i - 1])
+            if compare_list(tmp, result):
+                result = tmp
+            # print(tmp, result)
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.countRangeSum([-2, 5, -1], -2, 2))
+    # print(s.maxNumber([2, 5, 6, 4, 4, 0], [7, 3, 8, 0, 6, 5, 7, 6, 2], 15))
+    print(s.maxNumber([1, 2], [], 1))
