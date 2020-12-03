@@ -826,10 +826,53 @@ class Solution:
 
         return result
 
+    def countPrimes(self, n: int) -> int:
+        """
+        204. 计数质数
+        :see https://leetcode-cn.com/problems/count-primes/
+        """
+        ''' 位图法超时！
+        if n < 3:
+            return 0
+
+        value = 0b11
+        result = 1
+
+        # 跳过所有偶数的检测
+        for i in range(3, n, 2):
+            # 当value的第i位是1时，说明i是合数，不需要检测，否则，说明该位是质数
+            if not value >> i & 1:
+                result += 1
+                print(i)
+
+                # 当该位是质数的时候，需要更新这个质数的所有倍数的位为1
+                # 更新时，同样跳过所有偶数倍
+                for j in range(i * i, n, 2 * i):
+                    value |= 1 << j
+
+        return result
+        '''
+        if n < 3:
+            return 0
+
+        # True代表合数
+        arr = [False] * n
+        result = 1
+
+        # 跳过所有偶数的检测
+        for i in range(3, n, 2):
+            if not arr[i]:
+                result += 1
+                # print(i)
+
+                # 当该位是质数的时候，需要更新这个质数的所有倍数的位为1
+                # 更新时，同样跳过所有偶数倍
+                for j in range(i * i, n, 2 * i):
+                    arr[j] = True
+
+        return result
+
 
 if __name__ == '__main__':
-    factorial_list = [0, 1, 2, 6, 24, 120, 720, 5040, 40320]
-    for i in range(5):
-        print(f'---- {i} ----')
-        for j in range(1, factorial_list[i] + 1):
-            print(Solution().getPermutation(i, j))
+    s = Solution()
+    print(s.countPrimes(20))
