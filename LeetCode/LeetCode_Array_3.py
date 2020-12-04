@@ -962,8 +962,32 @@ class Solution:
 
         return result
 
+    def isPossible(self, nums: List[int]) -> bool:
+        """
+        659. 分割数组为连续子序列
+        :see https://leetcode-cn.com/problems/split-array-into-consecutive-subsequences/
+        """
+        import heapq
+        from collections import defaultdict
+
+        nums_dict = defaultdict(list)
+
+        for i in nums:
+            # 获得以 i - 1 结尾的最短序列，加上i，成为以 i 结尾序列
+            heapq.heappush(nums_dict[i], heapq.heappop(nums_dict.get(i - 1, [0])) + 1)
+
+            # 如果以 i - 1 结尾的序列，因为 pop 后被清空，则从 nums_dict 内删除
+            if not nums_dict[i - 1]:
+                del nums_dict[i - 1]
+
+        # 如果有任意一个序列的最短长度小于3，则说明不能完成分割
+        for i in nums_dict:
+            if nums_dict[i][0] < 3:
+                return False
+        return True
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.maxNumber([2, 5, 6, 4, 4, 0], [7, 3, 8, 0, 6, 5, 7, 6, 2], 15))
-    print(s.maxNumber([1, 2], [], 1))
+    print(s.isPossible([1, 2, 2, 3, 3, 4, ]))
