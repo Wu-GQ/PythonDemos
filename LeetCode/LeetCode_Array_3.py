@@ -986,6 +986,54 @@ class Solution:
                 return False
         return True
 
+    def leastInterval(self, tasks: List[str], n: int) -> int:
+        """
+        621. 任务调度器
+        :see https://leetcode-cn.com/problems/task-scheduler/
+        """
+        if n == 0:
+            return len(tasks)
+
+        import heapq
+        count_dict = {}
+        for i in tasks:
+            count_dict[i] = count_dict.get(i, 0) + 1
+
+        arr = []
+        for i in count_dict:
+            heapq.heappush(arr, [-count_dict[i], i])
+
+        cold = {}
+
+        result = 0
+        while arr or cold:
+            result += 1
+            if arr:
+                # 取出出现次数最多的，且不在冷却期的字母
+                item = heapq.heappop(arr)
+
+                item[0] += 1
+                if item[0] == 0:
+                    pass
+                elif n > 0:
+                    cold[item[1]] = [item[0], n + 1]
+                else:
+                    heapq.heappush(arr, [item[0], item[1]])
+
+            tmp = []
+            for i in cold:
+                cold[i][1] -= 1
+                if cold[i][1] == 0:
+                    heapq.heappush(arr, [cold[i][0], i])
+                    tmp.append(i)
+
+            for i in tmp:
+                del cold[i]
+
+            print(result, arr, cold)
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
