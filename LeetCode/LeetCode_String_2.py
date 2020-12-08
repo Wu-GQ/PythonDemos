@@ -579,12 +579,56 @@ class Solution:
 
         return ''.join(result)
 
+    def splitIntoFibonacci(self, S: str) -> list:
+        """
+        842. 将数组拆分成斐波那契序列
+        :see https://leetcode-cn.com/problems/split-array-into-fibonacci-sequence/
+        """
+
+        def check(l: int, r: int, string: str) -> bool:
+            """ 确认以l和r为前缀，s能否分割成斐波那契序列 """
+            # 整形限制
+            if r >= 1 << 31:
+                return False
+            result.append(r)
+            next = str(l + r)
+            return not string or string.startswith(next) and check(r, l + r, string[len(next):])
+
+        if len(S) < 3:
+            return []
+
+        for i in range(1, len(S) // 2 + 1):
+            # 开头为0时，这个数字只能为0
+            if S[0] == '0' and i > 1:
+                break
+
+            # 第一个数字为S[:i]
+            first = int(S[:i])
+            # 整形限制
+            if first >= 1 << 31:
+                break
+
+            for j in range(i + 1, len(S)):
+                # 开头为0时，这个数字只能为0
+                if S[i] == '0' and j > i + 1:
+                    break
+
+                # 第二个数字为S[i:j]
+                second = int(S[i:j])
+
+                result = [first]
+                if check(first, second, S[j:]) and len(result) > 2:
+                    return result
+
+        return []
+
 
 if __name__ == '__main__':
     s = Solution()
-    # print(s.minimumOperations('rryryyyr'))
-    print(s.reorganizeString('aaaaabbbccc'))
-    # print(s.minimumOperations('rryryyyrryyrr'))
-    # print(s.minimumOperations('yrrrrrryyy'))
-    # print(s.minimumOperations('ryyyrrrrrr'))
-    # print(s.minimumOperations('ryryryryry'))
+    print(s.splitIntoFibonacci('123456579'))
+    print(s.splitIntoFibonacci('11235813'))
+    print(s.splitIntoFibonacci('0123'))
+    print(s.splitIntoFibonacci('1101111'))
+    print(s.splitIntoFibonacci('0000011'))
+    print(s.splitIntoFibonacci('00000'))
+    print(s.splitIntoFibonacci('10112'))
