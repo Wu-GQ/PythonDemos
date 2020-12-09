@@ -872,7 +872,52 @@ class Solution:
 
         return result
 
+    def smallestGoodBase(self, n: str) -> str:
+        """
+        483. 最小好进制
+        :see https://leetcode-cn.com/problems/smallest-good-base/
+        """
+        ''' 时间复杂度O(n)，超时
+        # k进制每一位都是1，那么这个数字用数学公式可以表示为: n(k) = k^i + k^(i-1) + k^(i-2) + ... + k + 1。
+        # 这个数学公式可以看做一个首项为1，末项为k^i，倍数为k的等比数列。
+        # 等比数列的求和公式有两种，其中一种为: (首项 - 末项 * 倍数) / (1 - 倍数)。
+        # 因此，这个数字公式可以表示为 n(k) = (1 - k^i * k) / (1 - k) = (k^(i+1) - 1) / (k - 1)，
+        # 其中，k表示进制，i表示这个进制最高位数
+        # PS: 上述中的n(k)表示用k进制表示的数字n。
+        N = int(n)
+        for k in range(2, N):
+            # l表示用k进制表示时的长度
+            l = int(math.log(N, k)) + 1
+            if (k ** l - 1) // (k - 1) == N:
+                return str(k)
+        return ''
+        '''
+        # 考虑最大数字1E18，用二进制表示时，有61位，那么用任意大于2的进制表示，最大长度也不可能超过61位。
+        # 假设当进制长度为i时，是否存在一个k进制可以表示为n。
+        N = int(n)
+        max_length = int(math.log(N, 2)) + 1
+
+        # 最小长度为2，即(N-1)进制时表示为11
+        for i in range(max_length, 1, -1):
+            # 求出长度为i时，进制的最小值
+            l = 2  # int(math.pow(N, 1 / (i + 1))) + 1
+            r = N  # int(math.pow(N, 1 / i))，由于精度丢失，长度为i时，进制的最大值无法优化
+
+            # 用二分查找确认是否存在满足条件的k进制
+            while l <= r:
+                k = (l + r) // 2
+                num = (k ** i - 1) // (k - 1)
+                if num == N:
+                    return str(k)
+                elif num < N:
+                    l = k + 1
+                else:
+                    r = k - 1
+        return ''
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.countPrimes(20))
+    print(s.smallestGoodBase('13'))
+    # print(s.smallestGoodBase('1000000000000000000'))
+    # print(s.smallestGoodBase('4681'))
