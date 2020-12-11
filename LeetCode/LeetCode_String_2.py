@@ -622,13 +622,44 @@ class Solution:
 
         return []
 
+    def predictPartyVictory(self, senate: str) -> str:
+        """
+        649. Dota2 参议院
+        :see https://leetcode-cn.com/problems/dota2-senate/
+        """
+        ch_list = list(senate)
+
+        # 把排在自己后面的最近的非同阵营的投出去
+        # 上一轮多余的投票可以留到下一轮
+        r_right_count, d_right_count = 0, 0
+
+        while True:
+            # 本轮可投票的人数
+            r_count, d_count, = 0, 0
+
+            for i in range(len(ch_list)):
+                if ch_list[i] == 'R':
+                    if d_right_count > 0:
+                        d_right_count -= 1
+                        # 被投出去就变成空字符串
+                        ch_list[i] = ''
+                    else:
+                        r_count += 1
+                        r_right_count += 1
+                elif ch_list[i] == 'D':
+                    if r_right_count > 0:
+                        r_right_count -= 1
+                        ch_list[i] = ''
+                    else:
+                        d_count += 1
+                        d_right_count += 1
+
+            if r_count == 0:
+                return 'Dire'
+            elif d_count == 0:
+                return 'Radiant'
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.splitIntoFibonacci('123456579'))
-    print(s.splitIntoFibonacci('11235813'))
-    print(s.splitIntoFibonacci('0123'))
-    print(s.splitIntoFibonacci('1101111'))
-    print(s.splitIntoFibonacci('0000011'))
-    print(s.splitIntoFibonacci('00000'))
-    print(s.splitIntoFibonacci('10112'))
+    print(s.predictPartyVictory('DDRRR'))
