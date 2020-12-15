@@ -659,7 +659,33 @@ class Solution:
             elif d_count == 0:
                 return 'Radiant'
 
+    def removeDuplicateLetters(self, s: str) -> str:
+        """
+        316. 去除重复字母
+        :see https://leetcode-cn.com/problems/remove-duplicate-letters/
+        """
+        ch_count_dict = {}
+        for i in s:
+            ch_count_dict[i] = ch_count_dict.get(i, 0) + 1
+
+        used_set = set()
+        stack = []
+
+        for i in s:
+            if i not in used_set:
+                while stack and i <= stack[-1] and ch_count_dict[stack[-1]] > 1:
+                    ch_count_dict[stack[-1]] -= 1
+                    used_set.remove(stack[-1])
+                    stack.pop()
+
+                used_set.add(i)
+                stack.append(i)
+            else:
+                ch_count_dict[i] -= 1
+
+        return ''.join(stack)
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.predictPartyVictory('DDRRR'))
+    print(s.removeDuplicateLetters("bbcaac"))
