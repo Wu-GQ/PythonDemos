@@ -915,9 +915,25 @@ class Solution:
                     r = k - 1
         return ''
 
+    def countNumbersWithUniqueDigits(self, n: int) -> int:
+        """
+        357. 计算各个位数不同的数字个数
+        :see https://leetcode-cn.com/problems/count-numbers-with-unique-digits/
+        """
+        # 阶乘数组
+        factorial = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880]
+
+        # 包含0
+        result = 1
+        for i in range(1, min(n, 10) + 1):
+            # 从0~9中选出i个数字的排列总数，减去以0开头的排列总数
+            # A(10, i) - A(9, i - 1) = 9 * 9! // factorial[10 - i] = 3265920 // factorial[10 - i]
+            result += 3265920 // factorial[10 - i]
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.smallestGoodBase('13'))
+    print(s.countNumbersWithUniqueDigits(3))
     # print(s.smallestGoodBase('1000000000000000000'))
     # print(s.smallestGoodBase('4681'))

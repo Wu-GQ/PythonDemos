@@ -1034,8 +1034,34 @@ class Solution:
 
         return result
 
+    def kSmallestPairs(self, nums1: List[int], nums2: List[int], k: int) -> List[List[int]]:
+        """
+        373. 查找和最小的K对数字
+        :see https://leetcode-cn.com/problems/find-k-pairs-with-smallest-sums/
+        """
+        if not nums1 or not nums2:
+            return []
+
+        import heapq
+        # 最小堆初始化
+        heap_queue = [(nums1[i] + nums2[0], i, 0) for i in range(len(nums1))]
+        heapq.heapify(heap_queue)
+
+        result = []
+        while heap_queue:
+            _, i, j = heapq.heappop(heap_queue)
+            result.append([nums1[i], nums2[j]])
+
+            if len(result) == k:
+                break
+
+            if j < len(nums2) - 1:
+                heapq.heappush(heap_queue, (nums1[i] + nums2[j + 1], i, j + 1))
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.maxNumber([2, 5, 6, 4, 4, 0], [7, 3, 8, 0, 6, 5, 7, 6, 2], 15))
-    print(s.isPossible([1, 2, 2, 3, 3, 4, ]))
+    print(s.kSmallestPairs([1, 7, 11], [2, 4, 6, 100], 3))
