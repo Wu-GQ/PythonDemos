@@ -579,12 +579,113 @@ class Solution:
 
         return ''.join(result)
 
+    def splitIntoFibonacci(self, S: str) -> list:
+        """
+        842. 将数组拆分成斐波那契序列
+        :see https://leetcode-cn.com/problems/split-array-into-fibonacci-sequence/
+        """
+
+        def check(l: int, r: int, string: str) -> bool:
+            """ 确认以l和r为前缀，s能否分割成斐波那契序列 """
+            # 整形限制
+            if r >= 1 << 31:
+                return False
+            result.append(r)
+            next = str(l + r)
+            return not string or string.startswith(next) and check(r, l + r, string[len(next):])
+
+        if len(S) < 3:
+            return []
+
+        for i in range(1, len(S) // 2 + 1):
+            # 开头为0时，这个数字只能为0
+            if S[0] == '0' and i > 1:
+                break
+
+            # 第一个数字为S[:i]
+            first = int(S[:i])
+            # 整形限制
+            if first >= 1 << 31:
+                break
+
+            for j in range(i + 1, len(S)):
+                # 开头为0时，这个数字只能为0
+                if S[i] == '0' and j > i + 1:
+                    break
+
+                # 第二个数字为S[i:j]
+                second = int(S[i:j])
+
+                result = [first]
+                if check(first, second, S[j:]) and len(result) > 2:
+                    return result
+
+        return []
+
+    def predictPartyVictory(self, senate: str) -> str:
+        """
+        649. Dota2 参议院
+        :see https://leetcode-cn.com/problems/dota2-senate/
+        """
+        ch_list = list(senate)
+
+        # 把排在自己后面的最近的非同阵营的投出去
+        # 上一轮多余的投票可以留到下一轮
+        r_right_count, d_right_count = 0, 0
+
+        while True:
+            # 本轮可投票的人数
+            r_count, d_count, = 0, 0
+
+            for i in range(len(ch_list)):
+                if ch_list[i] == 'R':
+                    if d_right_count > 0:
+                        d_right_count -= 1
+                        # 被投出去就变成空字符串
+                        ch_list[i] = ''
+                    else:
+                        r_count += 1
+                        r_right_count += 1
+                elif ch_list[i] == 'D':
+                    if r_right_count > 0:
+                        r_right_count -= 1
+                        ch_list[i] = ''
+                    else:
+                        d_count += 1
+                        d_right_count += 1
+
+            if r_count == 0:
+                return 'Dire'
+            elif d_count == 0:
+                return 'Radiant'
+
+    def removeDuplicateLetters(self, s: str) -> str:
+        """
+        316. 去除重复字母
+        :see https://leetcode-cn.com/problems/remove-duplicate-letters/
+        """
+        ch_count_dict = {}
+        for i in s:
+            ch_count_dict[i] = ch_count_dict.get(i, 0) + 1
+
+        used_set = set()
+        stack = []
+
+        for i in s:
+            if i not in used_set:
+                while stack and i <= stack[-1] and ch_count_dict[stack[-1]] > 1:
+                    ch_count_dict[stack[-1]] -= 1
+                    used_set.remove(stack[-1])
+                    stack.pop()
+
+                used_set.add(i)
+                stack.append(i)
+            else:
+                ch_count_dict[i] -= 1
+
+        return ''.join(stack)
+
 
 if __name__ == '__main__':
     s = Solution()
-    # print(s.minimumOperations('rryryyyr'))
-    print(s.reorganizeString('aaaaabbbccc'))
-    # print(s.minimumOperations('rryryyyrryyrr'))
-    # print(s.minimumOperations('yrrrrrryyy'))
-    # print(s.minimumOperations('ryyyrrrrrr'))
-    # print(s.minimumOperations('ryryryryry'))
+    print(s.removeDuplicateLetters("bbcaac"))

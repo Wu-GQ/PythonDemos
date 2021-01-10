@@ -1,20 +1,7 @@
-def sort(a: list, x):
-    lo = 0
-    hi = len(a)
-    while lo < hi:
-        mid = (lo + hi) // 2
-        print(lo, hi, mid)
-        if a[mid] < x:
-            lo = mid + 1
-        else:
-            hi = mid
-
-    return lo
-
-
 if __name__ == '__main__':
     # print(sort([0, 1, 2, 3, 5, 6], 4))
-    result = [1]
-    for i in range(1, 27):
-        result.append(result[-1] * i)
-    print(result)
+    import math
+
+    # for i in range(2, 70):
+    #     print(i, math.log(4681, i))
+    print(math.pow(1000000000000000000, 1 / 2), math.pow(1000000000000000000, 1 / 3))
