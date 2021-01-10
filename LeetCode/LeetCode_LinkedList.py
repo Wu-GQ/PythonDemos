@@ -756,9 +756,29 @@ class LinkedList(object):
             node.next = fast
             slow, fast = fast, fast.next if fast else None
 
+    def swapNodes(self, head: ListNode, k: int) -> ListNode:
+        """
+        5652. 交换链表中的节点
+        :see https://leetcode-cn.com/problems/swapping-nodes-in-a-linked-list/
+        """
+        fast = head
+        for _ in range(1, k):
+            fast = fast.next
+        left = fast
+
+        fast = fast.next
+
+        slow = head
+        while fast:
+            fast = fast.next
+            slow = slow.next
+
+        left.val, slow.val = slow.val, left.val
+        return head
+
 
 if __name__ == '__main__':
-    data = [1, 2, 3, 2, 1]
+    data = [1, 2, 3, 4, 5]
     linked_list = LinkedList(data)
 
     # data1 = [9]
@@ -768,4 +788,4 @@ if __name__ == '__main__':
     # p: ListNode = linked_list.middleNode(linked_list.head)
     # result_list: ListNode = linked_list.removeDuplicateNodes(linked_list.head)
     # print(result_list)
-    print(linked_list.isPalindrome(linked_list.head))
+    print(linked_list.description(linked_list.swapNodes(linked_list.head, 2)))

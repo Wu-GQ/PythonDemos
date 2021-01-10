@@ -1034,8 +1034,69 @@ class Solution:
 
         return result
 
+    def decode(self, encoded: List[int], first: int) -> List[int]:
+        """
+        5649. 解码异或后的数组
+        :see https://leetcode-cn.com/problems/decode-xored-array/
+        """
+        result = [first]
+        for i in encoded:
+            result.append(result[-1] ^ i)
+        return result
+
+    def minimumHammingDistance(self, source: List[int], target: List[int], allowedSwaps: List[List[int]]) -> int:
+        """
+        5650. 执行交换操作后的最小汉明距离
+        :see https://leetcode-cn.com/problems/minimize-hamming-distance-after-swap-operations/
+        """
+        from Class.UnionFindClass import UnionFindClass
+        union = UnionFindClass(len(source))
+        for l in allowedSwaps:
+            union.union(l[0], l[1])
+
+        from collections import defaultdict
+        group_dict = defaultdict(dict)
+        for i in range(len(source)):
+            father = union.find_parent(i)
+            group_dict[father][source[i]] = group_dict[father].get(source[i], 0) + 1
+
+        result = 0
+        for i in range(len(source)):
+            father = union.find_parent(i)
+            if target[i] in group_dict[father]:
+                group_dict[father][target[i]] -= 1
+                result += 1
+
+                if group_dict[father][target[i]] == 0:
+                    del group_dict[father][target[i]]
+
+        return len(source) - result
+
+    def summaryRanges(self, nums: List[int]) -> List[str]:
+        """
+        228. 汇总区间
+        :see https://leetcode-cn.com/problems/summary-ranges/
+        """
+        if not nums:
+            return []
+        nums.append(nums[0])
+
+        result = []
+
+        low_index = 0
+        low = nums[0]
+        for i in range(1, len(nums)):
+            if nums[i] != low + i - low_index:
+                if i - 1 > low_index:
+                    result.append(f'{low}->{nums[i - 1]}')
+                else:
+                    result.append(f'{low}')
+                low_index = i
+                low = nums[i]
+
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    # print(s.maxNumber([2, 5, 6, 4, 4, 0], [7, 3, 8, 0, 6, 5, 7, 6, 2], 15))
-    print(s.isPossible([1, 2, 2, 3, 3, 4, ]))
+    print(s.summaryRanges([]))
