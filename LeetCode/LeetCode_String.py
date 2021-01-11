@@ -1076,6 +1076,46 @@ class Solution:
                 path_stack.pop()
         return f"/{'/'.join(path_stack)}"
 
+    def solveEquation(self, equation: str) -> str:
+        """
+        640. 求解方程
+        :see https://leetcode-cn.com/problems/solve-the-equation/
+        """
+
+        def analysis(s: str) -> (int, int):
+            """ 表达式分析 """
+            import re
+            nums_list = re.findall(r'[+|-]?\d*x?', s)
+
+            a, b = 0, 0
+            for i in nums_list:
+                if not i:
+                    continue
+                elif i == 'x' or i == '+x':
+                    a += 1
+                elif i == '-x':
+                    a -= 1
+                elif i.endswith('x'):
+                    a += int(i[:-1])
+                else:
+                    b += int(i)
+            return a, b
+
+        arr = equation.split('=')
+
+        left_a, left_b = analysis(arr[0])
+        right_a, right_b = analysis(arr[1])
+
+        a = left_a - right_a
+        b = left_b - right_b
+
+        if a == 0 and b == 0:
+            return "Infinite solutions"
+        elif a == 0:
+            return "No solution"
+        else:
+            return f'x={-b // a}'
+
 
 if __name__ == "__main__":
-    print(Solution().word_break("leetcode", ["leet", "code"]))
+    print(Solution().solveEquation("0x=x"))
