@@ -33,7 +33,21 @@ class Solution:
 
         return ''.join(arr)
 
+    def findLongestChain(self, pairs: List[List[int]]) -> int:
+        """
+        646. 最长数对链
+        :see https://leetcode-cn.com/problems/maximum-length-of-pair-chain/
+        """
+        pairs.sort(key=lambda x: x[1])
+        last = -float('inf')
+        result = 0
+        for i in pairs:
+            if i[0] > last:
+                last = i[1]
+                result += 1
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.smallestStringWithSwaps("dcab", [[0, 3], [1, 2], [0, 2]]))
+    print(s.findLongestChain([[0, 3], [1, 4], [2, 5], [1, 2]]))

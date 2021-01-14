@@ -1,3 +1,5 @@
+from typing import List
+
 from LeetCode.LeetCode_Tree import TreeNode
 
 
@@ -205,6 +207,36 @@ class Solution:
         if root.val < p.val and root.val < q.val:
             return self.lowestCommonAncestor(root.right, p, q)
         return root
+
+    def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:
+        """
+        654. 最大二叉树
+        :see https://leetcode-cn.com/problems/maximum-binary-tree/
+        """
+        # dp[i][j] = (v, index), i和j表示在nums的[i, j]区间内，v代表最大值，index代表最大值所在位置
+        dp = [[(0, -1) for _ in nums] for _ in nums]
+        for i in range(len(nums)):
+            dp[i][i] = (nums[i], i)
+
+        for k in range(1, len(nums)):
+            for i in range(0, len(nums) - k):
+                j = i + k
+                # dp[i][j] = max(dp[i][j - 1], nums[j])
+                dp[i][j] = dp[i][j - 1]
+                if nums[j] > dp[i][j][0]:
+                    dp[i][j] = (nums[j], j)
+
+        def create_tree(start: int, end: int) -> TreeNode:
+            if start > end:
+                return None
+            val, index = dp[start][end]
+
+            root = TreeNode(val)
+            root.left = create_tree(start, index - 1)
+            root.right = create_tree(index + 1, end)
+            return root
+
+        return create_tree(0, len(nums) - 1)
 
     def widthOfBinaryTree(self, root: TreeNode) -> int:
         """
