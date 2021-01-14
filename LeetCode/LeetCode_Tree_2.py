@@ -206,28 +206,60 @@ class Solution:
             return self.lowestCommonAncestor(root.right, p, q)
         return root
 
+    def widthOfBinaryTree(self, root: TreeNode) -> int:
+        """
+        662. 二叉树最大宽度
+        :see https://leetcode-cn.com/problems/maximum-width-of-binary-tree/
+        """
+        if not root:
+            return 0
+
+        queue = [(root, 0)]
+        length = 1
+        left_index = 0
+        result = 0
+
+        while queue:
+            node, index = queue.pop(0)
+            length -= 1
+
+            if node.left:
+                queue.append((node.left, index * 2 + 1))
+            if node.right:
+                queue.append((node.right, index * 2 + 2))
+
+            if left_index == 0:
+                left_index = index
+
+            if length == 0:
+                result = max(result, index - left_index)
+                left_index = 0
+                length = len(queue)
+
+        return result + 1
+
 
 if __name__ == '__main__':
     s = Solution()
 
-    root = TreeNode(6)
-    root.left = TreeNode(2)
-    root.right = TreeNode(8)
+    root = TreeNode(1)
+    root.left = TreeNode(3)
+    root.right = TreeNode(2)
     # # #
-    root.left.left = TreeNode(0)
-    root.left.right = TreeNode(4)
+    root.left.left = TreeNode(5)
+    root.left.right = TreeNode(3)
 
     # root.left.left.left = TreeNode(8)
     # root.left.left.right = TreeNode(9)
 
     # #
-    root.left.right.left = TreeNode(3)
-    root.left.right.right = TreeNode(5)
+    # root.left.right.left = TreeNode(3)
+    # root.left.right.right = TreeNode(5)
     #
-    root.right.left = TreeNode(7)
+    # root.right.left = TreeNode(7)
     root.right.right = TreeNode(9)
 
     # root.right.left.right = TreeNode(7)
 
     # print(s.recoverTree(root))
-    print(s.lowestCommonAncestor(root, TreeNode(0), TreeNode(4)).val)
+    print(s.widthOfBinaryTree(root))
