@@ -17,14 +17,14 @@ class Solution:
         dic = defaultdict(list)
         for i in range(len(s)):
             ch_code = ord(s[i]) - 97
-            father = union.find_parent(i)
+            father = union.find_root(i)
             if not dic[father]:
                 dic[father] = [0] * 26
             dic[father][ch_code] += 1
 
         arr = []
         for i in range(len(s)):
-            father = union.find_parent(i)
+            father = union.find_root(i)
             for j in range(26):
                 if dic[father][j] > 0:
                     dic[father][j] -= 1
@@ -46,6 +46,12 @@ class Solution:
                 last = i[1]
                 result += 1
         return result
+
+    def hitBricks(self, grid: List[List[int]], hits: List[List[int]]) -> List[int]:
+        """
+        803. 打砖块
+        :see https://leetcode-cn.com/problems/bricks-falling-when-hit/
+        """
 
 
 if __name__ == '__main__':

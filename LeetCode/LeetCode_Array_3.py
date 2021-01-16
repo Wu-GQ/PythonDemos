@@ -712,7 +712,7 @@ class Solution:
         from LeetCode.Class.UnionFindClass import UnionFindClass
         union = UnionFindClass(len(edges) + 1)
         for u, v in edges:
-            if union.find_parent(u) == union.find_parent(v):
+            if union.find_root(u) == union.find_root(v):
                 return [u, v]
             union.union(u, v)
             # print(union.father)
@@ -1083,12 +1083,12 @@ class Solution:
         from collections import defaultdict
         group_dict = defaultdict(dict)
         for i in range(len(source)):
-            father = union.find_parent(i)
+            father = union.find_root(i)
             group_dict[father][source[i]] = group_dict[father].get(source[i], 0) + 1
 
         result = 0
         for i in range(len(source)):
-            father = union.find_parent(i)
+            father = union.find_root(i)
             if target[i] in group_dict[father]:
                 group_dict[father][target[i]] -= 1
                 result += 1
