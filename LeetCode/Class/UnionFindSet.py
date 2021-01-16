@@ -26,4 +26,8 @@ class UnionFindSet:
         :param node1: 第一个元素
         :param node2: 第二个元素
         """
-        self.father[node1] = self.find_root(node2)
+        a = self.find_root(node1)
+        b = self.find_root(node2)
+        if a != b:
+            self.father[b] = a
+        return a

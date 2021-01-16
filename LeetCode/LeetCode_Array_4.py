@@ -52,8 +52,98 @@ class Solution:
         803. 打砖块
         :see https://leetcode-cn.com/problems/bricks-falling-when-hit/
         """
+        # PS: 这波啊，逆向思考才是关键
+        # 所有被敲打的位置
+        hit_dict = {}
+        for i in hits:
+            hit_dict[(i[0], i[1])] = hit_dict.get((i[0], i[1]), 0) + 1
+
+        # 并查集，每个节点的根节点
+        father = {}
+        # 每个集合中的节点数量
+        count_dict = {}
+
+        def find_root(node):
+            """ 并查集，查找根节点 """
+            if node not in father:
+                return (-1, -1)
+
+            if node != father[node]:
+                # 路径压缩，将元素的父节点设为所在树的根节点
+                father[node] = find_root(father[node])
+
+            return father[node]
+
+        def merge(node1, node2):
+            """ 并查集，合并两个集合 """
+            a = find_root(node1)
+            b = find_root(node2)
+            if a != b:
+                # 合并时，优先将x==0的作为根节点
+                if a[0] == 0:
+                    father[b] = a
+                    count_dict[a] += count_dict[b]
+                    del count_dict[b]
+                    return a
+                else:
+                    father[a] = b
+                    count_dict[b] += count_dict[a]
+                    del count_dict[a]
+                    return b
+            return a
+
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                if grid[i][j] == 1 and (i, j) not in hit_dict:
+                    # 添加新节点
+                    father[(i, j)] = (i, j)
+                    count_dict[(i, j)] = 1
+
+                    # 检查上下左右是否存在方块
+                    for (x, y) in [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)]:
+                        if 0 <= x < len(grid) and 0 <= y < len(grid[x]) and grid[x][y] == 1 and (x, y) not in hit_dict and (x, y) in father:
+                            merge((i, j), (x, y))
+
+        result = [0] * len(hits)
+        for i in range(len(hits) - 1, -1, -1):
+            x, y = hits[i][0], hits[i][1]
+
+            # 如果这个地方存在砖块，或者这个地方已经被敲打过
+            if grid[x][y] == 0 or hit_dict[(x, y)] > 1:
+                hit_dict[(x, y)] -= 1
+                continue
+
+            # 获取上下左右的节点所在的集合的根节点
+            up = find_root((x - 1, y)) if x >= 0 else (-1, -1)
+            down = find_root((x + 1, y)) if x < len(grid) else (-1, -1)
+            left = find_root((x, y - 1)) if y >= 0 else (-1, -1)
+            right = find_root((x, y + 1)) if y < len(grid[0]) else (-1, -1)
+
+            tmp = 0
+            # 当其中有一个集合的x==0时，说明其它集合的根节点x!=0的集合全会掉落
+            is_find = x == 0
+            for (a, b) in {up, down, left, right}:
+                if a == 0:
+                    is_find = True
+                elif a > 0:
+                    tmp += count_dict[(a, b)]
+
+            if is_find:
+                result[i] = tmp
+
+            # 将敲打的节点还原
+            father[(x, y)] = (x, y)
+            count_dict[(x, y)] = 1
+
+            # 串联上下左右节点
+            for (a, b) in [up, down, left, right]:
+                if a >= 0:
+                    merge((x, y), (a, b))
+
+        return result
 
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.findLongestChain([[0, 3], [1, 4], [2, 5], [1, 2]]))
+    print(
+        s.hitBricks([[1, 1, 0, 1, 0], [1, 1, 0, 1, 1], [0, 0, 0, 1, 1], [0, 0, 0, 1, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]], [[0, 0], [0, 1], [1, 3]]))
