@@ -11,7 +11,7 @@ class Solution:
         from LeetCode.Class.UnionFindClass import UnionFindClass
         union = UnionFindClass(len(s))
         for item in pairs:
-            union.union(item[0], item[1])
+            union.merge(item[0], item[1])
 
         from collections import defaultdict
         dic = defaultdict(list)
@@ -139,6 +139,33 @@ class Solution:
             for (a, b) in [up, down, left, right]:
                 if a >= 0:
                     merge((x, y), (a, b))
+
+        return result
+
+    def minCostConnectPoints(self, points: List[List[int]]) -> int:
+        """
+        1584. 连接所有点的最小费用
+        :see https://leetcode-cn.com/problems/min-cost-to-connect-all-points/
+        """
+        # 最小生成树 - Kruskal 算法
+        if len(points) < 2:
+            return 0
+
+        from Class.UnionFindClass import UnionFindClass
+        union = UnionFindClass(len(points))
+
+        import heapq
+        queue = []
+
+        for i in range(len(points)):
+            for j in range(i + 1, len(points)):
+                heapq.heappush(queue, (abs(points[j][0] - points[i][0]) + abs(points[j][1] - points[i][1]), i, j))
+
+        result = 0
+        while queue:
+            dis, a, b = heapq.heappop(queue)
+            if not union.merge(a, b):
+                result += dis
 
         return result
 

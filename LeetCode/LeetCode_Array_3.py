@@ -714,7 +714,7 @@ class Solution:
         for u, v in edges:
             if union.find_root(u) == union.find_root(v):
                 return [u, v]
-            union.union(u, v)
+            union.merge(u, v)
             # print(union.father)
         return []
 
@@ -1078,7 +1078,7 @@ class Solution:
         from Class.UnionFindClass import UnionFindClass
         union = UnionFindClass(len(source))
         for l in allowedSwaps:
-            union.union(l[0], l[1])
+            union.merge(l[0], l[1])
 
         from collections import defaultdict
         group_dict = defaultdict(dict)

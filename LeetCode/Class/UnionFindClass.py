@@ -3,10 +3,8 @@ class UnionFindClass:
     def __init__(self, n):
         # 用来表示节点的父节点
         self.father = [i for i in range(n)]
-        # 用来表示所在树的深度
-        self.depth = [1] * n
 
-    def find_root(self, node: int):
+    def find_root(self, node: int) -> int:
         """
         找到元素的父节点
         :param node: 被查找的元素
@@ -20,21 +18,17 @@ class UnionFindClass:
         self.father[node] = self.find_root(self.father[node])
         return self.father[node]
 
-    def union(self, node1: int, node2: int):
+    def merge(self, node1: int, node2: int) -> bool:
         """
         将两个元素所在的集合合并为一个集合
         :param node1: 第一个元素
         :param node2: 第二个元素
+        :return: 合并前的两个元素是否在同一个集合
         """
         father1 = self.find_root(node1)
         father2 = self.find_root(node2)
 
-        # 将深度较浅的树合并到深度较深的树
-        if self.depth[father1] <= self.depth[father2]:
+        if father1 != father2:
             self.father[father1] = father2
-        else:
-            self.father[father2] = father1
 
-        # 如果两棵树的深度相同且根节点不同时，新的根节点的深度+1
-        if self.depth[father1] == self.depth[father2] and father1 != father2:
-            self.depth[father2] += 1
+        return father1 == father2
