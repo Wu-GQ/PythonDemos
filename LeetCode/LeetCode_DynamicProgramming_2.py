@@ -954,8 +954,46 @@ class Solution:
 
         return min(dp.values())
 
+    def minCut(self, s: str) -> int:
+        """
+        132. 分割回文串 II
+        :see https://leetcode-cn.com/problems/palindrome-partitioning-ii/
+        """
+        length = len(s)
+
+        # step[i]表示，step[i]开始，可以形成的回文串长度
+        step = [set() for _ in range(length)]
+
+        for i in range(length):
+            # 以s[i]和s[i + 1]为中心，搜索可以组成的最长回文串
+            flag = 0  # 0b00表示两者都要判断，0b01表示单字符为中心需要判断，0b10表示双字符为中心需要判断
+            j = 0
+            while j <= i < length - j and flag < 3:
+                if s[i - j] != s[i + j]:
+                    flag |= 1
+                if flag & 1 == 0:
+                    step[i - j].add(2 * j + 1)
+
+                if i + j + 1 >= length or s[i - j] != s[i + j + 1]:
+                    flag |= 2
+                if (flag >> 1) & 1 == 0:
+                    step[i - j].add(2 * (j + 1))
+
+                j += 1
+
+        # dp[i]表示，s[:i]可以分成几个回文串
+        dp = [length] * (length + 1)
+        dp[0] = 0
+
+        for i in range(length):
+            for j in step[i]:
+                dp[i + j] = min(dp[i + j], dp[i] + 1)
+        return dp[-1] - 1
+
 
 if __name__ == '__main__':
     s = Solution()
     # print(s.stoneGameV([1, 1, 2]))
-    print(s.findRotateSteps("xrrakuulnczywjs", "jrlucwzakzussrlckyjjsuwkuarnaluxnyzcnrxxwruyr"))
+    # print(s.minCut("abbaabbc"))
+    print(s.minCut("aab"))
+    print(s.minCut("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
