@@ -239,8 +239,77 @@ class Solution:
         backtrace(0)
         return result
 
+    def findCriticalAndPseudoCriticalEdges(self, n: int, edges: List[List[int]]) -> List[List[int]]:
+        """
+        1489. 找到最小生成树里的关键边和伪关键边
+        :see https://leetcode-cn.com/problems/find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree/
+        """
+        from LeetCode.Class.UnionFindClass import UnionFindClass
+
+        def generateMST(ignore: int) -> (int, set):
+            """
+            删除某条边后，生成的最小生成树的权重和
+            :param ignore: 删除的边的下标
+            :return: 权重和，若为-1，则表示不能生成最小生成树;最小生成树的未使用边的下标
+            """
+            union = UnionFindClass(n)
+            unused = {ignore}
+            value = 0
+
+            for i in range(len(graph)):
+                item = graph[i]
+                if item[3] == ignore:
+                    continue
+
+                if union.merge(item[1], item[2]):
+                    unused.add(item[3])
+                else:
+                    value += item[0]
+
+            return (value, unused) if union.get_root_count() == 1 else (-1, None)
+
+        def generateMST2(pre: int) -> int:
+            """ 使用某一边，构成最小生成树的权重和 """
+            union = UnionFindClass(n)
+            union.merge(edges[pre][0], edges[pre][1])
+            value = edges[pre][2]
+
+            for i in range(len(graph)):
+                item = graph[i]
+                if not union.merge(item[1], item[2]):
+                    value += item[0]
+
+            return value
+
+        graph = sorted([(edges[i][2], edges[i][0], edges[i][1], i) for i in range(len(edges))])
+        # 一直没有被使用的边
+        min_val, unused_edges = generateMST(-1)
+        unused_edges.remove(-1)
+        # 关键边
+        key_edges = set()
+
+        for i in range(len(graph)):
+            # 删除第i条边后，生成的最小生成树
+            v, un = generateMST(i)
+            if v == -1 or v > min_val:
+                key_edges.add(i)
+            else:
+                unused_edges &= un
+
+        # 对未出现过的边进行检查，如果这条边加入后，构成的最小生成树的权重和未改变边，则说明这条边是可能出现的边
+        delete = set()
+        for i in unused_edges:
+            v = generateMST2(i)
+            if v == min_val:
+                delete.add(i)
+        unused_edges -= delete
+
+        # 可能出现过的边 = 所有边 - 关键边 - 未出现过的边
+        other = {i for i in range(len(edges))} - key_edges - unused_edges
+
+        return [list(key_edges), list(other)]
+
 
 if __name__ == '__main__':
     s = Solution()
-    for i in range(20):
-        print(s.totalNQueens(i))
+    print(s.findCriticalAndPseudoCriticalEdges(4, [[0, 1, 1], [0, 3, 1], [0, 2, 1], [1, 2, 1], [1, 3, 1], [2, 3, 1]]))

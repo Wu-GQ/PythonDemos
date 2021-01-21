@@ -4,11 +4,21 @@ class UnionFindClass:
         # 用来表示节点的父节点
         self.father = [i for i in range(n)]
 
+    def get_root_count(self) -> int:
+        """
+        获得集合的数量
+        :return:
+        """
+        father_set = set()
+        for i in range(len(self.father)):
+            father_set.add(self.find_root(i))
+        return len(father_set)
+
     def find_root(self, node: int) -> int:
         """
-        找到元素的父节点
+        找到元素的根节点
         :param node: 被查找的元素
-        :return: 被查找元素的父节点
+        :return: 被查找元素的根节点
         """
         if node == self.father[node]:
             # 元素所在树的根节点就是元素本身
@@ -32,3 +42,11 @@ class UnionFindClass:
             self.father[father1] = father2
 
         return father1 == father2
+
+    def reset(self):
+        """
+        重置并查集
+        :return:
+        """
+        for i in range(len(self.father)):
+            self.father[i] = i
