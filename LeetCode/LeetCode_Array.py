@@ -804,36 +804,38 @@ class Solution:
 
     def canCross(self, stones: list) -> bool:
         """
-        青蛙过河
+        403. 青蛙过河
         :see https://leetcode-cn.com/problems/frog-jump/
         """
-        length = len(stones)
-        if length < 2:
+
+        memory = set()
+
+        def backtrace(index: int, step: int) -> bool:
+            if index == len(stones) - 1:
+                return True
+            if step == 0:
+                return False
+
+            if (index, step) in memory:
+                return False
+
+            next_index = bisect.bisect_left(stones, stones[index] + step + 1, index)
+            if next_index < len(stones) and stones[next_index] == stones[index] + step + 1 and backtrace(next_index, step + 1):
+                return True
+
+            next_index = bisect.bisect_left(stones, stones[index] + step, index)
+            if next_index < len(stones) and stones[next_index] == stones[index] + step and backtrace(next_index, step):
+                return True
+
+            next_index = bisect.bisect_left(stones, stones[index] + step - 1, index)
+            if next_index < len(stones) and stones[next_index] == stones[index] + step - 1 and backtrace(next_index, step - 1):
+                return True
+
+            memory.add((index, step))
+
             return False
 
-        # 元组的第一位表示index，第二位表示打到该位置所用的距离
-        stone_list = [(0, 0)]
-        checked_stone_set = set()
-
-        while len(stone_list) > 0:
-            next_stone = stone_list.pop(0)
-
-            for i in range(next_stone[0] + 1, stones[next_stone[0]] + next_stone[1] + 2):
-                if i >= length:
-                    break
-                distance = stones[i] - stones[next_stone[0]]
-                if (i, distance) in checked_stone_set:
-                    continue
-
-                if distance == next_stone[1] - 1 or distance == next_stone[1] or distance == next_stone[1] + 1:
-                    if i == length - 1:
-                        return True
-                    stone_list.append((i, distance))
-                    checked_stone_set.add((i, distance))
-
-            print(next_stone[0], next_stone[1])
-
-        return False
+        return stones[0] == 0 and stones[1] == 1 and backtrace(1, 1)
 
     def wiggleSort(self, nums: list) -> None:
         """
@@ -1834,5 +1836,5 @@ class Solution:
 
 if __name__ == "__main__":
     s = Solution()
-    print(s.threeSum([0, 0, 0]))
+    print(s.canCross([0, 1]))
     # print(a)
