@@ -309,7 +309,28 @@ class Solution:
 
         return [list(key_edges), list(other)]
 
+    def swimInWater(self, grid: List[List[int]]) -> int:
+        """
+        778. 水位上升的泳池中游泳
+        :See: https://leetcode-cn.com/problems/swim-in-rising-water/
+        """
+        N = len(grid)
+        costs = [[float('inf')] * N for i in range(N)]
+        costs[0][0] = grid[0][0]
+
+        queue = [(0, 0)]
+        while queue:
+            x, y = queue.pop(0)
+            for i, j in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]:
+                if 0 <= i < N and 0 <= j < N:
+                    cost = max(costs[x][y], grid[i][j])
+                    if cost < costs[i][j]:
+                        costs[i][j] = cost
+                        queue.append((i, j))
+
+        return int(costs[-1][-1])
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.findCriticalAndPseudoCriticalEdges(4, [[0, 1, 1], [0, 3, 1], [0, 2, 1], [1, 2, 1], [1, 3, 1], [2, 3, 1]]))
+    print(s.swimInWater([[0, 1, 2, 3, 4], [24, 23, 22, 21, 5], [12, 13, 14, 15, 16], [11, 17, 18, 19, 20], [10, 9, 8, 7, 6]]))
