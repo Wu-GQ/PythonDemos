@@ -169,8 +169,20 @@ class Solution:
 
         return result
 
+    def numEquivDominoPairs(self, dominoes: List[List[int]]) -> int:
+        """
+        1128. 等价多米诺骨牌对的数量
+        :see https://leetcode-cn.com/problems/number-of-equivalent-domino-pairs/
+        """
+        dic = {}
+        for i in dominoes:
+            dic[i[0], i[1]] = dic.get((i[0], i[1]), 0) + 1
+        result = 0
+        for (k1, k2) in dic:
+            result += dic[k1, k2] * (dic[k1, k2] - 1) // 2 + (dic[k1, k2] * dic[k2, k1] if k1 < k2 and (k2, k1) in dic else 0)
+        return result
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(
-        s.hitBricks([[1, 1, 0, 1, 0], [1, 1, 0, 1, 1], [0, 0, 0, 1, 1], [0, 0, 0, 1, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]], [[0, 0], [0, 1], [1, 3]]))
+    print(s.numEquivDominoPairs([[1, 2], [2, 1], [1, 2], [2, 1]]))
