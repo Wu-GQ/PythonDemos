@@ -182,7 +182,105 @@ class Solution:
             result += dic[k1, k2] * (dic[k1, k2] - 1) // 2 + (dic[k1, k2] * dic[k2, k1] if k1 < k2 and (k2, k1) in dic else 0)
         return result
 
+    def countBalls(self, lowLimit: int, highLimit: int) -> int:
+        """
+        5654. 盒子中小球的最大数量
+        :see https://leetcode-cn.com/problems/maximum-number-of-balls-in-a-box/
+        """
+        box = {}
+        for i in range(lowLimit, highLimit + 1):
+            res = 0
+            n = i
+            while n > 0:
+                res += n % 10
+                n //= 10
+            box[res] = box.get(res, 0) + 1
+
+        minI = 0
+        for i in box:
+            if box[i] > box.get(minI, 0):
+                minI = i
+        return box[minI]
+
+    def restoreArray(self, adjacentPairs: List[List[int]]) -> List[int]:
+        """
+        5665. 从相邻元素对还原数组
+        :see https://leetcode-cn.com/problems/restore-the-array-from-adjacent-pairs/
+        """
+        from collections import defaultdict
+        pair = defaultdict(list)
+        for i in adjacentPairs:
+            pair[i[0]].append(i[1])
+            pair[i[1]].append(i[0])
+
+        start = 0
+        for i in pair:
+            if len(pair[i]) == 1:
+                start = i
+                break
+
+        res = [start]
+
+        def dfs(left: int):
+            if not pair[left]:
+                return
+            nextI = pair[left][0]
+            pair[nextI].remove(left)
+            res.append(nextI)
+            dfs(nextI)
+
+        dfs(start)
+        return res
+
+    def canEat(self, candiesCount: List[int], queries: List[List[int]]) -> List[bool]:
+        """
+        5667. 你能在你最喜欢的那天吃到你最喜欢的糖果吗？
+        :see https://leetcode-cn.com/problems/can-you-eat-your-favorite-candy-on-your-favorite-day/
+        """
+        prefix = [0]
+        for i in candiesCount:
+            prefix.append(prefix[-1] + i)
+
+        res = []
+        for i in range(len(queries)):
+            c_type, day, limit = queries[i][0], queries[i][1], queries[i][2]
+
+            # 至少一天吃一颗，最多一天吃limit颗
+            res.append(day < prefix[c_type + 1] and prefix[c_type] < (day + 1) * limit)
+
+        return res
+
+    def numSimilarGroups(self, strs: List[str]) -> int:
+        """
+        839. 相似字符串组
+        :see https://leetcode-cn.com/problems/similar-string-groups/
+        """
+
+        def check(a: str, b: str) -> bool:
+            indexes = []
+            for i in range(len(a)):
+                if a[i] != b[i]:
+                    indexes.append(i)
+            return len(indexes) == 0 or len(indexes) == 2 and a[indexes[0]] == b[indexes[1]] and a[indexes[1]] == b[indexes[0]]
+
+        pair = []
+        for i in range(len(strs)):
+            for j in range(i + 1, len(strs)):
+                if check(strs[i], strs[j]):
+                    pair.append((i, j))
+
+        from Class.UnionFindClass import UnionFindClass
+        union = UnionFindClass(len(strs))
+
+        for i in pair:
+            union.merge(i[0], i[1])
+
+        return union.get_root_count()
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.numEquivDominoPairs([[1, 2], [2, 1], [1, 2], [2, 1]]))
+    # print(s.canEat([7, 4, 5, 3, 8], [[0, 2, 2], [4, 2, 4], [2, 13, 1000000000]]))
+    # print(s.canEat([5, 2, 6, 4, 1], [[3, 1, 2], [4, 10, 3], [3, 10, 100], [4, 100, 30], [1, 3, 1]]))
+    # print(s.canEat([1, 8], [[1, 0, 1]]))
+    print(s.numSimilarGroups(["omv", "ovm"]))

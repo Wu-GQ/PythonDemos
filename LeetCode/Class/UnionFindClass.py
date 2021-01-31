@@ -9,10 +9,11 @@ class UnionFindClass:
         获得集合的数量
         :return:
         """
-        father_set = set()
+        count = 0
         for i in range(len(self.father)):
-            father_set.add(self.find_root(i))
-        return len(father_set)
+            if i == self.find_root(i):
+                count += 1
+        return count
 
     def find_root(self, node: int) -> int:
         """

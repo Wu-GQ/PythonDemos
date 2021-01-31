@@ -330,7 +330,42 @@ class Solution:
 
         return int(costs[-1][-1])
 
+    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+        """
+        212. 单词搜索 II
+        :see https://leetcode-cn.com/problems/word-search-ii/
+        """
+        from Class.TrieTree import TrieTree, TrieNode
+        tree = TrieTree()
+        for i in words:
+            tree.insert(i)
+
+        def dfs(x: int, y: int, node: TrieNode, s: List[str], path: set):
+            if board[x][y] not in node.children or (x, y) in path:
+                return
+
+            path.add((x, y))
+            s.append(board[x][y])
+
+            next_node: TrieNode = node.children[board[x][y]]
+            if next_node.is_word:
+                result.add(''.join(s))
+
+            for i, j in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]:
+                if 0 <= i < len(board) and 0 <= j < len(board[i]):
+                    dfs(i, j, next_node, s, path)
+
+            path.remove((x, y))
+            s.pop()
+
+        result = set()
+        for i in range(len(board)):
+            for j in range(len(board[i])):
+                dfs(i, j, tree.root, [], set())
+
+        return list(result)
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.swimInWater([[0, 1, 2, 3, 4], [24, 23, 22, 21, 5], [12, 13, 14, 15, 16], [11, 17, 18, 19, 20], [10, 9, 8, 7, 6]]))
+    print(s.findWords([["o", "a", "a", "n"], ["e", "t", "a", "e"], ["i", "h", "k", "r"], ["i", "f", "l", "v"]], ["oath", "pea", "eat", "rain"]))

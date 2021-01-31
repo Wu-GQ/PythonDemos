@@ -685,7 +685,52 @@ class Solution:
 
         return ''.join(stack)
 
+    def checkPartitioning(self, s: str) -> bool:
+        """
+        5666. 回文串分割 IV
+        :see https://leetcode-cn.com/problems/palindrome-partitioning-iv/
+        """
+        if len(s) == 3:
+            return True
+
+        length = len(s)
+
+        # step[i]表示，step[i]开始，可以形成的回文串长度
+        step = [set() for _ in range(length)]
+
+        for i in range(length):
+            # 以s[i]和s[i + 1]为中心，搜索可以组成的最长回文串
+            flag = 0  # 0b00表示两者都要判断，0b01表示单字符为中心需要判断，0b10表示双字符为中心需要判断
+            j = 0
+            while j <= i < length - j and flag < 3:
+                if s[i - j] != s[i + j]:
+                    flag |= 1
+                if flag & 1 == 0:
+                    step[i - j].add(2 * j + 1)
+
+                if i + j + 1 >= length or s[i - j] != s[i + j + 1]:
+                    flag |= 2
+                if (flag >> 1) & 1 == 0:
+                    step[i - j].add(2 * (j + 1))
+
+                j += 1
+
+        from functools import lru_cache
+        @lru_cache(None)
+        def backtrace(index: int, st: int) -> bool:
+            if st == 0:
+                return index == length
+            if index >= length:
+                return False
+
+            for i in step[index]:
+                if backtrace(index + i, st - 1):
+                    return True
+            return False
+
+        return backtrace(0, 3)
+
 
 if __name__ == '__main__':
     s = Solution()
-    print(s.removeDuplicateLetters("bbcaac"))
+    print(s.checkPartitioning("abaabcac"))
